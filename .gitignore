@@ -102,6 +102,3 @@ __tests__/runner/*
 # IDE files
 .idea
 *.code-workspace
-
-# Temporarily during development. After finishing, it is necessary to clean up.
-dist
