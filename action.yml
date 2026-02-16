@@ -2,9 +2,18 @@ name: "i582/setup-acton"
 description: "Set up a specific version of Acton and add the command-line tools to the PATH."
 author: "TON Core"
 
-#inputs:
+inputs:
+  acton-version:
+    description: ""
+    required: false
+  github-token:
+    description: ""
+    default: ${{ github.token }}
+    required: false
 
-#outputs:
+outputs:
+  acton-path:
+    description: ""
 
 runs:
   using: "node24"
