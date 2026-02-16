@@ -1,17 +1,15 @@
-name: 'i582/setup-acton'
-description:
-  'Set up a specific version of Acton and add the command-line tools to the
-  PATH.'
-author: 'TON Core'
+name: "i582/setup-acton"
+description: "Set up a specific version of Acton and add the command-line tools to the PATH."
+author: "TON Core"
 
 #inputs:
 
 #outputs:
 
 runs:
-  using: 'node24'
-  main: 'dist/index.js'
+  using: "node24"
+  main: "dist/index.js"
 
 branding:
-  icon: 'package'
-  color: 'blue'
+  icon: "package"
+  color: "blue"
