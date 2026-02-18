@@ -10,15 +10,15 @@ import { resolveVersion } from "./version"
 
 async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
-  const inputArchitecture = inputs.architectureInput
   const inputPlatform = inputs.platformInput
+  const inputArchitecture = inputs.architectureInput
 
   const githubToken = inputs.githubTokenInput
   const github = new GitHub(githubToken)
 
   const version = await resolveVersion(inputVersion, github)
-  const architecture = resolveArchitecture(inputArchitecture)
   const platform = resolvePlatform(inputPlatform)
+  const architecture = resolveArchitecture(inputArchitecture)
 
   const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github)
 

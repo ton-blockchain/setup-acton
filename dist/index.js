@@ -64812,13 +64812,13 @@ async function resolveVersion(inputVersion, github) {
 
 async function run() {
     const inputVersion = getActonVersion();
-    const inputArchitecture = architectureInput;
     const inputPlatform = platformInput;
+    const inputArchitecture = architectureInput;
     const githubToken = githubTokenInput;
     const github = new GitHub(githubToken);
     const version = await resolveVersion(inputVersion, github);
-    const architecture = resolveArchitecture(inputArchitecture);
     const platform = resolvePlatform(inputPlatform);
+    const architecture = resolveArchitecture(inputArchitecture);
     const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github);
     coreExports.addPath(toolPath);
     coreExports.setOutput("acton-path", path$1.join(toolPath, BINARY_NAME));
