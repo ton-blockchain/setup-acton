@@ -1,21 +1,24 @@
 import * as core from "@actions/core"
 import path from "node:path"
 import { BINARY_NAME } from "./constants"
+import * as inputs from "./inputs"
 import { downloadVersion } from "./download"
 import { GitHub } from "./github"
-import * as inputs from "./inputs"
-import { getArchitecture, getPlatform } from "./os"
+import { resolveArchitecture } from "./architecture"
+import { resolvePlatform } from "./platform"
 import { resolveVersion } from "./version"
 
 async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
-  const githubToken = inputs.githubToken
+  const inputArchitecture = inputs.architectureInput
+  const inputPlatform = inputs.platformInput
 
+  const githubToken = inputs.githubTokenInput
   const github = new GitHub(githubToken)
 
   const version = await resolveVersion(inputVersion, github)
-  const platform = getPlatform()
-  const architecture = getArchitecture()
+  const architecture = resolveArchitecture(inputArchitecture)
+  const platform = resolvePlatform(inputPlatform)
 
   const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github)
 

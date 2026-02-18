@@ -10,6 +10,12 @@ inputs:
     description: ""
     default: ${{ github.token }}
     required: false
+  architecture:
+    description: ""
+    required: false
+  platform:
+    description: ""
+    required: false
 
 outputs:
   acton-path:

@@ -1,10 +1,9 @@
 import * as core from "@actions/core"
 import process from "node:process"
 
-export type Platform = "linux" | "darwin" | "windows"
 export type Architecture = "x86_64" | "aarch64"
 
-export function getArchitecture(): Architecture {
+function getArchitecture(): Architecture {
   const architecture = process.arch
   core.debug(`Detected architecture: ${architecture}`)
 
@@ -21,20 +20,10 @@ export function getArchitecture(): Architecture {
   throw new Error(`Unsupported architecture: ${architecture}`)
 }
 
-export function getPlatform(): Platform {
-  const platform = process.platform
-  core.debug(`Detected platform: ${platform}`)
-
-  const platformMapping: { [P in NodeJS.Platform]?: Platform } = {
-    darwin: "darwin",
-    win32: "windows",
-    linux: "linux",
-  } as const
-
-  const plat = platformMapping[platform]
-  if (plat !== undefined) {
-    return plat
+export function resolveArchitecture(inputArchitecture: string): Architecture {
+  if (inputArchitecture !== "") {
+    return inputArchitecture as Architecture
   }
 
-  throw new Error(`Unsupported platform: ${platform}`)
+  return getArchitecture()
 }
