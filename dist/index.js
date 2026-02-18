@@ -27307,6 +27307,17 @@ const OWNER = "i582";
 const REPO = "acton";
 const BINARY_NAME = "acton";
 
+const githubTokenInput = coreExports.getInput("github-token", { required: true });
+const architectureInput = coreExports.getInput("architecture");
+const platformInput = coreExports.getInput("platform");
+function getActonVersion() {
+    const version = coreExports.getInput("acton-version");
+    if (version !== "") {
+        return version;
+    }
+    return "latest";
+}
+
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
@@ -64745,15 +64756,6 @@ class GitHub {
     }
 }
 
-const githubToken = coreExports.getInput("github-token", { required: true });
-function getActonVersion() {
-    const version = coreExports.getInput("acton-version");
-    if (version !== "") {
-        return version;
-    }
-    return "latest";
-}
-
 function getArchitecture() {
     const architecture = process$1.arch;
     coreExports.debug(`Detected architecture: ${architecture}`);
@@ -64767,6 +64769,13 @@ function getArchitecture() {
     }
     throw new Error(`Unsupported architecture: ${architecture}`);
 }
+function resolveArchitecture(inputArchitecture) {
+    if (inputArchitecture !== "") {
+        return inputArchitecture;
+    }
+    return getArchitecture();
+}
+
 function getPlatform() {
     const platform = process$1.platform;
     coreExports.debug(`Detected platform: ${platform}`);
@@ -64780,6 +64789,12 @@ function getPlatform() {
         return plat;
     }
     throw new Error(`Unsupported platform: ${platform}`);
+}
+function resolvePlatform(inputPlatform) {
+    if (inputPlatform !== "") {
+        return inputPlatform;
+    }
+    return getPlatform();
 }
 
 async function getLatestVersion(github) {
@@ -64797,11 +64812,13 @@ async function resolveVersion(inputVersion, github) {
 
 async function run() {
     const inputVersion = getActonVersion();
-    const githubToken$1 = githubToken;
-    const github = new GitHub(githubToken$1);
+    const inputArchitecture = architectureInput;
+    const inputPlatform = platformInput;
+    const githubToken = githubTokenInput;
+    const github = new GitHub(githubToken);
     const version = await resolveVersion(inputVersion, github);
-    const platform = getPlatform();
-    const architecture = getArchitecture();
+    const architecture = resolveArchitecture(inputArchitecture);
+    const platform = resolvePlatform(inputPlatform);
     const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github);
     coreExports.addPath(toolPath);
     coreExports.setOutput("acton-path", path$1.join(toolPath, BINARY_NAME));

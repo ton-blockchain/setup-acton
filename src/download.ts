@@ -4,7 +4,8 @@ import * as fs from "node:fs"
 import path from "node:path"
 import { OWNER, REPO } from "./constants"
 import { GitHub } from "./github"
-import { Architecture, Platform } from "./os"
+import { Platform } from "./platform"
+import { Architecture } from "./architecture"
 
 function getArtifactName(artifact: string, platform: Platform, architecture: Architecture): string {
   return `${artifact}-${platform}-${architecture}.tar.gz`
