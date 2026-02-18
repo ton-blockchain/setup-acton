@@ -1,6 +1,6 @@
 import * as core from "@actions/core"
 import { OWNER, REPO } from "./constants"
-import { GitHub } from "./github"
+import type { GitHub } from "./github"
 
 async function getLatestVersion(github: GitHub): Promise<string> {
   const octokit = github.getOctokit()

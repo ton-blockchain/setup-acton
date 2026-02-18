@@ -1,5 +1,5 @@
 import * as github from "@actions/github"
-import { GitHub as GH } from "@actions/github/lib/utils"
+import type { GitHub as GH } from "@actions/github/lib/utils"
 
 type Octokit = InstanceType<typeof GH>
 

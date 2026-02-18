@@ -3,9 +3,9 @@ import * as tc from "@actions/tool-cache"
 import * as fs from "node:fs"
 import path from "node:path"
 import { OWNER, REPO } from "./constants"
-import { GitHub } from "./github"
-import { Platform } from "./platform"
-import { Architecture } from "./architecture"
+import type { GitHub } from "./github"
+import type { Platform } from "./platform"
+import type { Architecture } from "./architecture"
 
 function getArtifactName(artifact: string, platform: Platform, architecture: Architecture): string {
   return `${artifact}-${platform}-${architecture}.tar.gz`
