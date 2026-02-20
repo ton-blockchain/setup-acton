@@ -37,7 +37,6 @@ import require$$0$7 from 'diagnostics_channel';
 import * as require$$2$2 from 'child_process';
 import require$$2__default$1 from 'child_process';
 import require$$6$1, { setTimeout as setTimeout$1 } from 'timers';
-import path$1 from 'node:path';
 import require$$0$9 from 'node:assert';
 import require$$0$a from 'node:net';
 import require$$2$4 from 'node:http';
@@ -54,6 +53,7 @@ import require$$5$3 from 'node:async_hooks';
 import require$$1$7 from 'node:console';
 import require$$1$8 from 'node:dns';
 import * as fs$1 from 'node:fs';
+import path$1 from 'node:path';
 import process$1 from 'node:process';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -59482,12 +59482,13 @@ async function downloadVersion(artifact, version, platform, architecture, github
         coreExports.debug(`Download ${downloadPath} with size ${stats.size}`);
     }
     const extractedPath = await extractTar(downloadPath);
+    const toolPath = path$1.join(extractedPath, artifact);
     if (coreExports.isDebug()) {
-        const stats = fs$1.statSync(path$1.join(extractedPath, artifact));
-        coreExports.debug(`Extracted ${extractedPath} with size ${stats.size}`);
+        const stats = fs$1.statSync(toolPath);
+        coreExports.debug(`Extracted ${toolPath} with size ${stats.size}`);
     }
-    coreExports.debug(`Save extracted path: ${extractedPath}`);
-    return { toolPath: extractedPath };
+    coreExports.debug(`Save extracted path: ${toolPath}`);
+    return { toolPath: toolPath };
 }
 
 var github = {};
@@ -64831,7 +64832,7 @@ async function run() {
     const architecture = resolveArchitecture(inputArchitecture);
     const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github);
     coreExports.addPath(toolPath);
-    coreExports.setOutput("acton-path", path$1.join(toolPath, BINARY_NAME));
+    coreExports.setOutput("acton-path", toolPath);
 }
 async function main() {
     coreExports.debug("Start setup-action action");
