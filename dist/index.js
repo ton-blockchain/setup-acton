@@ -64802,9 +64802,19 @@ async function getLatestVersion(github) {
     const { data: release } = await octokit.rest.repos.getLatestRelease({ owner: OWNER, repo: REPO });
     return release.tag_name;
 }
+function versionNormalize(version) {
+    if (version.startsWith("v")) {
+        return version;
+    }
+    const re = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
+    if (re.test(version)) {
+        return `v${version}`;
+    }
+    return version;
+}
 async function resolveVersion(inputVersion, github) {
     if (inputVersion !== "latest") {
-        return inputVersion;
+        return versionNormalize(inputVersion);
     }
     coreExports.debug("Fetching latest version from GitHub...");
     return await getLatestVersion(github);
