@@ -9,9 +9,22 @@ async function getLatestVersion(github: GitHub): Promise<string> {
   return release.tag_name
 }
 
+function versionNormalize(version: string): string {
+  if (version.startsWith("v")) {
+    return version
+  }
+
+  const re = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$")
+  if (re.test(version)) {
+    return `v${version}`
+  }
+
+  return version
+}
+
 export async function resolveVersion(inputVersion: string, github: GitHub): Promise<string> {
   if (inputVersion !== "latest") {
-    return inputVersion
+    return versionNormalize(inputVersion)
   }
 
   core.debug("Fetching latest version from GitHub...")
