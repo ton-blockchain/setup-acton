@@ -23,7 +23,7 @@ async function run(): Promise<void> {
   const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github)
 
   core.addPath(toolPath)
-  core.setOutput("acton-path", path.join(toolPath, BINARY_NAME))
+  core.setOutput("acton-path", toolPath)
 }
 
 async function main(): Promise<void> {

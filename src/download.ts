@@ -39,11 +39,13 @@ export async function downloadVersion(
   }
 
   const extractedPath = await tc.extractTar(downloadPath)
+
+  const toolPath = path.join(extractedPath, artifact)
   if (core.isDebug()) {
-    const stats = fs.statSync(path.join(extractedPath, artifact))
-    core.debug(`Extracted ${extractedPath} with size ${stats.size}`)
+    const stats = fs.statSync(toolPath)
+    core.debug(`Extracted ${toolPath} with size ${stats.size}`)
   }
 
-  core.debug(`Save extracted path: ${extractedPath}`)
-  return { toolPath: extractedPath }
+  core.debug(`Save extracted path: ${toolPath}`)
+  return { toolPath: toolPath }
 }
