@@ -28,5 +28,6 @@ export async function resolveVersion(inputVersion: string, github: GitHub): Prom
   }
 
   core.debug("Fetching latest version from GitHub...")
-  return await getLatestVersion(github)
+  const version = await getLatestVersion(github)
+  return version
 }

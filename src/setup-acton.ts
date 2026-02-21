@@ -1,5 +1,4 @@
 import * as core from "@actions/core"
-import path from "node:path"
 import { BINARY_NAME } from "./constants"
 import * as inputs from "./inputs"
 import { downloadVersion } from "./download"
