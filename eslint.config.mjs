@@ -71,6 +71,8 @@ export default [
       "eslint-comments/no-unused-disable": "off",
       "@typescript-eslint/consistent-return": "error",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/explicit-function-return-type": "error",
+      "@typescript-eslint/return-await": "error",
       "i18n-text/no-en": "off",
       "import/no-namespace": "off",
       "no-console": "off",

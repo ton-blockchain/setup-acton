@@ -64818,7 +64818,8 @@ async function resolveVersion(inputVersion, github) {
         return versionNormalize(inputVersion);
     }
     coreExports.debug("Fetching latest version from GitHub...");
-    return await getLatestVersion(github);
+    const version = await getLatestVersion(github);
+    return version;
 }
 
 async function run() {
