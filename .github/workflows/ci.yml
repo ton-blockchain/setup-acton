@@ -9,11 +9,31 @@ on:
       - master
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  validate-typings:
+  check-all:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v6
 
-      - uses: typesafegithub/github-actions-typing@v2
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --immutable --check-cache --check-resolutions
+
+      - name: Check yarn dedupe
+        run: yarn dedupe --check
+
+      - name: Run all
+        run: yarn  run all
