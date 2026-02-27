@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - action.yml
+      - action-types.yml
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - action.yml
+      - action-types.yml
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-typings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v6
+
+      - name: Validate typings
+        uses: typesafegithub/github-actions-typing@v2
