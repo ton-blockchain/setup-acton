@@ -26,7 +26,7 @@ async function run(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  core.debug("Start setup-action action")
+  core.debug("Start setup-acton action")
 
   try {
     await run()
