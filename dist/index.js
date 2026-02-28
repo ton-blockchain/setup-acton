@@ -59473,13 +59473,13 @@ async function downloadVersion(artifact, version, platform, architecture, github
     if (asset === undefined) {
         throw new Error(`Asset ${artifactName} in release ${version} not found`);
     }
-    coreExports.info(`"Downloading ${artifactName} from ${asset.browser_download_url}"`);
+    coreExports.info(`Downloading ${artifactName} from ${asset.browser_download_url}`);
     const downloadPath = await downloadTool(asset.url, undefined, github.getAuthToken(), {
         accept: "application/octet-stream",
     });
     if (coreExports.isDebug()) {
         const stats = fs$1.statSync(downloadPath);
-        coreExports.debug(`Download ${downloadPath} with size ${stats.size}`);
+        coreExports.debug(`Downloaded ${downloadPath} with size ${stats.size}`);
     }
     const extractedPath = await extractTar(downloadPath);
     const toolPath = path$1.join(extractedPath, artifact);
@@ -59487,7 +59487,7 @@ async function downloadVersion(artifact, version, platform, architecture, github
         const stats = fs$1.statSync(toolPath);
         coreExports.debug(`Extracted ${toolPath} with size ${stats.size}`);
     }
-    coreExports.debug(`Save extracted path: ${toolPath}`);
+    coreExports.debug(`Saved extracted path: ${toolPath}`);
     return { toolPath: toolPath };
 }
 
@@ -64836,7 +64836,7 @@ async function run() {
     coreExports.setOutput("acton-path", toolPath);
 }
 async function main() {
-    coreExports.debug("Start setup-action action");
+    coreExports.debug("Start setup-acton action");
     try {
         await run();
     }
