@@ -29,13 +29,13 @@ export async function downloadVersion(
     throw new Error(`Asset ${artifactName} in release ${version} not found`)
   }
 
-  core.info(`"Downloading ${artifactName} from ${asset.browser_download_url}"`)
+  core.info(`Downloading ${artifactName} from ${asset.browser_download_url}`)
   const downloadPath = await tc.downloadTool(asset.url, undefined, github.getAuthToken(), {
     accept: "application/octet-stream",
   })
   if (core.isDebug()) {
     const stats = fs.statSync(downloadPath)
-    core.debug(`Download ${downloadPath} with size ${stats.size}`)
+    core.debug(`Downloaded ${downloadPath} with size ${stats.size}`)
   }
 
   const extractedPath = await tc.extractTar(downloadPath)
@@ -46,6 +46,6 @@ export async function downloadVersion(
     core.debug(`Extracted ${toolPath} with size ${stats.size}`)
   }
 
-  core.debug(`Save extracted path: ${toolPath}`)
+  core.debug(`Saved extracted path: ${toolPath}`)
   return { toolPath: toolPath }
 }
