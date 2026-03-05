@@ -31,4 +31,4 @@ jobs:
         run: yarn npm audit --all --severity moderate
 
       - name: Check all packages for vulnerabilities
-        run: yarn npm audit --all --recursive --severity high --exclude minimatch
+        run: yarn npm audit --all --recursive --severity high
