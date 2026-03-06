@@ -37,3 +37,15 @@ jobs:
 
       - name: Run all
         run: yarn  run all
+
+      - name: Verify dist is up-to-date
+        run: git diff --name-only --exit-code -- dist
+
+  validate-typings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v6
+
+      - name: Validate typings
+        uses: typesafegithub/github-actions-typing@v2
