@@ -6,6 +6,7 @@ import { GitHub } from "./github"
 import { resolveArchitecture } from "./architecture"
 import { resolvePlatform } from "./platform"
 import { resolveVersion } from "./version"
+import path from "node:path"
 
 async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
@@ -21,7 +22,7 @@ async function run(): Promise<void> {
 
   const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github)
 
-  core.addPath(toolPath)
+  core.addPath(path.dirname(toolPath))
   core.setOutput("acton-path", toolPath)
 }
 
