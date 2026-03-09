@@ -64832,7 +64832,7 @@ async function run() {
     const platform = resolvePlatform(inputPlatform);
     const architecture = resolveArchitecture(inputArchitecture);
     const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github);
-    coreExports.addPath(toolPath);
+    coreExports.addPath(path$1.dirname(toolPath));
     coreExports.setOutput("acton-path", toolPath);
 }
 async function main() {
