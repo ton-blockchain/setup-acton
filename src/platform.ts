@@ -1,14 +1,14 @@
 import * as core from "@actions/core"
 import process from "node:process"
 
-export type Platform = "linux" | "darwin" | "windows"
+export type Platform = "linux" | "apple" | "windows"
 
 function getPlatform(): Platform {
   const platform = process.platform
   core.debug(`Detected platform: ${platform}`)
 
   const platformMapping: { [P in NodeJS.Platform]?: Platform } = {
-    darwin: "darwin",
+    darwin: "apple",
     win32: "windows",
     linux: "linux",
   } as const

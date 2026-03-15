@@ -64781,7 +64781,7 @@ function getPlatform() {
     const platform = process$1.platform;
     coreExports.debug(`Detected platform: ${platform}`);
     const platformMapping = {
-        darwin: "darwin",
+        darwin: "apple",
         win32: "windows",
         linux: "linux",
     };
