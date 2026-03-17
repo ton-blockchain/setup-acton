@@ -8,7 +8,7 @@ import type { Platform } from "./platform"
 import type { Architecture } from "./architecture"
 
 function getArtifactName(artifact: string, platform: Platform, architecture: Architecture): string {
-  return `${artifact}-${platform}-${architecture}.tar.gz`
+  return `${artifact}-${architecture}-${platform}.tar.gz`
 }
 
 export async function downloadVersion(

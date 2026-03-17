@@ -59462,7 +59462,7 @@ function _getGlobal(key, defaultValue) {
 }
 
 function getArtifactName(artifact, platform, architecture) {
-    return `${artifact}-${platform}-${architecture}.tar.gz`;
+    return `${artifact}-${architecture}-${platform}.tar.gz`;
 }
 async function downloadVersion(artifact, version, platform, architecture, github) {
     const octokit = github.getOctokit();
@@ -64781,9 +64781,9 @@ function getPlatform() {
     const platform = process$1.platform;
     coreExports.debug(`Detected platform: ${platform}`);
     const platformMapping = {
-        darwin: "apple",
-        win32: "windows",
-        linux: "linux",
+        darwin: "apple-darwin",
+        win32: "pc-windows-msvc",
+        linux: "unknown-linux-gnu",
     };
     const plat = platformMapping[platform];
     if (plat !== undefined) {
