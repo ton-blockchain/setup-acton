@@ -1,4 +1,4 @@
-name: "i582/setup-acton"
+name: "ton-blockchain/setup-acton"
 description: "Set up a specific version of Acton and add the command-line tools to the PATH."
 author: "TON Core"
 

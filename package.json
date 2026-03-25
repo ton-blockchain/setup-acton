@@ -5,13 +5,13 @@
   "author": "TON Core",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/i582/setup-acton",
+  "homepage": "https://github.com/ton-blockchain/setup-acton",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/i582/setup-acton.git"
+    "url": "git+https://github.com/ton-blockchain/setup-acton.git"
   },
   "bugs": {
-    "url": "https://github.com/i582/setup-acton/issues"
+    "url": "https://github.com/ton-blockchain/setup-acton/issues"
   },
   "keywords": [
     "actions",

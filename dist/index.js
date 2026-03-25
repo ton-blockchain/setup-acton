@@ -27303,7 +27303,7 @@ function requireCore () {
 
 var coreExports = requireCore();
 
-const OWNER = "i582";
+const OWNER = "ton-blockchain";
 const REPO = "acton";
 const BINARY_NAME = "acton";
 
