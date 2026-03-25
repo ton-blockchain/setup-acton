@@ -64827,6 +64827,17 @@ async function run() {
     const inputPlatform = platformInput;
     const inputArchitecture = architectureInput;
     const githubToken = githubTokenInput;
+    coreExports.debug(`Action inputs: ${JSON.stringify({
+        "acton-version": inputVersion,
+        platform: inputPlatform,
+        architecture: inputArchitecture,
+        "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
+    })}`);
+    coreExports.debug(`Action constants: ${JSON.stringify({
+        owner: OWNER,
+        repo: REPO,
+        binaryName: BINARY_NAME,
+    })}`);
     const github = new GitHub(githubToken);
     const version = await resolveVersion(inputVersion, github);
     const platform = resolvePlatform(inputPlatform);

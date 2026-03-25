@@ -1,5 +1,5 @@
 import * as core from "@actions/core"
-import { BINARY_NAME } from "./constants"
+import { BINARY_NAME, OWNER, REPO } from "./constants"
 import * as inputs from "./inputs"
 import { downloadVersion } from "./download"
 import { GitHub } from "./github"
@@ -12,8 +12,24 @@ async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
   const inputPlatform = inputs.platformInput
   const inputArchitecture = inputs.architectureInput
-
   const githubToken = inputs.githubTokenInput
+
+  core.debug(
+    `Action inputs: ${JSON.stringify({
+      "acton-version": inputVersion,
+      platform: inputPlatform,
+      architecture: inputArchitecture,
+      "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
+    })}`,
+  )
+  core.debug(
+    `Action constants: ${JSON.stringify({
+      owner: OWNER,
+      repo: REPO,
+      binaryName: BINARY_NAME,
+    })}`,
+  )
+
   const github = new GitHub(githubToken)
 
   const version = await resolveVersion(inputVersion, github)
