@@ -1,7 +1,6 @@
 import * as github from "@actions/github"
-import type { GitHub as GH } from "@actions/github/lib/utils"
 
-type Octokit = InstanceType<typeof GH>
+type Octokit = ReturnType<typeof github.getOctokit>
 
 export class GitHub {
   private readonly githubToken: string

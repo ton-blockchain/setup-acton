@@ -6,8 +6,6 @@ node_modules
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 lerna-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
@@ -61,11 +59,6 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
-
-# yarn
-.yarn/
-.yarn-integrity
-yarn-error.log
 
 # dotenv environment variables file
 .env
