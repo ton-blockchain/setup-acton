@@ -20,23 +20,14 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v6
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22.x
-          cache: "yarn"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: yarn install --immutable --check-cache --check-resolutions
-
-      - name: Check yarn dedupe
-        run: yarn dedupe --check
+        run: bun ci
 
       - name: Run all
-        run: yarn  run all
+        run: bun run all
 
       - name: Verify dist is up-to-date
         run: git diff --name-only --exit-code -- dist

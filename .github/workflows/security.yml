@@ -3,7 +3,8 @@ on:
   pull_request:
     paths:
       - package.json
-      - yarn.lock
+      - bun.lock
+      - bunfig.toml
   push:
     branches:
       - master
@@ -15,20 +16,8 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v6
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22.x
-          cache: "yarn"
-
-      - name: Install dependencies
-        run: yarn install --immutable --check-cache --check-resolutions
-
-      - name: Check project packages for deprecated
-        run: yarn npm audit --all --severity moderate
-
-      - name: Check all packages for vulnerabilities
-        run: yarn npm audit --all --recursive --severity high
+      - name: Run Bun audit
+        run: bun audit --audit-level=moderate
