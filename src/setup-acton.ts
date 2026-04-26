@@ -1,13 +1,14 @@
 import * as core from "@actions/core"
-import { BINARY_NAME, OWNER, REPO } from "./constants"
-import * as inputs from "./inputs"
-import { downloadVersion } from "./download"
-import { GitHub } from "./github"
-import { resolveArchitecture } from "./architecture"
-import { resolvePlatform } from "./platform"
-import { resolveVersion } from "./version"
-import { Artifact } from "./artifact"
+import { BINARY_NAME, OWNER, REPO } from "@/constants"
+import * as inputs from "@/inputs"
+import { downloadVersion } from "@/download"
+import { GitHub } from "@/github"
+import { resolveArchitecture } from "@/artifact/architecture"
+import { resolvePlatform } from "@/artifact/platform"
+import { resolveVersion } from "@/version/tag-version"
+import { Artifact } from "@/artifact/artifact"
 import path from "node:path"
+import { getInstalledActonVersion } from "@/version/acton-version"
 
 async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
@@ -17,7 +18,7 @@ async function run(): Promise<void> {
 
   core.debug(
     `Action inputs: ${JSON.stringify({
-      "acton-version": inputVersion,
+      version: inputVersion,
       platform: inputPlatform,
       architecture: inputArchitecture,
       "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
@@ -40,9 +41,11 @@ async function run(): Promise<void> {
   const artifact = new Artifact(BINARY_NAME, version, platform, architecture)
 
   const { toolPath } = await downloadVersion(artifact, github)
+  const actonVersion = await getInstalledActonVersion(toolPath)
 
   core.addPath(path.dirname(toolPath))
   core.setOutput("acton-path", toolPath)
+  core.setOutput("acton-version", actonVersion)
 }
 
 async function main(): Promise<void> {
@@ -51,13 +54,7 @@ async function main(): Promise<void> {
   try {
     await run()
   } catch (error: unknown) {
-    let message: string
-    if (error instanceof Error) {
-      message = error.message
-    } else {
-      message = String(error)
-    }
-
+    const message = error instanceof Error ? error : String(error)
     core.setFailed(message)
   }
 }

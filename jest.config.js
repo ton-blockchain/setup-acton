@@ -18,6 +18,9 @@ export default {
   //   }
   // },
   extensionsToTreatAsEsm: [".ts"],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
   moduleFileExtensions: ["ts", "js"],
   preset: "ts-jest",
   reporters: ["default"],

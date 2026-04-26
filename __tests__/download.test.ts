@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
 import path from "node:path"
-import { Artifact } from "../src/artifact"
-import type { Architecture } from "../src/architecture"
-import type { GitHub } from "../src/github"
+import { Artifact } from "@/artifact/artifact"
+import type { Architecture } from "@/artifact/architecture"
+import type { GitHub } from "@/github"
 
 type ReleaseAsset = {
   readonly name: string
@@ -53,7 +53,7 @@ jest.unstable_mockModule("node:fs", (): Record<string, unknown> => {
   }
 })
 
-const { downloadVersion } = await import("../src/download")
+const { downloadVersion } = await import("@/download")
 
 const artifactVersion = "v1.2.3"
 const downloadPath = "/tmp/acton.tar.gz"

@@ -1,7 +1,7 @@
 # See https://github.com/typesafegithub/github-actions-typing
 
 inputs:
-  acton-version:
+  version:
     type: string
   github-token:
     type: string
@@ -19,4 +19,6 @@ inputs:
 
 outputs:
   acton-path:
+    type: string
+  acton-version:
     type: string

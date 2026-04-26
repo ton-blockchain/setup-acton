@@ -33,7 +33,7 @@ jobs:
         run: bun run all
 
       - name: Verify dist is up-to-date
-        run: git diff --name-only --exit-code -- dist
+        run: git diff --text --exit-code -- dist
 
   validate-typings:
     runs-on: ubuntu-latest

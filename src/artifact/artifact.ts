@@ -1,5 +1,5 @@
-import type { Platform } from "./platform"
-import type { Architecture } from "./architecture"
+import type { Platform } from "@/artifact/platform"
+import type { Architecture } from "@/artifact/architecture"
 
 export class Artifact {
   public constructor(

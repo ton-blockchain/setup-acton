@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
-import type { GitHub } from "../src/github"
+import type { GitHub } from "@/github"
 
 type LatestReleaseResponse = {
   readonly data: {
@@ -21,7 +21,7 @@ jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   }
 })
 
-const { resolveVersion } = await import("../src/version")
+const { resolveVersion } = await import("@/version/tag-version")
 
 function createGitHub(): GitHub {
   return {
@@ -68,5 +68,15 @@ describe("resolveVersion", (): void => {
       repo: "acton",
     })
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
+  })
+
+  it("logs debug context and falls back to unknown when latest version cannot be fetched", async (): Promise<void> => {
+    const error = new Error("GitHub API unavailable")
+    getLatestReleaseMock.mockRejectedValue(error)
+
+    await expect(resolveVersion("latest", createGitHub())).resolves.toBe("unknown")
+
+    expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
+    expect(debugMock).toHaveBeenCalledWith("Failed to fetch latest version from GitHub: GitHub API unavailable")
   })
 })

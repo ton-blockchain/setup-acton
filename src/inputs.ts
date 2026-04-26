@@ -5,7 +5,7 @@ export const architectureInput = core.getInput("architecture")
 export const platformInput = core.getInput("platform")
 
 export function getActonVersion(): string {
-  const version = core.getInput("acton-version")
+  const version = core.getInput("version")
   if (version !== "") {
     return version
   }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals"
-import { Artifact } from "../src/artifact"
-import type { Architecture } from "../src/architecture"
-import type { Platform } from "../src/platform"
+import { Artifact } from "@/artifact/artifact"
+import type { Architecture } from "@/artifact/architecture"
+import type { Platform } from "@/artifact/platform"
 
 type ArtifactCase = Readonly<{
   name: string
