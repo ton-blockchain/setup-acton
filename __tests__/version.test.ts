@@ -69,4 +69,14 @@ describe("resolveVersion", (): void => {
     })
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
   })
+
+  it("logs debug context and falls back to unknown when latest version cannot be fetched", async (): Promise<void> => {
+    const error = new Error("GitHub API unavailable")
+    getLatestReleaseMock.mockRejectedValue(error)
+
+    await expect(resolveVersion("latest", createGitHub())).resolves.toBe("unknown")
+
+    expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
+    expect(debugMock).toHaveBeenCalledWith("Failed to fetch latest version from GitHub: GitHub API unavailable")
+  })
 })

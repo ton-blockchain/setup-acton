@@ -54,13 +54,7 @@ async function main(): Promise<void> {
   try {
     await run()
   } catch (error: unknown) {
-    let message: string
-    if (error instanceof Error) {
-      message = error.message
-    } else {
-      message = String(error)
-    }
-
+    const message = error instanceof Error ? error : String(error)
     core.setFailed(message)
   }
 }

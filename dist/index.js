@@ -38094,8 +38094,15 @@ async function resolveVersion(inputVersion, github) {
         return versionNormalize(inputVersion);
     }
     debug$1("Fetching latest version from GitHub...");
-    const version = await getLatestVersion(github);
-    return version;
+    try {
+        const version = await getLatestVersion(github);
+        return version;
+    }
+    catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        debug$1(`Failed to fetch latest version from GitHub: ${message}`);
+        return "unknown";
+    }
 }
 
 class Artifact {
@@ -38182,13 +38189,7 @@ async function main() {
         await run();
     }
     catch (error) {
-        let message;
-        if (error instanceof Error) {
-            message = error.message;
-        }
-        else {
-            message = String(error);
-        }
+        const message = error instanceof Error ? error : String(error);
         setFailed(message);
     }
 }

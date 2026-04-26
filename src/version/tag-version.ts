@@ -29,6 +29,12 @@ export async function resolveVersion(inputVersion: string, github: GitHub): Prom
   }
 
   core.debug("Fetching latest version from GitHub...")
-  const version = await getLatestVersion(github)
-  return version
+  try {
+    const version = await getLatestVersion(github)
+    return version
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    core.debug(`Failed to fetch latest version from GitHub: ${message}`)
+    return "unknown"
+  }
 }
