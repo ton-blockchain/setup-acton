@@ -20,6 +20,9 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v6
 
+      - name: Verify dist/index.js exists
+        run: test -f dist/index.js
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 

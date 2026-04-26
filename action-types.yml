@@ -6,9 +6,16 @@ inputs:
   github-token:
     type: string
   architecture:
-    type: string
+    type: enum
+    allowed-values:
+      - x86_64
+      - aarch64
   platform:
-    type: string
+    type: enum
+    allowed-values:
+      - linux
+      - apple
+      - windows
 
 outputs:
   acton-path:

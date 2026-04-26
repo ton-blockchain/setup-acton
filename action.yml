@@ -12,17 +12,19 @@ inputs:
     default: ${{ github.token }}
     required: false
   architecture:
-    description: "Target architecture. Auto-detected from the runner if not specified."
+    description:
+      "Target architecture. Supported values: x86_64, aarch64. Auto-detected from the runner if not specified."
     default: ""
     required: false
   platform:
-    description: "Target platform. Auto-detected from the runner if not specified."
+    description:
+      "Target platform. Supported values: linux, apple, windows. Auto-detected from the runner if not specified."
     default: ""
     required: false
 
 outputs:
   acton-path:
-    description: "Path to the directory containing the installed Acton binaries."
+    description: "Path to the installed Acton binary."
 
 runs:
   using: "node24"
