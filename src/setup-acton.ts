@@ -6,6 +6,7 @@ import { GitHub } from "./github"
 import { resolveArchitecture } from "./architecture"
 import { resolvePlatform } from "./platform"
 import { resolveVersion } from "./version"
+import { Artifact } from "./artifact"
 import path from "node:path"
 
 async function run(): Promise<void> {
@@ -36,7 +37,9 @@ async function run(): Promise<void> {
   const platform = resolvePlatform(inputPlatform)
   const architecture = resolveArchitecture(inputArchitecture)
 
-  const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github)
+  const artifact = new Artifact(BINARY_NAME, version, platform, architecture)
+
+  const { toolPath } = await downloadVersion(artifact, github)
 
   core.addPath(path.dirname(toolPath))
   core.setOutput("acton-path", toolPath)

@@ -33021,17 +33021,14 @@ function _getGlobal(key, defaultValue) {
     return value !== undefined ? value : defaultValue;
 }
 
-function getArtifactName(artifact, platform, architecture) {
-    return `${artifact}-${architecture}-${platform}.tar.gz`;
-}
-async function downloadVersion(artifact, version, platform, architecture, github) {
+async function downloadVersion(artifact, github) {
     const octokit = github.getOctokit();
-    const artifactName = getArtifactName(artifact, platform, architecture);
-    info$1(`Downloading ${artifactName} from ${version} release`);
-    const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: version });
+    const { artifactName, artifactVersion } = artifact;
+    info$1(`Downloading ${artifactName} from ${artifactVersion} release`);
+    const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: artifactVersion });
     const asset = release.assets.find((asset) => asset.name === artifactName);
     if (asset === undefined) {
-        throw new Error(`Asset ${artifactName} in release ${version} not found`);
+        throw new Error(`Asset ${artifactName} in release ${artifactVersion} not found`);
     }
     info$1(`Downloading ${artifactName} from ${asset.browser_download_url}`);
     const downloadPath = await downloadTool(asset.url, undefined, github.getAuthToken(), {
@@ -33042,7 +33039,7 @@ async function downloadVersion(artifact, version, platform, architecture, github
         debug$1(`Downloaded ${downloadPath} with size ${stats.size}`);
     }
     const extractedPath = await extractTar(downloadPath);
-    const toolPath = path$1.join(extractedPath, artifact);
+    const toolPath = path$1.join(extractedPath, artifact.name);
     if (isDebug$1()) {
         const stats = fs$1.statSync(toolPath);
         debug$1(`Extracted ${toolPath} with size ${stats.size}`);
@@ -38038,9 +38035,9 @@ function getPlatform() {
     const platform = process$1.platform;
     debug$1(`Detected platform: ${platform}`);
     const platformMapping = {
-        darwin: "apple-darwin",
-        win32: "pc-windows-msvc",
-        linux: "unknown-linux-gnu",
+        darwin: "apple",
+        win32: "windows",
+        linux: "linux",
     };
     const plat = platformMapping[platform];
     if (plat !== undefined) {
@@ -38079,6 +38076,37 @@ async function resolveVersion(inputVersion, github) {
     return version;
 }
 
+class Artifact {
+    name;
+    artifactVersion;
+    platform;
+    architecture;
+    constructor(name, artifactVersion, platform, architecture) {
+        this.name = name;
+        this.artifactVersion = artifactVersion;
+        this.platform = platform;
+        this.architecture = architecture;
+    }
+    get artifactName() {
+        let target;
+        switch (this.platform) {
+            case "linux":
+                target = "unknown-linux-gnu";
+                break;
+            case "apple":
+                target = "apple-darwin";
+                break;
+            case "windows":
+                target = "pc-windows-msvc";
+                break;
+            default:
+                target = this.platform;
+                break;
+        }
+        return `${this.name}-${this.architecture}-${target}.tar.gz`;
+    }
+}
+
 async function run() {
     const inputVersion = getActonVersion();
     const inputPlatform = platformInput;
@@ -38099,7 +38127,8 @@ async function run() {
     const version = await resolveVersion(inputVersion, github);
     const platform = resolvePlatform(inputPlatform);
     const architecture = resolveArchitecture(inputArchitecture);
-    const { toolPath } = await downloadVersion(BINARY_NAME, version, platform, architecture, github);
+    const artifact = new Artifact(BINARY_NAME, version, platform, architecture);
+    const { toolPath } = await downloadVersion(artifact, github);
     addPath(path$1.dirname(toolPath));
     setOutput("acton-path", toolPath);
 }

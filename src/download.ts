@@ -4,29 +4,18 @@ import * as fs from "node:fs"
 import path from "node:path"
 import { OWNER, REPO } from "./constants"
 import type { GitHub } from "./github"
-import type { Platform } from "./platform"
-import type { Architecture } from "./architecture"
+import type { Artifact } from "./artifact"
 
-function getArtifactName(artifact: string, platform: Platform, architecture: Architecture): string {
-  return `${artifact}-${architecture}-${platform}.tar.gz`
-}
-
-export async function downloadVersion(
-  artifact: string,
-  version: string,
-  platform: Platform,
-  architecture: Architecture,
-  github: GitHub,
-): Promise<{ toolPath: string }> {
+export async function downloadVersion(artifact: Artifact, github: GitHub): Promise<{ toolPath: string }> {
   const octokit = github.getOctokit()
 
-  const artifactName = getArtifactName(artifact, platform, architecture)
-  core.info(`Downloading ${artifactName} from ${version} release`)
+  const { artifactName, artifactVersion } = artifact
+  core.info(`Downloading ${artifactName} from ${artifactVersion} release`)
 
-  const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: version })
+  const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: artifactVersion })
   const asset = release.assets.find((asset) => asset.name === artifactName)
   if (asset === undefined) {
-    throw new Error(`Asset ${artifactName} in release ${version} not found`)
+    throw new Error(`Asset ${artifactName} in release ${artifactVersion} not found`)
   }
 
   core.info(`Downloading ${artifactName} from ${asset.browser_download_url}`)
@@ -40,7 +29,7 @@ export async function downloadVersion(
 
   const extractedPath = await tc.extractTar(downloadPath)
 
-  const toolPath = path.join(extractedPath, artifact)
+  const toolPath = path.join(extractedPath, artifact.name)
   if (core.isDebug()) {
     const stats = fs.statSync(toolPath)
     core.debug(`Extracted ${toolPath} with size ${stats.size}`)
