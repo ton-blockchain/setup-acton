@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
-import type { GitHub } from "../src/github"
+import type { GitHub } from "@/github"
 
 type LatestReleaseResponse = {
   readonly data: {
@@ -21,7 +21,7 @@ jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   }
 })
 
-const { resolveVersion } = await import("../src/version")
+const { resolveVersion } = await import("@/version/tag-version")
 
 function createGitHub(): GitHub {
   return {

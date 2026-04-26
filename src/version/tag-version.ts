@@ -1,6 +1,8 @@
 import * as core from "@actions/core"
-import { OWNER, REPO } from "./constants"
-import type { GitHub } from "./github"
+import { OWNER, REPO } from "@/constants"
+import type { GitHub } from "@/github"
+
+const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$")
 
 async function getLatestVersion(github: GitHub): Promise<string> {
   const octokit = github.getOctokit()
@@ -14,8 +16,7 @@ function versionNormalize(version: string): string {
     return version
   }
 
-  const re = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$")
-  if (re.test(version)) {
+  if (versionTagPattern.test(version)) {
     return `v${version}`
   }
 

@@ -2,9 +2,9 @@ import * as core from "@actions/core"
 import * as tc from "@actions/tool-cache"
 import * as fs from "node:fs"
 import path from "node:path"
-import { OWNER, REPO } from "./constants"
-import type { GitHub } from "./github"
-import type { Artifact } from "./artifact"
+import { OWNER, REPO } from "@/constants"
+import type { GitHub } from "@/github"
+import type { Artifact } from "@/artifact/artifact"
 
 export async function downloadVersion(artifact: Artifact, github: GitHub): Promise<{ toolPath: string }> {
   const octokit = github.getOctokit()

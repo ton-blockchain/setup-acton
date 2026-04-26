@@ -33,7 +33,7 @@ import require$$1$3 from 'node:url';
 import require$$5$2 from 'node:async_hooks';
 import require$$1$4 from 'node:console';
 import require$$1$5 from 'node:dns';
-import require$$5$3 from 'string_decoder';
+import require$$5$3, { StringDecoder } from 'string_decoder';
 import * as child from 'child_process';
 import { setTimeout as setTimeout$1 } from 'timers';
 import * as stream from 'stream';
@@ -28307,1073 +28307,7 @@ function findInPath(tool) {
     });
 }
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-/* eslint-disable @typescript-eslint/unbound-method */
-process.platform === 'win32';
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-os__default.platform();
-os__default.arch();
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-/**
- * The code to exit an action
- */
-var ExitCode$1;
-(function (ExitCode) {
-    /**
-     * A code indicating that the action was successful
-     */
-    ExitCode[ExitCode["Success"] = 0] = "Success";
-    /**
-     * A code indicating that the action was a failure
-     */
-    ExitCode[ExitCode["Failure"] = 1] = "Failure";
-})(ExitCode$1 || (ExitCode$1 = {}));
-/**
- * Prepends inputPath to the PATH (for this action and future actions)
- * @param inputPath
- */
-function addPath(inputPath) {
-    const filePath = process.env['GITHUB_PATH'] || '';
-    if (filePath) {
-        issueFileCommand('PATH', inputPath);
-    }
-    else {
-        issueCommand$1('add-path', {}, inputPath);
-    }
-    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
-}
-/**
- * Gets the value of an input.
- * Unless trimWhitespace is set to false in InputOptions, the value is also trimmed.
- * Returns an empty string if the value is not defined.
- *
- * @param     name     name of the input to get
- * @param     options  optional. See InputOptions.
- * @returns   string
- */
-function getInput(name, options) {
-    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
-    if (options && options.required && !val) {
-        throw new Error(`Input required and not supplied: ${name}`);
-    }
-    if (options && options.trimWhitespace === false) {
-        return val;
-    }
-    return val.trim();
-}
-/**
- * Sets the value of an output.
- *
- * @param     name     name of the output to set
- * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function setOutput(name, value) {
-    const filePath = process.env['GITHUB_OUTPUT'] || '';
-    if (filePath) {
-        return issueFileCommand('OUTPUT', prepareKeyValueMessage(name, value));
-    }
-    process.stdout.write(os.EOL);
-    issueCommand$1('set-output', { name }, toCommandValue$1(value));
-}
-//-----------------------------------------------------------------------
-// Results
-//-----------------------------------------------------------------------
-/**
- * Sets the action status to failed.
- * When the action exits it will be with an exit code of 1
- * @param message add error issue message
- */
-function setFailed(message) {
-    process.exitCode = ExitCode$1.Failure;
-    error(message);
-}
-//-----------------------------------------------------------------------
-// Logging Commands
-//-----------------------------------------------------------------------
-/**
- * Gets whether Actions Step Debug is on or not
- */
-function isDebug$1() {
-    return process.env['RUNNER_DEBUG'] === '1';
-}
-/**
- * Writes debug message to user log
- * @param message debug message
- */
-function debug$1(message) {
-    issueCommand$1('debug', {}, message);
-}
-/**
- * Adds an error issue
- * @param message error issue message. Errors will be converted to string via toString()
- * @param properties optional properties to add to the annotation.
- */
-function error(message, properties = {}) {
-    issueCommand$1('error', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
-}
-/**
- * Writes info to log with console.log.
- * @param message info message
- */
-function info$1(message) {
-    process.stdout.write(message + os.EOL);
-}
-
-const OWNER = "ton-blockchain";
-const REPO = "acton";
-const BINARY_NAME = "acton";
-
-const githubTokenInput = getInput("github-token", { required: true });
-const architectureInput = getInput("architecture");
-const platformInput = getInput("platform");
-function getActonVersion() {
-    const version = getInput("acton-version");
-    if (version !== "") {
-        return version;
-    }
-    return "latest";
-}
-
-// We use any as a valid input type
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * Sanitizes an input into a string so it can be passed into issueCommand safely
- * @param input input to sanitize into a string
- */
-function toCommandValue(input) {
-    if (input === null || input === undefined) {
-        return '';
-    }
-    else if (typeof input === 'string' || input instanceof String) {
-        return input;
-    }
-    return JSON.stringify(input);
-}
-
-/**
- * Issues a command to the GitHub Actions runner
- *
- * @param command - The command name to issue
- * @param properties - Additional properties for the command (key-value pairs)
- * @param message - The message to include with the command
- * @remarks
- * This function outputs a specially formatted string to stdout that the Actions
- * runner interprets as a command. These commands can control workflow behavior,
- * set outputs, create annotations, mask values, and more.
- *
- * Command Format:
- *   ::name key=value,key=value::message
- *
- * @example
- * ```typescript
- * // Issue a warning annotation
- * issueCommand('warning', {}, 'This is a warning message');
- * // Output: ::warning::This is a warning message
- *
- * // Set an environment variable
- * issueCommand('set-env', { name: 'MY_VAR' }, 'some value');
- * // Output: ::set-env name=MY_VAR::some value
- *
- * // Add a secret mask
- * issueCommand('add-mask', {}, 'secretValue123');
- * // Output: ::add-mask::secretValue123
- * ```
- *
- * @internal
- * This is an internal utility function that powers the public API functions
- * such as setSecret, warning, error, and exportVariable.
- */
-function issueCommand(command, properties, message) {
-    const cmd = new Command(command, properties, message);
-    process.stdout.write(cmd.toString() + os.EOL);
-}
-const CMD_STRING = '::';
-class Command {
-    constructor(command, properties, message) {
-        if (!command) {
-            command = 'missing.command';
-        }
-        this.command = command;
-        this.properties = properties;
-        this.message = message;
-    }
-    toString() {
-        let cmdStr = CMD_STRING + this.command;
-        if (this.properties && Object.keys(this.properties).length > 0) {
-            cmdStr += ' ';
-            let first = true;
-            for (const key in this.properties) {
-                if (this.properties.hasOwnProperty(key)) {
-                    const val = this.properties[key];
-                    if (val) {
-                        if (first) {
-                            first = false;
-                        }
-                        else {
-                            cmdStr += ',';
-                        }
-                        cmdStr += `${key}=${escapeProperty(val)}`;
-                    }
-                }
-            }
-        }
-        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
-        return cmdStr;
-    }
-}
-function escapeData(s) {
-    return toCommandValue(s)
-        .replace(/%/g, '%25')
-        .replace(/\r/g, '%0D')
-        .replace(/\n/g, '%0A');
-}
-function escapeProperty(s) {
-    return toCommandValue(s)
-        .replace(/%/g, '%25')
-        .replace(/\r/g, '%0D')
-        .replace(/\n/g, '%0A')
-        .replace(/:/g, '%3A')
-        .replace(/,/g, '%2C');
-}
-
-function getProxyUrl(reqUrl) {
-    const usingSsl = reqUrl.protocol === 'https:';
-    if (checkBypass(reqUrl)) {
-        return undefined;
-    }
-    const proxyVar = (() => {
-        if (usingSsl) {
-            return process.env['https_proxy'] || process.env['HTTPS_PROXY'];
-        }
-        else {
-            return process.env['http_proxy'] || process.env['HTTP_PROXY'];
-        }
-    })();
-    if (proxyVar) {
-        try {
-            return new DecodedURL(proxyVar);
-        }
-        catch (_a) {
-            if (!proxyVar.startsWith('http://') && !proxyVar.startsWith('https://'))
-                return new DecodedURL(`http://${proxyVar}`);
-        }
-    }
-    else {
-        return undefined;
-    }
-}
-function checkBypass(reqUrl) {
-    if (!reqUrl.hostname) {
-        return false;
-    }
-    const reqHost = reqUrl.hostname;
-    if (isLoopbackAddress(reqHost)) {
-        return true;
-    }
-    const noProxy = process.env['no_proxy'] || process.env['NO_PROXY'] || '';
-    if (!noProxy) {
-        return false;
-    }
-    // Determine the request port
-    let reqPort;
-    if (reqUrl.port) {
-        reqPort = Number(reqUrl.port);
-    }
-    else if (reqUrl.protocol === 'http:') {
-        reqPort = 80;
-    }
-    else if (reqUrl.protocol === 'https:') {
-        reqPort = 443;
-    }
-    // Format the request hostname and hostname with port
-    const upperReqHosts = [reqUrl.hostname.toUpperCase()];
-    if (typeof reqPort === 'number') {
-        upperReqHosts.push(`${upperReqHosts[0]}:${reqPort}`);
-    }
-    // Compare request host against noproxy
-    for (const upperNoProxyItem of noProxy
-        .split(',')
-        .map(x => x.trim().toUpperCase())
-        .filter(x => x)) {
-        if (upperNoProxyItem === '*' ||
-            upperReqHosts.some(x => x === upperNoProxyItem ||
-                x.endsWith(`.${upperNoProxyItem}`) ||
-                (upperNoProxyItem.startsWith('.') &&
-                    x.endsWith(`${upperNoProxyItem}`)))) {
-            return true;
-        }
-    }
-    return false;
-}
-function isLoopbackAddress(host) {
-    const hostLower = host.toLowerCase();
-    return (hostLower === 'localhost' ||
-        hostLower.startsWith('127.') ||
-        hostLower.startsWith('[::1]') ||
-        hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
-}
-class DecodedURL extends URL {
-    constructor(url, base) {
-        super(url, base);
-        this._decodedUsername = decodeURIComponent(super.username);
-        this._decodedPassword = decodeURIComponent(super.password);
-    }
-    get username() {
-        return this._decodedUsername;
-    }
-    get password() {
-        return this._decodedPassword;
-    }
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var HttpCodes;
-(function (HttpCodes) {
-    HttpCodes[HttpCodes["OK"] = 200] = "OK";
-    HttpCodes[HttpCodes["MultipleChoices"] = 300] = "MultipleChoices";
-    HttpCodes[HttpCodes["MovedPermanently"] = 301] = "MovedPermanently";
-    HttpCodes[HttpCodes["ResourceMoved"] = 302] = "ResourceMoved";
-    HttpCodes[HttpCodes["SeeOther"] = 303] = "SeeOther";
-    HttpCodes[HttpCodes["NotModified"] = 304] = "NotModified";
-    HttpCodes[HttpCodes["UseProxy"] = 305] = "UseProxy";
-    HttpCodes[HttpCodes["SwitchProxy"] = 306] = "SwitchProxy";
-    HttpCodes[HttpCodes["TemporaryRedirect"] = 307] = "TemporaryRedirect";
-    HttpCodes[HttpCodes["PermanentRedirect"] = 308] = "PermanentRedirect";
-    HttpCodes[HttpCodes["BadRequest"] = 400] = "BadRequest";
-    HttpCodes[HttpCodes["Unauthorized"] = 401] = "Unauthorized";
-    HttpCodes[HttpCodes["PaymentRequired"] = 402] = "PaymentRequired";
-    HttpCodes[HttpCodes["Forbidden"] = 403] = "Forbidden";
-    HttpCodes[HttpCodes["NotFound"] = 404] = "NotFound";
-    HttpCodes[HttpCodes["MethodNotAllowed"] = 405] = "MethodNotAllowed";
-    HttpCodes[HttpCodes["NotAcceptable"] = 406] = "NotAcceptable";
-    HttpCodes[HttpCodes["ProxyAuthenticationRequired"] = 407] = "ProxyAuthenticationRequired";
-    HttpCodes[HttpCodes["RequestTimeout"] = 408] = "RequestTimeout";
-    HttpCodes[HttpCodes["Conflict"] = 409] = "Conflict";
-    HttpCodes[HttpCodes["Gone"] = 410] = "Gone";
-    HttpCodes[HttpCodes["TooManyRequests"] = 429] = "TooManyRequests";
-    HttpCodes[HttpCodes["InternalServerError"] = 500] = "InternalServerError";
-    HttpCodes[HttpCodes["NotImplemented"] = 501] = "NotImplemented";
-    HttpCodes[HttpCodes["BadGateway"] = 502] = "BadGateway";
-    HttpCodes[HttpCodes["ServiceUnavailable"] = 503] = "ServiceUnavailable";
-    HttpCodes[HttpCodes["GatewayTimeout"] = 504] = "GatewayTimeout";
-})(HttpCodes || (HttpCodes = {}));
-var Headers;
-(function (Headers) {
-    Headers["Accept"] = "accept";
-    Headers["ContentType"] = "content-type";
-})(Headers || (Headers = {}));
-var MediaTypes;
-(function (MediaTypes) {
-    MediaTypes["ApplicationJson"] = "application/json";
-})(MediaTypes || (MediaTypes = {}));
-const HttpRedirectCodes = [
-    HttpCodes.MovedPermanently,
-    HttpCodes.ResourceMoved,
-    HttpCodes.SeeOther,
-    HttpCodes.TemporaryRedirect,
-    HttpCodes.PermanentRedirect
-];
-const HttpResponseRetryCodes = [
-    HttpCodes.BadGateway,
-    HttpCodes.ServiceUnavailable,
-    HttpCodes.GatewayTimeout
-];
-const RetryableHttpVerbs = ['OPTIONS', 'GET', 'DELETE', 'HEAD'];
-const ExponentialBackoffCeiling = 10;
-const ExponentialBackoffTimeSlice = 5;
-class HttpClientError extends Error {
-    constructor(message, statusCode) {
-        super(message);
-        this.name = 'HttpClientError';
-        this.statusCode = statusCode;
-        Object.setPrototypeOf(this, HttpClientError.prototype);
-    }
-}
-class HttpClientResponse {
-    constructor(message) {
-        this.message = message;
-    }
-    readBody() {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter$5(this, void 0, void 0, function* () {
-                let output = Buffer.alloc(0);
-                this.message.on('data', (chunk) => {
-                    output = Buffer.concat([output, chunk]);
-                });
-                this.message.on('end', () => {
-                    resolve(output.toString());
-                });
-            }));
-        });
-    }
-    readBodyBuffer() {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter$5(this, void 0, void 0, function* () {
-                const chunks = [];
-                this.message.on('data', (chunk) => {
-                    chunks.push(chunk);
-                });
-                this.message.on('end', () => {
-                    resolve(Buffer.concat(chunks));
-                });
-            }));
-        });
-    }
-}
-class HttpClient {
-    constructor(userAgent, handlers, requestOptions) {
-        this._ignoreSslError = false;
-        this._allowRedirects = true;
-        this._allowRedirectDowngrade = false;
-        this._maxRedirects = 50;
-        this._allowRetries = false;
-        this._maxRetries = 1;
-        this._keepAlive = false;
-        this._disposed = false;
-        this.userAgent = this._getUserAgentWithOrchestrationId(userAgent);
-        this.handlers = handlers || [];
-        this.requestOptions = requestOptions;
-        if (requestOptions) {
-            if (requestOptions.ignoreSslError != null) {
-                this._ignoreSslError = requestOptions.ignoreSslError;
-            }
-            this._socketTimeout = requestOptions.socketTimeout;
-            if (requestOptions.allowRedirects != null) {
-                this._allowRedirects = requestOptions.allowRedirects;
-            }
-            if (requestOptions.allowRedirectDowngrade != null) {
-                this._allowRedirectDowngrade = requestOptions.allowRedirectDowngrade;
-            }
-            if (requestOptions.maxRedirects != null) {
-                this._maxRedirects = Math.max(requestOptions.maxRedirects, 0);
-            }
-            if (requestOptions.keepAlive != null) {
-                this._keepAlive = requestOptions.keepAlive;
-            }
-            if (requestOptions.allowRetries != null) {
-                this._allowRetries = requestOptions.allowRetries;
-            }
-            if (requestOptions.maxRetries != null) {
-                this._maxRetries = requestOptions.maxRetries;
-            }
-        }
-    }
-    options(requestUrl, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('OPTIONS', requestUrl, null, additionalHeaders || {});
-        });
-    }
-    get(requestUrl, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('GET', requestUrl, null, additionalHeaders || {});
-        });
-    }
-    del(requestUrl, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('DELETE', requestUrl, null, additionalHeaders || {});
-        });
-    }
-    post(requestUrl, data, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('POST', requestUrl, data, additionalHeaders || {});
-        });
-    }
-    patch(requestUrl, data, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('PATCH', requestUrl, data, additionalHeaders || {});
-        });
-    }
-    put(requestUrl, data, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('PUT', requestUrl, data, additionalHeaders || {});
-        });
-    }
-    head(requestUrl, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request('HEAD', requestUrl, null, additionalHeaders || {});
-        });
-    }
-    sendStream(verb, requestUrl, stream, additionalHeaders) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return this.request(verb, requestUrl, stream, additionalHeaders);
-        });
-    }
-    /**
-     * Gets a typed object from an endpoint
-     * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
-     */
-    getJson(requestUrl_1) {
-        return __awaiter$5(this, arguments, void 0, function* (requestUrl, additionalHeaders = {}) {
-            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
-            const res = yield this.get(requestUrl, additionalHeaders);
-            return this._processResponse(res, this.requestOptions);
-        });
-    }
-    postJson(requestUrl_1, obj_1) {
-        return __awaiter$5(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
-            const data = JSON.stringify(obj, null, 2);
-            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
-            additionalHeaders[Headers.ContentType] =
-                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
-            const res = yield this.post(requestUrl, data, additionalHeaders);
-            return this._processResponse(res, this.requestOptions);
-        });
-    }
-    putJson(requestUrl_1, obj_1) {
-        return __awaiter$5(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
-            const data = JSON.stringify(obj, null, 2);
-            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
-            additionalHeaders[Headers.ContentType] =
-                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
-            const res = yield this.put(requestUrl, data, additionalHeaders);
-            return this._processResponse(res, this.requestOptions);
-        });
-    }
-    patchJson(requestUrl_1, obj_1) {
-        return __awaiter$5(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
-            const data = JSON.stringify(obj, null, 2);
-            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
-            additionalHeaders[Headers.ContentType] =
-                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
-            const res = yield this.patch(requestUrl, data, additionalHeaders);
-            return this._processResponse(res, this.requestOptions);
-        });
-    }
-    /**
-     * Makes a raw http request.
-     * All other methods such as get, post, patch, and request ultimately call this.
-     * Prefer get, del, post and patch
-     */
-    request(verb, requestUrl, data, headers) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            if (this._disposed) {
-                throw new Error('Client has already been disposed.');
-            }
-            const parsedUrl = new URL(requestUrl);
-            let info = this._prepareRequest(verb, parsedUrl, headers);
-            // Only perform retries on reads since writes may not be idempotent.
-            const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb)
-                ? this._maxRetries + 1
-                : 1;
-            let numTries = 0;
-            let response;
-            do {
-                response = yield this.requestRaw(info, data);
-                // Check if it's an authentication challenge
-                if (response &&
-                    response.message &&
-                    response.message.statusCode === HttpCodes.Unauthorized) {
-                    let authenticationHandler;
-                    for (const handler of this.handlers) {
-                        if (handler.canHandleAuthentication(response)) {
-                            authenticationHandler = handler;
-                            break;
-                        }
-                    }
-                    if (authenticationHandler) {
-                        return authenticationHandler.handleAuthentication(this, info, data);
-                    }
-                    else {
-                        // We have received an unauthorized response but have no handlers to handle it.
-                        // Let the response return to the caller.
-                        return response;
-                    }
-                }
-                let redirectsRemaining = this._maxRedirects;
-                while (response.message.statusCode &&
-                    HttpRedirectCodes.includes(response.message.statusCode) &&
-                    this._allowRedirects &&
-                    redirectsRemaining > 0) {
-                    const redirectUrl = response.message.headers['location'];
-                    if (!redirectUrl) {
-                        // if there's no location to redirect to, we won't
-                        break;
-                    }
-                    const parsedRedirectUrl = new URL(redirectUrl);
-                    if (parsedUrl.protocol === 'https:' &&
-                        parsedUrl.protocol !== parsedRedirectUrl.protocol &&
-                        !this._allowRedirectDowngrade) {
-                        throw new Error('Redirect from HTTPS to HTTP protocol. This downgrade is not allowed for security reasons. If you want to allow this behavior, set the allowRedirectDowngrade option to true.');
-                    }
-                    // we need to finish reading the response before reassigning response
-                    // which will leak the open socket.
-                    yield response.readBody();
-                    // strip authorization header if redirected to a different hostname
-                    if (parsedRedirectUrl.hostname !== parsedUrl.hostname) {
-                        for (const header in headers) {
-                            // header names are case insensitive
-                            if (header.toLowerCase() === 'authorization') {
-                                delete headers[header];
-                            }
-                        }
-                    }
-                    // let's make the request with the new redirectUrl
-                    info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-                    response = yield this.requestRaw(info, data);
-                    redirectsRemaining--;
-                }
-                if (!response.message.statusCode ||
-                    !HttpResponseRetryCodes.includes(response.message.statusCode)) {
-                    // If not a retry code, return immediately instead of retrying
-                    return response;
-                }
-                numTries += 1;
-                if (numTries < maxTries) {
-                    yield response.readBody();
-                    yield this._performExponentialBackoff(numTries);
-                }
-            } while (numTries < maxTries);
-            return response;
-        });
-    }
-    /**
-     * Needs to be called if keepAlive is set to true in request options.
-     */
-    dispose() {
-        if (this._agent) {
-            this._agent.destroy();
-        }
-        this._disposed = true;
-    }
-    /**
-     * Raw request.
-     * @param info
-     * @param data
-     */
-    requestRaw(info, data) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                function callbackForResult(err, res) {
-                    if (err) {
-                        reject(err);
-                    }
-                    else if (!res) {
-                        // If `err` is not passed, then `res` must be passed.
-                        reject(new Error('Unknown error'));
-                    }
-                    else {
-                        resolve(res);
-                    }
-                }
-                this.requestRawWithCallback(info, data, callbackForResult);
-            });
-        });
-    }
-    /**
-     * Raw request with callback.
-     * @param info
-     * @param data
-     * @param onResult
-     */
-    requestRawWithCallback(info, data, onResult) {
-        if (typeof data === 'string') {
-            if (!info.options.headers) {
-                info.options.headers = {};
-            }
-            info.options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
-        }
-        let callbackCalled = false;
-        function handleResult(err, res) {
-            if (!callbackCalled) {
-                callbackCalled = true;
-                onResult(err, res);
-            }
-        }
-        const req = info.httpModule.request(info.options, (msg) => {
-            const res = new HttpClientResponse(msg);
-            handleResult(undefined, res);
-        });
-        let socket;
-        req.on('socket', sock => {
-            socket = sock;
-        });
-        // If we ever get disconnected, we want the socket to timeout eventually
-        req.setTimeout(this._socketTimeout || 3 * 60000, () => {
-            if (socket) {
-                socket.end();
-            }
-            handleResult(new Error(`Request timeout: ${info.options.path}`));
-        });
-        req.on('error', function (err) {
-            // err has statusCode property
-            // res should have headers
-            handleResult(err);
-        });
-        if (data && typeof data === 'string') {
-            req.write(data, 'utf8');
-        }
-        if (data && typeof data !== 'string') {
-            data.on('close', function () {
-                req.end();
-            });
-            data.pipe(req);
-        }
-        else {
-            req.end();
-        }
-    }
-    /**
-     * Gets an http agent. This function is useful when you need an http agent that handles
-     * routing through a proxy server - depending upon the url and proxy environment variables.
-     * @param serverUrl  The server URL where the request will be sent. For example, https://api.github.com
-     */
-    getAgent(serverUrl) {
-        const parsedUrl = new URL(serverUrl);
-        return this._getAgent(parsedUrl);
-    }
-    getAgentDispatcher(serverUrl) {
-        const parsedUrl = new URL(serverUrl);
-        const proxyUrl = getProxyUrl(parsedUrl);
-        const useProxy = proxyUrl && proxyUrl.hostname;
-        if (!useProxy) {
-            return;
-        }
-        return this._getProxyAgentDispatcher(parsedUrl, proxyUrl);
-    }
-    _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === 'https:';
-        info.httpModule = usingSsl ? https : http;
-        const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port
-            ? parseInt(info.parsedUrl.port)
-            : defaultPort;
-        info.options.path =
-            (info.parsedUrl.pathname || '') + (info.parsedUrl.search || '');
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
-        if (this.userAgent != null) {
-            info.options.headers['user-agent'] = this.userAgent;
-        }
-        info.options.agent = this._getAgent(info.parsedUrl);
-        // gives handlers an opportunity to participate
-        if (this.handlers) {
-            for (const handler of this.handlers) {
-                handler.prepareRequest(info.options);
-            }
-        }
-        return info;
-    }
-    _mergeHeaders(headers) {
-        if (this.requestOptions && this.requestOptions.headers) {
-            return Object.assign({}, lowercaseKeys$1(this.requestOptions.headers), lowercaseKeys$1(headers || {}));
-        }
-        return lowercaseKeys$1(headers || {});
-    }
-    /**
-     * Gets an existing header value or returns a default.
-     * Handles converting number header values to strings since HTTP headers must be strings.
-     * Note: This returns string | string[] since some headers can have multiple values.
-     * For headers that must always be a single string (like Content-Type), use the
-     * specialized _getExistingOrDefaultContentTypeHeader method instead.
-     */
-    _getExistingOrDefaultHeader(additionalHeaders, header, _default) {
-        let clientHeader;
-        if (this.requestOptions && this.requestOptions.headers) {
-            const headerValue = lowercaseKeys$1(this.requestOptions.headers)[header];
-            if (headerValue) {
-                clientHeader =
-                    typeof headerValue === 'number' ? headerValue.toString() : headerValue;
-            }
-        }
-        const additionalValue = additionalHeaders[header];
-        if (additionalValue !== undefined) {
-            return typeof additionalValue === 'number'
-                ? additionalValue.toString()
-                : additionalValue;
-        }
-        if (clientHeader !== undefined) {
-            return clientHeader;
-        }
-        return _default;
-    }
-    /**
-     * Specialized version of _getExistingOrDefaultHeader for Content-Type header.
-     * Always returns a single string (not an array) since Content-Type should be a single value.
-     * Converts arrays to comma-separated strings and numbers to strings to ensure type safety.
-     * This was split from _getExistingOrDefaultHeader to provide stricter typing for callers
-     * that assign the result to places expecting a string (e.g., additionalHeaders[Headers.ContentType]).
-     */
-    _getExistingOrDefaultContentTypeHeader(additionalHeaders, _default) {
-        let clientHeader;
-        if (this.requestOptions && this.requestOptions.headers) {
-            const headerValue = lowercaseKeys$1(this.requestOptions.headers)[Headers.ContentType];
-            if (headerValue) {
-                if (typeof headerValue === 'number') {
-                    clientHeader = String(headerValue);
-                }
-                else if (Array.isArray(headerValue)) {
-                    clientHeader = headerValue.join(', ');
-                }
-                else {
-                    clientHeader = headerValue;
-                }
-            }
-        }
-        const additionalValue = additionalHeaders[Headers.ContentType];
-        // Return the first non-undefined value, converting numbers or arrays to strings if necessary
-        if (additionalValue !== undefined) {
-            if (typeof additionalValue === 'number') {
-                return String(additionalValue);
-            }
-            else if (Array.isArray(additionalValue)) {
-                return additionalValue.join(', ');
-            }
-            else {
-                return additionalValue;
-            }
-        }
-        if (clientHeader !== undefined) {
-            return clientHeader;
-        }
-        return _default;
-    }
-    _getAgent(parsedUrl) {
-        let agent;
-        const proxyUrl = getProxyUrl(parsedUrl);
-        const useProxy = proxyUrl && proxyUrl.hostname;
-        if (this._keepAlive && useProxy) {
-            agent = this._proxyAgent;
-        }
-        if (!useProxy) {
-            agent = this._agent;
-        }
-        // if agent is already assigned use that agent.
-        if (agent) {
-            return agent;
-        }
-        const usingSsl = parsedUrl.protocol === 'https:';
-        let maxSockets = 100;
-        if (this.requestOptions) {
-            maxSockets = this.requestOptions.maxSockets || http.globalAgent.maxSockets;
-        }
-        // This is `useProxy` again, but we need to check `proxyURl` directly for TypeScripts's flow analysis.
-        if (proxyUrl && proxyUrl.hostname) {
-            const agentOptions = {
-                maxSockets,
-                keepAlive: this._keepAlive,
-                proxy: Object.assign(Object.assign({}, ((proxyUrl.username || proxyUrl.password) && {
-                    proxyAuth: `${proxyUrl.username}:${proxyUrl.password}`
-                })), { host: proxyUrl.hostname, port: proxyUrl.port })
-            };
-            let tunnelAgent;
-            const overHttps = proxyUrl.protocol === 'https:';
-            if (usingSsl) {
-                tunnelAgent = overHttps ? tunnelExports.httpsOverHttps : tunnelExports.httpsOverHttp;
-            }
-            else {
-                tunnelAgent = overHttps ? tunnelExports.httpOverHttps : tunnelExports.httpOverHttp;
-            }
-            agent = tunnelAgent(agentOptions);
-            this._proxyAgent = agent;
-        }
-        // if tunneling agent isn't assigned create a new agent
-        if (!agent) {
-            const options = { keepAlive: this._keepAlive, maxSockets };
-            agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
-            this._agent = agent;
-        }
-        if (usingSsl && this._ignoreSslError) {
-            // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
-            // http.RequestOptions doesn't expose a way to modify RequestOptions.agent.options
-            // we have to cast it to any and change it directly
-            agent.options = Object.assign(agent.options || {}, {
-                rejectUnauthorized: false
-            });
-        }
-        return agent;
-    }
-    _getProxyAgentDispatcher(parsedUrl, proxyUrl) {
-        let proxyAgent;
-        if (this._keepAlive) {
-            proxyAgent = this._proxyAgentDispatcher;
-        }
-        // if agent is already assigned use that agent.
-        if (proxyAgent) {
-            return proxyAgent;
-        }
-        const usingSsl = parsedUrl.protocol === 'https:';
-        proxyAgent = new undiciExports.ProxyAgent(Object.assign({ uri: proxyUrl.href, pipelining: !this._keepAlive ? 0 : 1 }, ((proxyUrl.username || proxyUrl.password) && {
-            token: `Basic ${Buffer.from(`${proxyUrl.username}:${proxyUrl.password}`).toString('base64')}`
-        })));
-        this._proxyAgentDispatcher = proxyAgent;
-        if (usingSsl && this._ignoreSslError) {
-            // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
-            // http.RequestOptions doesn't expose a way to modify RequestOptions.agent.options
-            // we have to cast it to any and change it directly
-            proxyAgent.options = Object.assign(proxyAgent.options.requestTls || {}, {
-                rejectUnauthorized: false
-            });
-        }
-        return proxyAgent;
-    }
-    _getUserAgentWithOrchestrationId(userAgent) {
-        const baseUserAgent = userAgent || 'actions/http-client';
-        const orchId = process.env['ACTIONS_ORCHESTRATION_ID'];
-        if (orchId) {
-            // Sanitize the orchestration ID to ensure it contains only valid characters
-            // Valid characters: 0-9, a-z, _, -, .
-            const sanitizedId = orchId.replace(/[^a-z0-9_.-]/gi, '_');
-            return `${baseUserAgent} actions_orchestration_id/${sanitizedId}`;
-        }
-        return baseUserAgent;
-    }
-    _performExponentialBackoff(retryNumber) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
-            const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
-            return new Promise(resolve => setTimeout(() => resolve(), ms));
-        });
-    }
-    _processResponse(res, options) {
-        return __awaiter$5(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter$5(this, void 0, void 0, function* () {
-                const statusCode = res.message.statusCode || 0;
-                const response = {
-                    statusCode,
-                    result: null,
-                    headers: {}
-                };
-                // not found leads to null obj returned
-                if (statusCode === HttpCodes.NotFound) {
-                    resolve(response);
-                }
-                // get the result from the body
-                function dateTimeDeserializer(key, value) {
-                    if (typeof value === 'string') {
-                        const a = new Date(value);
-                        if (!isNaN(a.valueOf())) {
-                            return a;
-                        }
-                    }
-                    return value;
-                }
-                let obj;
-                let contents;
-                try {
-                    contents = yield res.readBody();
-                    if (contents && contents.length > 0) {
-                        if (options && options.deserializeDates) {
-                            obj = JSON.parse(contents, dateTimeDeserializer);
-                        }
-                        else {
-                            obj = JSON.parse(contents);
-                        }
-                        response.result = obj;
-                    }
-                    response.headers = res.message.headers;
-                }
-                catch (err) {
-                    // Invalid resource (contents not json);  leaving result obj null
-                }
-                // note that 3xx redirects are handled by the http layer.
-                if (statusCode > 299) {
-                    let msg;
-                    // if exception/error in body, attempt to get better error
-                    if (obj && obj.message) {
-                        msg = obj.message;
-                    }
-                    else if (contents && contents.length > 0) {
-                        // it may be the case that the exception is in the body message as string
-                        msg = contents;
-                    }
-                    else {
-                        msg = `Failed request: (${statusCode})`;
-                    }
-                    const err = new HttpClientError(msg, statusCode);
-                    err.result = response.result;
-                    reject(err);
-                }
-                else {
-                    resolve(response);
-                }
-            }));
-        });
-    }
-}
-const lowercaseKeys$1 = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCase()] = obj[k]), c), {});
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-const { access, appendFile, writeFile } = promises;
-
-var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29721,7 +28655,7 @@ class ToolRunner extends events$1.EventEmitter {
      * @returns   number
      */
     exec() {
-        return __awaiter$4(this, void 0, void 0, function* () {
+        return __awaiter$5(this, void 0, void 0, function* () {
             // root the tool path if it is unrooted and contains relative pathing
             if (!isRooted(this.toolPath) &&
                 (this.toolPath.includes('/') ||
@@ -29732,7 +28666,7 @@ class ToolRunner extends events$1.EventEmitter {
             // if the tool is only a file name, then resolve it from the PATH
             // otherwise verify it exists (add extension on Windows if necessary)
             this.toolPath = yield which(this.toolPath, true);
-            return new Promise((resolve, reject) => __awaiter$4(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter$5(this, void 0, void 0, function* () {
                 this._debug(`exec tool: ${this.toolPath}`);
                 this._debug('arguments:');
                 for (const arg of this.args) {
@@ -29953,7 +28887,7 @@ class ExecState extends events$1.EventEmitter {
     }
 }
 
-var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29973,7 +28907,7 @@ var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _argu
  * @returns   Promise<number>    exit code
  */
 function exec(commandLine, args, options) {
-    return __awaiter$3(this, void 0, void 0, function* () {
+    return __awaiter$4(this, void 0, void 0, function* () {
         const commandArgs = argStringToArray(commandLine);
         if (commandArgs.length === 0) {
             throw new Error(`Parameter 'commandLine' cannot be null or empty.`);
@@ -29985,6 +28919,1094 @@ function exec(commandLine, args, options) {
         return runner.exec();
     });
 }
+/**
+ * Exec a command and get the output.
+ * Output will be streamed to the live console.
+ * Returns promise with the exit code and collected stdout and stderr
+ *
+ * @param     commandLine           command to execute (can include additional args). Must be correctly escaped.
+ * @param     args                  optional arguments for tool. Escaping is handled by the lib.
+ * @param     options               optional exec options.  See ExecOptions
+ * @returns   Promise<ExecOutput>   exit code, stdout, and stderr
+ */
+function getExecOutput(commandLine, args, options) {
+    return __awaiter$4(this, void 0, void 0, function* () {
+        var _a, _b;
+        let stdout = '';
+        let stderr = '';
+        //Using string decoder covers the case where a mult-byte character is split
+        const stdoutDecoder = new StringDecoder('utf8');
+        const stderrDecoder = new StringDecoder('utf8');
+        const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
+        const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
+        const stdErrListener = (data) => {
+            stderr += stderrDecoder.write(data);
+            if (originalStdErrListener) {
+                originalStdErrListener(data);
+            }
+        };
+        const stdOutListener = (data) => {
+            stdout += stdoutDecoder.write(data);
+            if (originalStdoutListener) {
+                originalStdoutListener(data);
+            }
+        };
+        const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
+        const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        //flush any remaining characters
+        stdout += stdoutDecoder.end();
+        stderr += stderrDecoder.end();
+        return {
+            exitCode,
+            stdout,
+            stderr
+        };
+    });
+}
+
+(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+os__default.platform();
+os__default.arch();
+
+(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+/**
+ * The code to exit an action
+ */
+var ExitCode$1;
+(function (ExitCode) {
+    /**
+     * A code indicating that the action was successful
+     */
+    ExitCode[ExitCode["Success"] = 0] = "Success";
+    /**
+     * A code indicating that the action was a failure
+     */
+    ExitCode[ExitCode["Failure"] = 1] = "Failure";
+})(ExitCode$1 || (ExitCode$1 = {}));
+/**
+ * Prepends inputPath to the PATH (for this action and future actions)
+ * @param inputPath
+ */
+function addPath(inputPath) {
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        issueFileCommand('PATH', inputPath);
+    }
+    else {
+        issueCommand$1('add-path', {}, inputPath);
+    }
+    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
+}
+/**
+ * Gets the value of an input.
+ * Unless trimWhitespace is set to false in InputOptions, the value is also trimmed.
+ * Returns an empty string if the value is not defined.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string
+ */
+function getInput(name, options) {
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    if (options && options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    if (options && options.trimWhitespace === false) {
+        return val;
+    }
+    return val.trim();
+}
+/**
+ * Sets the value of an output.
+ *
+ * @param     name     name of the output to set
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setOutput(name, value) {
+    const filePath = process.env['GITHUB_OUTPUT'] || '';
+    if (filePath) {
+        return issueFileCommand('OUTPUT', prepareKeyValueMessage(name, value));
+    }
+    process.stdout.write(os.EOL);
+    issueCommand$1('set-output', { name }, toCommandValue$1(value));
+}
+//-----------------------------------------------------------------------
+// Results
+//-----------------------------------------------------------------------
+/**
+ * Sets the action status to failed.
+ * When the action exits it will be with an exit code of 1
+ * @param message add error issue message
+ */
+function setFailed(message) {
+    process.exitCode = ExitCode$1.Failure;
+    error(message);
+}
+//-----------------------------------------------------------------------
+// Logging Commands
+//-----------------------------------------------------------------------
+/**
+ * Gets whether Actions Step Debug is on or not
+ */
+function isDebug$1() {
+    return process.env['RUNNER_DEBUG'] === '1';
+}
+/**
+ * Writes debug message to user log
+ * @param message debug message
+ */
+function debug$1(message) {
+    issueCommand$1('debug', {}, message);
+}
+/**
+ * Adds an error issue
+ * @param message error issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function error(message, properties = {}) {
+    issueCommand$1('error', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+/**
+ * Writes info to log with console.log.
+ * @param message info message
+ */
+function info$1(message) {
+    process.stdout.write(message + os.EOL);
+}
+
+const OWNER = "ton-blockchain";
+const REPO = "acton";
+const BINARY_NAME = "acton";
+
+const githubTokenInput = getInput("github-token", { required: true });
+const architectureInput = getInput("architecture");
+const platformInput = getInput("platform");
+function getActonVersion() {
+    const version = getInput("version");
+    if (version !== "") {
+        return version;
+    }
+    return "latest";
+}
+
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
+ */
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
+    }
+    return JSON.stringify(input);
+}
+
+/**
+ * Issues a command to the GitHub Actions runner
+ *
+ * @param command - The command name to issue
+ * @param properties - Additional properties for the command (key-value pairs)
+ * @param message - The message to include with the command
+ * @remarks
+ * This function outputs a specially formatted string to stdout that the Actions
+ * runner interprets as a command. These commands can control workflow behavior,
+ * set outputs, create annotations, mask values, and more.
+ *
+ * Command Format:
+ *   ::name key=value,key=value::message
+ *
+ * @example
+ * ```typescript
+ * // Issue a warning annotation
+ * issueCommand('warning', {}, 'This is a warning message');
+ * // Output: ::warning::This is a warning message
+ *
+ * // Set an environment variable
+ * issueCommand('set-env', { name: 'MY_VAR' }, 'some value');
+ * // Output: ::set-env name=MY_VAR::some value
+ *
+ * // Add a secret mask
+ * issueCommand('add-mask', {}, 'secretValue123');
+ * // Output: ::add-mask::secretValue123
+ * ```
+ *
+ * @internal
+ * This is an internal utility function that powers the public API functions
+ * such as setSecret, warning, error, and exportVariable.
+ */
+function issueCommand(command, properties, message) {
+    const cmd = new Command(command, properties, message);
+    process.stdout.write(cmd.toString() + os.EOL);
+}
+const CMD_STRING = '::';
+class Command {
+    constructor(command, properties, message) {
+        if (!command) {
+            command = 'missing.command';
+        }
+        this.command = command;
+        this.properties = properties;
+        this.message = message;
+    }
+    toString() {
+        let cmdStr = CMD_STRING + this.command;
+        if (this.properties && Object.keys(this.properties).length > 0) {
+            cmdStr += ' ';
+            let first = true;
+            for (const key in this.properties) {
+                if (this.properties.hasOwnProperty(key)) {
+                    const val = this.properties[key];
+                    if (val) {
+                        if (first) {
+                            first = false;
+                        }
+                        else {
+                            cmdStr += ',';
+                        }
+                        cmdStr += `${key}=${escapeProperty(val)}`;
+                    }
+                }
+            }
+        }
+        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
+        return cmdStr;
+    }
+}
+function escapeData(s) {
+    return toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A');
+}
+function escapeProperty(s) {
+    return toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A')
+        .replace(/:/g, '%3A')
+        .replace(/,/g, '%2C');
+}
+
+function getProxyUrl(reqUrl) {
+    const usingSsl = reqUrl.protocol === 'https:';
+    if (checkBypass(reqUrl)) {
+        return undefined;
+    }
+    const proxyVar = (() => {
+        if (usingSsl) {
+            return process.env['https_proxy'] || process.env['HTTPS_PROXY'];
+        }
+        else {
+            return process.env['http_proxy'] || process.env['HTTP_PROXY'];
+        }
+    })();
+    if (proxyVar) {
+        try {
+            return new DecodedURL(proxyVar);
+        }
+        catch (_a) {
+            if (!proxyVar.startsWith('http://') && !proxyVar.startsWith('https://'))
+                return new DecodedURL(`http://${proxyVar}`);
+        }
+    }
+    else {
+        return undefined;
+    }
+}
+function checkBypass(reqUrl) {
+    if (!reqUrl.hostname) {
+        return false;
+    }
+    const reqHost = reqUrl.hostname;
+    if (isLoopbackAddress(reqHost)) {
+        return true;
+    }
+    const noProxy = process.env['no_proxy'] || process.env['NO_PROXY'] || '';
+    if (!noProxy) {
+        return false;
+    }
+    // Determine the request port
+    let reqPort;
+    if (reqUrl.port) {
+        reqPort = Number(reqUrl.port);
+    }
+    else if (reqUrl.protocol === 'http:') {
+        reqPort = 80;
+    }
+    else if (reqUrl.protocol === 'https:') {
+        reqPort = 443;
+    }
+    // Format the request hostname and hostname with port
+    const upperReqHosts = [reqUrl.hostname.toUpperCase()];
+    if (typeof reqPort === 'number') {
+        upperReqHosts.push(`${upperReqHosts[0]}:${reqPort}`);
+    }
+    // Compare request host against noproxy
+    for (const upperNoProxyItem of noProxy
+        .split(',')
+        .map(x => x.trim().toUpperCase())
+        .filter(x => x)) {
+        if (upperNoProxyItem === '*' ||
+            upperReqHosts.some(x => x === upperNoProxyItem ||
+                x.endsWith(`.${upperNoProxyItem}`) ||
+                (upperNoProxyItem.startsWith('.') &&
+                    x.endsWith(`${upperNoProxyItem}`)))) {
+            return true;
+        }
+    }
+    return false;
+}
+function isLoopbackAddress(host) {
+    const hostLower = host.toLowerCase();
+    return (hostLower === 'localhost' ||
+        hostLower.startsWith('127.') ||
+        hostLower.startsWith('[::1]') ||
+        hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
+}
+class DecodedURL extends URL {
+    constructor(url, base) {
+        super(url, base);
+        this._decodedUsername = decodeURIComponent(super.username);
+        this._decodedPassword = decodeURIComponent(super.password);
+    }
+    get username() {
+        return this._decodedUsername;
+    }
+    get password() {
+        return this._decodedPassword;
+    }
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var HttpCodes;
+(function (HttpCodes) {
+    HttpCodes[HttpCodes["OK"] = 200] = "OK";
+    HttpCodes[HttpCodes["MultipleChoices"] = 300] = "MultipleChoices";
+    HttpCodes[HttpCodes["MovedPermanently"] = 301] = "MovedPermanently";
+    HttpCodes[HttpCodes["ResourceMoved"] = 302] = "ResourceMoved";
+    HttpCodes[HttpCodes["SeeOther"] = 303] = "SeeOther";
+    HttpCodes[HttpCodes["NotModified"] = 304] = "NotModified";
+    HttpCodes[HttpCodes["UseProxy"] = 305] = "UseProxy";
+    HttpCodes[HttpCodes["SwitchProxy"] = 306] = "SwitchProxy";
+    HttpCodes[HttpCodes["TemporaryRedirect"] = 307] = "TemporaryRedirect";
+    HttpCodes[HttpCodes["PermanentRedirect"] = 308] = "PermanentRedirect";
+    HttpCodes[HttpCodes["BadRequest"] = 400] = "BadRequest";
+    HttpCodes[HttpCodes["Unauthorized"] = 401] = "Unauthorized";
+    HttpCodes[HttpCodes["PaymentRequired"] = 402] = "PaymentRequired";
+    HttpCodes[HttpCodes["Forbidden"] = 403] = "Forbidden";
+    HttpCodes[HttpCodes["NotFound"] = 404] = "NotFound";
+    HttpCodes[HttpCodes["MethodNotAllowed"] = 405] = "MethodNotAllowed";
+    HttpCodes[HttpCodes["NotAcceptable"] = 406] = "NotAcceptable";
+    HttpCodes[HttpCodes["ProxyAuthenticationRequired"] = 407] = "ProxyAuthenticationRequired";
+    HttpCodes[HttpCodes["RequestTimeout"] = 408] = "RequestTimeout";
+    HttpCodes[HttpCodes["Conflict"] = 409] = "Conflict";
+    HttpCodes[HttpCodes["Gone"] = 410] = "Gone";
+    HttpCodes[HttpCodes["TooManyRequests"] = 429] = "TooManyRequests";
+    HttpCodes[HttpCodes["InternalServerError"] = 500] = "InternalServerError";
+    HttpCodes[HttpCodes["NotImplemented"] = 501] = "NotImplemented";
+    HttpCodes[HttpCodes["BadGateway"] = 502] = "BadGateway";
+    HttpCodes[HttpCodes["ServiceUnavailable"] = 503] = "ServiceUnavailable";
+    HttpCodes[HttpCodes["GatewayTimeout"] = 504] = "GatewayTimeout";
+})(HttpCodes || (HttpCodes = {}));
+var Headers;
+(function (Headers) {
+    Headers["Accept"] = "accept";
+    Headers["ContentType"] = "content-type";
+})(Headers || (Headers = {}));
+var MediaTypes;
+(function (MediaTypes) {
+    MediaTypes["ApplicationJson"] = "application/json";
+})(MediaTypes || (MediaTypes = {}));
+const HttpRedirectCodes = [
+    HttpCodes.MovedPermanently,
+    HttpCodes.ResourceMoved,
+    HttpCodes.SeeOther,
+    HttpCodes.TemporaryRedirect,
+    HttpCodes.PermanentRedirect
+];
+const HttpResponseRetryCodes = [
+    HttpCodes.BadGateway,
+    HttpCodes.ServiceUnavailable,
+    HttpCodes.GatewayTimeout
+];
+const RetryableHttpVerbs = ['OPTIONS', 'GET', 'DELETE', 'HEAD'];
+const ExponentialBackoffCeiling = 10;
+const ExponentialBackoffTimeSlice = 5;
+class HttpClientError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.name = 'HttpClientError';
+        this.statusCode = statusCode;
+        Object.setPrototypeOf(this, HttpClientError.prototype);
+    }
+}
+class HttpClientResponse {
+    constructor(message) {
+        this.message = message;
+    }
+    readBody() {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter$3(this, void 0, void 0, function* () {
+                let output = Buffer.alloc(0);
+                this.message.on('data', (chunk) => {
+                    output = Buffer.concat([output, chunk]);
+                });
+                this.message.on('end', () => {
+                    resolve(output.toString());
+                });
+            }));
+        });
+    }
+    readBodyBuffer() {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter$3(this, void 0, void 0, function* () {
+                const chunks = [];
+                this.message.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+                this.message.on('end', () => {
+                    resolve(Buffer.concat(chunks));
+                });
+            }));
+        });
+    }
+}
+class HttpClient {
+    constructor(userAgent, handlers, requestOptions) {
+        this._ignoreSslError = false;
+        this._allowRedirects = true;
+        this._allowRedirectDowngrade = false;
+        this._maxRedirects = 50;
+        this._allowRetries = false;
+        this._maxRetries = 1;
+        this._keepAlive = false;
+        this._disposed = false;
+        this.userAgent = this._getUserAgentWithOrchestrationId(userAgent);
+        this.handlers = handlers || [];
+        this.requestOptions = requestOptions;
+        if (requestOptions) {
+            if (requestOptions.ignoreSslError != null) {
+                this._ignoreSslError = requestOptions.ignoreSslError;
+            }
+            this._socketTimeout = requestOptions.socketTimeout;
+            if (requestOptions.allowRedirects != null) {
+                this._allowRedirects = requestOptions.allowRedirects;
+            }
+            if (requestOptions.allowRedirectDowngrade != null) {
+                this._allowRedirectDowngrade = requestOptions.allowRedirectDowngrade;
+            }
+            if (requestOptions.maxRedirects != null) {
+                this._maxRedirects = Math.max(requestOptions.maxRedirects, 0);
+            }
+            if (requestOptions.keepAlive != null) {
+                this._keepAlive = requestOptions.keepAlive;
+            }
+            if (requestOptions.allowRetries != null) {
+                this._allowRetries = requestOptions.allowRetries;
+            }
+            if (requestOptions.maxRetries != null) {
+                this._maxRetries = requestOptions.maxRetries;
+            }
+        }
+    }
+    options(requestUrl, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('OPTIONS', requestUrl, null, additionalHeaders || {});
+        });
+    }
+    get(requestUrl, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('GET', requestUrl, null, additionalHeaders || {});
+        });
+    }
+    del(requestUrl, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('DELETE', requestUrl, null, additionalHeaders || {});
+        });
+    }
+    post(requestUrl, data, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('POST', requestUrl, data, additionalHeaders || {});
+        });
+    }
+    patch(requestUrl, data, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('PATCH', requestUrl, data, additionalHeaders || {});
+        });
+    }
+    put(requestUrl, data, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('PUT', requestUrl, data, additionalHeaders || {});
+        });
+    }
+    head(requestUrl, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request('HEAD', requestUrl, null, additionalHeaders || {});
+        });
+    }
+    sendStream(verb, requestUrl, stream, additionalHeaders) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return this.request(verb, requestUrl, stream, additionalHeaders);
+        });
+    }
+    /**
+     * Gets a typed object from an endpoint
+     * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
+     */
+    getJson(requestUrl_1) {
+        return __awaiter$3(this, arguments, void 0, function* (requestUrl, additionalHeaders = {}) {
+            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+            const res = yield this.get(requestUrl, additionalHeaders);
+            return this._processResponse(res, this.requestOptions);
+        });
+    }
+    postJson(requestUrl_1, obj_1) {
+        return __awaiter$3(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+            const data = JSON.stringify(obj, null, 2);
+            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+            additionalHeaders[Headers.ContentType] =
+                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
+            const res = yield this.post(requestUrl, data, additionalHeaders);
+            return this._processResponse(res, this.requestOptions);
+        });
+    }
+    putJson(requestUrl_1, obj_1) {
+        return __awaiter$3(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+            const data = JSON.stringify(obj, null, 2);
+            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+            additionalHeaders[Headers.ContentType] =
+                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
+            const res = yield this.put(requestUrl, data, additionalHeaders);
+            return this._processResponse(res, this.requestOptions);
+        });
+    }
+    patchJson(requestUrl_1, obj_1) {
+        return __awaiter$3(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+            const data = JSON.stringify(obj, null, 2);
+            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+            additionalHeaders[Headers.ContentType] =
+                this._getExistingOrDefaultContentTypeHeader(additionalHeaders, MediaTypes.ApplicationJson);
+            const res = yield this.patch(requestUrl, data, additionalHeaders);
+            return this._processResponse(res, this.requestOptions);
+        });
+    }
+    /**
+     * Makes a raw http request.
+     * All other methods such as get, post, patch, and request ultimately call this.
+     * Prefer get, del, post and patch
+     */
+    request(verb, requestUrl, data, headers) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            if (this._disposed) {
+                throw new Error('Client has already been disposed.');
+            }
+            const parsedUrl = new URL(requestUrl);
+            let info = this._prepareRequest(verb, parsedUrl, headers);
+            // Only perform retries on reads since writes may not be idempotent.
+            const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb)
+                ? this._maxRetries + 1
+                : 1;
+            let numTries = 0;
+            let response;
+            do {
+                response = yield this.requestRaw(info, data);
+                // Check if it's an authentication challenge
+                if (response &&
+                    response.message &&
+                    response.message.statusCode === HttpCodes.Unauthorized) {
+                    let authenticationHandler;
+                    for (const handler of this.handlers) {
+                        if (handler.canHandleAuthentication(response)) {
+                            authenticationHandler = handler;
+                            break;
+                        }
+                    }
+                    if (authenticationHandler) {
+                        return authenticationHandler.handleAuthentication(this, info, data);
+                    }
+                    else {
+                        // We have received an unauthorized response but have no handlers to handle it.
+                        // Let the response return to the caller.
+                        return response;
+                    }
+                }
+                let redirectsRemaining = this._maxRedirects;
+                while (response.message.statusCode &&
+                    HttpRedirectCodes.includes(response.message.statusCode) &&
+                    this._allowRedirects &&
+                    redirectsRemaining > 0) {
+                    const redirectUrl = response.message.headers['location'];
+                    if (!redirectUrl) {
+                        // if there's no location to redirect to, we won't
+                        break;
+                    }
+                    const parsedRedirectUrl = new URL(redirectUrl);
+                    if (parsedUrl.protocol === 'https:' &&
+                        parsedUrl.protocol !== parsedRedirectUrl.protocol &&
+                        !this._allowRedirectDowngrade) {
+                        throw new Error('Redirect from HTTPS to HTTP protocol. This downgrade is not allowed for security reasons. If you want to allow this behavior, set the allowRedirectDowngrade option to true.');
+                    }
+                    // we need to finish reading the response before reassigning response
+                    // which will leak the open socket.
+                    yield response.readBody();
+                    // strip authorization header if redirected to a different hostname
+                    if (parsedRedirectUrl.hostname !== parsedUrl.hostname) {
+                        for (const header in headers) {
+                            // header names are case insensitive
+                            if (header.toLowerCase() === 'authorization') {
+                                delete headers[header];
+                            }
+                        }
+                    }
+                    // let's make the request with the new redirectUrl
+                    info = this._prepareRequest(verb, parsedRedirectUrl, headers);
+                    response = yield this.requestRaw(info, data);
+                    redirectsRemaining--;
+                }
+                if (!response.message.statusCode ||
+                    !HttpResponseRetryCodes.includes(response.message.statusCode)) {
+                    // If not a retry code, return immediately instead of retrying
+                    return response;
+                }
+                numTries += 1;
+                if (numTries < maxTries) {
+                    yield response.readBody();
+                    yield this._performExponentialBackoff(numTries);
+                }
+            } while (numTries < maxTries);
+            return response;
+        });
+    }
+    /**
+     * Needs to be called if keepAlive is set to true in request options.
+     */
+    dispose() {
+        if (this._agent) {
+            this._agent.destroy();
+        }
+        this._disposed = true;
+    }
+    /**
+     * Raw request.
+     * @param info
+     * @param data
+     */
+    requestRaw(info, data) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                function callbackForResult(err, res) {
+                    if (err) {
+                        reject(err);
+                    }
+                    else if (!res) {
+                        // If `err` is not passed, then `res` must be passed.
+                        reject(new Error('Unknown error'));
+                    }
+                    else {
+                        resolve(res);
+                    }
+                }
+                this.requestRawWithCallback(info, data, callbackForResult);
+            });
+        });
+    }
+    /**
+     * Raw request with callback.
+     * @param info
+     * @param data
+     * @param onResult
+     */
+    requestRawWithCallback(info, data, onResult) {
+        if (typeof data === 'string') {
+            if (!info.options.headers) {
+                info.options.headers = {};
+            }
+            info.options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
+        }
+        let callbackCalled = false;
+        function handleResult(err, res) {
+            if (!callbackCalled) {
+                callbackCalled = true;
+                onResult(err, res);
+            }
+        }
+        const req = info.httpModule.request(info.options, (msg) => {
+            const res = new HttpClientResponse(msg);
+            handleResult(undefined, res);
+        });
+        let socket;
+        req.on('socket', sock => {
+            socket = sock;
+        });
+        // If we ever get disconnected, we want the socket to timeout eventually
+        req.setTimeout(this._socketTimeout || 3 * 60000, () => {
+            if (socket) {
+                socket.end();
+            }
+            handleResult(new Error(`Request timeout: ${info.options.path}`));
+        });
+        req.on('error', function (err) {
+            // err has statusCode property
+            // res should have headers
+            handleResult(err);
+        });
+        if (data && typeof data === 'string') {
+            req.write(data, 'utf8');
+        }
+        if (data && typeof data !== 'string') {
+            data.on('close', function () {
+                req.end();
+            });
+            data.pipe(req);
+        }
+        else {
+            req.end();
+        }
+    }
+    /**
+     * Gets an http agent. This function is useful when you need an http agent that handles
+     * routing through a proxy server - depending upon the url and proxy environment variables.
+     * @param serverUrl  The server URL where the request will be sent. For example, https://api.github.com
+     */
+    getAgent(serverUrl) {
+        const parsedUrl = new URL(serverUrl);
+        return this._getAgent(parsedUrl);
+    }
+    getAgentDispatcher(serverUrl) {
+        const parsedUrl = new URL(serverUrl);
+        const proxyUrl = getProxyUrl(parsedUrl);
+        const useProxy = proxyUrl && proxyUrl.hostname;
+        if (!useProxy) {
+            return;
+        }
+        return this._getProxyAgentDispatcher(parsedUrl, proxyUrl);
+    }
+    _prepareRequest(method, requestUrl, headers) {
+        const info = {};
+        info.parsedUrl = requestUrl;
+        const usingSsl = info.parsedUrl.protocol === 'https:';
+        info.httpModule = usingSsl ? https : http;
+        const defaultPort = usingSsl ? 443 : 80;
+        info.options = {};
+        info.options.host = info.parsedUrl.hostname;
+        info.options.port = info.parsedUrl.port
+            ? parseInt(info.parsedUrl.port)
+            : defaultPort;
+        info.options.path =
+            (info.parsedUrl.pathname || '') + (info.parsedUrl.search || '');
+        info.options.method = method;
+        info.options.headers = this._mergeHeaders(headers);
+        if (this.userAgent != null) {
+            info.options.headers['user-agent'] = this.userAgent;
+        }
+        info.options.agent = this._getAgent(info.parsedUrl);
+        // gives handlers an opportunity to participate
+        if (this.handlers) {
+            for (const handler of this.handlers) {
+                handler.prepareRequest(info.options);
+            }
+        }
+        return info;
+    }
+    _mergeHeaders(headers) {
+        if (this.requestOptions && this.requestOptions.headers) {
+            return Object.assign({}, lowercaseKeys$1(this.requestOptions.headers), lowercaseKeys$1(headers || {}));
+        }
+        return lowercaseKeys$1(headers || {});
+    }
+    /**
+     * Gets an existing header value or returns a default.
+     * Handles converting number header values to strings since HTTP headers must be strings.
+     * Note: This returns string | string[] since some headers can have multiple values.
+     * For headers that must always be a single string (like Content-Type), use the
+     * specialized _getExistingOrDefaultContentTypeHeader method instead.
+     */
+    _getExistingOrDefaultHeader(additionalHeaders, header, _default) {
+        let clientHeader;
+        if (this.requestOptions && this.requestOptions.headers) {
+            const headerValue = lowercaseKeys$1(this.requestOptions.headers)[header];
+            if (headerValue) {
+                clientHeader =
+                    typeof headerValue === 'number' ? headerValue.toString() : headerValue;
+            }
+        }
+        const additionalValue = additionalHeaders[header];
+        if (additionalValue !== undefined) {
+            return typeof additionalValue === 'number'
+                ? additionalValue.toString()
+                : additionalValue;
+        }
+        if (clientHeader !== undefined) {
+            return clientHeader;
+        }
+        return _default;
+    }
+    /**
+     * Specialized version of _getExistingOrDefaultHeader for Content-Type header.
+     * Always returns a single string (not an array) since Content-Type should be a single value.
+     * Converts arrays to comma-separated strings and numbers to strings to ensure type safety.
+     * This was split from _getExistingOrDefaultHeader to provide stricter typing for callers
+     * that assign the result to places expecting a string (e.g., additionalHeaders[Headers.ContentType]).
+     */
+    _getExistingOrDefaultContentTypeHeader(additionalHeaders, _default) {
+        let clientHeader;
+        if (this.requestOptions && this.requestOptions.headers) {
+            const headerValue = lowercaseKeys$1(this.requestOptions.headers)[Headers.ContentType];
+            if (headerValue) {
+                if (typeof headerValue === 'number') {
+                    clientHeader = String(headerValue);
+                }
+                else if (Array.isArray(headerValue)) {
+                    clientHeader = headerValue.join(', ');
+                }
+                else {
+                    clientHeader = headerValue;
+                }
+            }
+        }
+        const additionalValue = additionalHeaders[Headers.ContentType];
+        // Return the first non-undefined value, converting numbers or arrays to strings if necessary
+        if (additionalValue !== undefined) {
+            if (typeof additionalValue === 'number') {
+                return String(additionalValue);
+            }
+            else if (Array.isArray(additionalValue)) {
+                return additionalValue.join(', ');
+            }
+            else {
+                return additionalValue;
+            }
+        }
+        if (clientHeader !== undefined) {
+            return clientHeader;
+        }
+        return _default;
+    }
+    _getAgent(parsedUrl) {
+        let agent;
+        const proxyUrl = getProxyUrl(parsedUrl);
+        const useProxy = proxyUrl && proxyUrl.hostname;
+        if (this._keepAlive && useProxy) {
+            agent = this._proxyAgent;
+        }
+        if (!useProxy) {
+            agent = this._agent;
+        }
+        // if agent is already assigned use that agent.
+        if (agent) {
+            return agent;
+        }
+        const usingSsl = parsedUrl.protocol === 'https:';
+        let maxSockets = 100;
+        if (this.requestOptions) {
+            maxSockets = this.requestOptions.maxSockets || http.globalAgent.maxSockets;
+        }
+        // This is `useProxy` again, but we need to check `proxyURl` directly for TypeScripts's flow analysis.
+        if (proxyUrl && proxyUrl.hostname) {
+            const agentOptions = {
+                maxSockets,
+                keepAlive: this._keepAlive,
+                proxy: Object.assign(Object.assign({}, ((proxyUrl.username || proxyUrl.password) && {
+                    proxyAuth: `${proxyUrl.username}:${proxyUrl.password}`
+                })), { host: proxyUrl.hostname, port: proxyUrl.port })
+            };
+            let tunnelAgent;
+            const overHttps = proxyUrl.protocol === 'https:';
+            if (usingSsl) {
+                tunnelAgent = overHttps ? tunnelExports.httpsOverHttps : tunnelExports.httpsOverHttp;
+            }
+            else {
+                tunnelAgent = overHttps ? tunnelExports.httpOverHttps : tunnelExports.httpOverHttp;
+            }
+            agent = tunnelAgent(agentOptions);
+            this._proxyAgent = agent;
+        }
+        // if tunneling agent isn't assigned create a new agent
+        if (!agent) {
+            const options = { keepAlive: this._keepAlive, maxSockets };
+            agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
+            this._agent = agent;
+        }
+        if (usingSsl && this._ignoreSslError) {
+            // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
+            // http.RequestOptions doesn't expose a way to modify RequestOptions.agent.options
+            // we have to cast it to any and change it directly
+            agent.options = Object.assign(agent.options || {}, {
+                rejectUnauthorized: false
+            });
+        }
+        return agent;
+    }
+    _getProxyAgentDispatcher(parsedUrl, proxyUrl) {
+        let proxyAgent;
+        if (this._keepAlive) {
+            proxyAgent = this._proxyAgentDispatcher;
+        }
+        // if agent is already assigned use that agent.
+        if (proxyAgent) {
+            return proxyAgent;
+        }
+        const usingSsl = parsedUrl.protocol === 'https:';
+        proxyAgent = new undiciExports.ProxyAgent(Object.assign({ uri: proxyUrl.href, pipelining: !this._keepAlive ? 0 : 1 }, ((proxyUrl.username || proxyUrl.password) && {
+            token: `Basic ${Buffer.from(`${proxyUrl.username}:${proxyUrl.password}`).toString('base64')}`
+        })));
+        this._proxyAgentDispatcher = proxyAgent;
+        if (usingSsl && this._ignoreSslError) {
+            // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
+            // http.RequestOptions doesn't expose a way to modify RequestOptions.agent.options
+            // we have to cast it to any and change it directly
+            proxyAgent.options = Object.assign(proxyAgent.options.requestTls || {}, {
+                rejectUnauthorized: false
+            });
+        }
+        return proxyAgent;
+    }
+    _getUserAgentWithOrchestrationId(userAgent) {
+        const baseUserAgent = userAgent || 'actions/http-client';
+        const orchId = process.env['ACTIONS_ORCHESTRATION_ID'];
+        if (orchId) {
+            // Sanitize the orchestration ID to ensure it contains only valid characters
+            // Valid characters: 0-9, a-z, _, -, .
+            const sanitizedId = orchId.replace(/[^a-z0-9_.-]/gi, '_');
+            return `${baseUserAgent} actions_orchestration_id/${sanitizedId}`;
+        }
+        return baseUserAgent;
+    }
+    _performExponentialBackoff(retryNumber) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
+            const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
+            return new Promise(resolve => setTimeout(() => resolve(), ms));
+        });
+    }
+    _processResponse(res, options) {
+        return __awaiter$3(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter$3(this, void 0, void 0, function* () {
+                const statusCode = res.message.statusCode || 0;
+                const response = {
+                    statusCode,
+                    result: null,
+                    headers: {}
+                };
+                // not found leads to null obj returned
+                if (statusCode === HttpCodes.NotFound) {
+                    resolve(response);
+                }
+                // get the result from the body
+                function dateTimeDeserializer(key, value) {
+                    if (typeof value === 'string') {
+                        const a = new Date(value);
+                        if (!isNaN(a.valueOf())) {
+                            return a;
+                        }
+                    }
+                    return value;
+                }
+                let obj;
+                let contents;
+                try {
+                    contents = yield res.readBody();
+                    if (contents && contents.length > 0) {
+                        if (options && options.deserializeDates) {
+                            obj = JSON.parse(contents, dateTimeDeserializer);
+                        }
+                        else {
+                            obj = JSON.parse(contents);
+                        }
+                        response.result = obj;
+                    }
+                    response.headers = res.message.headers;
+                }
+                catch (err) {
+                    // Invalid resource (contents not json);  leaving result obj null
+                }
+                // note that 3xx redirects are handled by the http layer.
+                if (statusCode > 299) {
+                    let msg;
+                    // if exception/error in body, attempt to get better error
+                    if (obj && obj.message) {
+                        msg = obj.message;
+                    }
+                    else if (contents && contents.length > 0) {
+                        // it may be the case that the exception is in the body message as string
+                        msg = contents;
+                    }
+                    else {
+                        msg = `Failed request: (${statusCode})`;
+                    }
+                    const err = new HttpClientError(msg, statusCode);
+                    err.result = response.result;
+                    reject(err);
+                }
+                else {
+                    resolve(response);
+                }
+            }));
+        });
+    }
+}
+const lowercaseKeys$1 = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCase()] = obj[k]), c), {});
+
+(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const { access, appendFile, writeFile } = promises;
 
 (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -38052,6 +38074,7 @@ function resolvePlatform(inputPlatform) {
     return getPlatform();
 }
 
+const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
 async function getLatestVersion(github) {
     const octokit = github.getOctokit();
     const { data: release } = await octokit.rest.repos.getLatestRelease({ owner: OWNER, repo: REPO });
@@ -38061,8 +38084,7 @@ function versionNormalize(version) {
     if (version.startsWith("v")) {
         return version;
     }
-    const re = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
-    if (re.test(version)) {
+    if (versionTagPattern.test(version)) {
         return `v${version}`;
     }
     return version;
@@ -38107,13 +38129,33 @@ class Artifact {
     }
 }
 
+const actonVersionPattern = new RegExp("^acton\\s+(?<version>\\S+)(?:\\s+\\(|$)");
+async function runActonVersion(toolPath) {
+    const { stdout } = await getExecOutput(toolPath, ["--version"], {
+        silent: true,
+    });
+    return stdout;
+}
+function parseActonVersion(output) {
+    const trimmedOutput = output.trim();
+    const version = actonVersionPattern.exec(trimmedOutput)?.groups?.version;
+    if (version === undefined) {
+        throw new Error(`Unable to parse Acton version from output: ${JSON.stringify(trimmedOutput)}`);
+    }
+    return version;
+}
+async function getInstalledActonVersion(toolPath) {
+    const output = await runActonVersion(toolPath);
+    return parseActonVersion(output);
+}
+
 async function run() {
     const inputVersion = getActonVersion();
     const inputPlatform = platformInput;
     const inputArchitecture = architectureInput;
     const githubToken = githubTokenInput;
     debug$1(`Action inputs: ${JSON.stringify({
-        "acton-version": inputVersion,
+        version: inputVersion,
         platform: inputPlatform,
         architecture: inputArchitecture,
         "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
@@ -38129,8 +38171,10 @@ async function run() {
     const architecture = resolveArchitecture(inputArchitecture);
     const artifact = new Artifact(BINARY_NAME, version, platform, architecture);
     const { toolPath } = await downloadVersion(artifact, github);
+    const actonVersion = await getInstalledActonVersion(toolPath);
     addPath(path$1.dirname(toolPath));
     setOutput("acton-path", toolPath);
+    setOutput("acton-version", actonVersion);
 }
 async function main() {
     debug$1("Start setup-acton action");
