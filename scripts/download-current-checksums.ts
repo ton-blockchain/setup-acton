@@ -1,0 +1,170 @@
+import { getOctokit } from "@actions/github"
+import * as fs from "node:fs"
+import path from "node:path"
+import { OWNER, REPO } from "../src/constants"
+import { parseChecksum } from "../src/download/checksum"
+
+const OUTPUT_PATH = "src/download/known-checksums.ts"
+const ARCHIVE_SUFFIX = ".tar.gz"
+const CHECKSUM_SUFFIX = ".sha256"
+
+type GitHub = ReturnType<typeof getOctokit>
+type Release = Awaited<ReturnType<GitHub["rest"]["repos"]["listReleases"]>>["data"][number]
+type ReleaseAsset = Release["assets"][number]
+
+type ChecksumManifest = Record<string, string>
+
+function getGitHubToken(): string {
+  const token = process.env.GH_TOKEN
+  if (token === undefined || token === "") {
+    throw new Error("GH_TOKEN environment variable is required")
+  }
+
+  return token
+}
+
+function isPublishedStableRelease(release: Release): boolean {
+  return !release.draft && !release.prerelease && release.published_at !== null && !release.tag_name.includes("trunk")
+}
+
+async function getReleases(octokit: GitHub): Promise<ReadonlyArray<Release>> {
+  const releases: Release[] = []
+  const perPage = 100
+  let page = 1
+
+  while (true) {
+    console.log(`Fetching releases page ${page}`)
+
+    const response = await octokit.rest.repos.listReleases({
+      owner: OWNER,
+      repo: REPO,
+      per_page: perPage,
+      page,
+    })
+
+    const releasePage = response.data
+    releases.push(...releasePage)
+    console.log(`Fetched ${releasePage.length} releases from page ${page}`)
+
+    if (releasePage.length < perPage) {
+      const publishedStableReleases = releases.filter(isPublishedStableRelease)
+      console.log(
+        `Using ${publishedStableReleases.length} published stable releases out of ${releases.length} releases`,
+      )
+      return publishedStableReleases
+    }
+
+    page += 1
+  }
+}
+
+async function downloadAssetText(octokit: GitHub, asset: ReleaseAsset): Promise<string> {
+  const response = await octokit.rest.repos.getReleaseAsset({
+    owner: OWNER,
+    repo: REPO,
+    asset_id: asset.id,
+    headers: {
+      accept: "application/octet-stream",
+    },
+  })
+
+  const data = response.data as unknown
+  if (typeof data === "string") {
+    return data
+  }
+
+  if (data instanceof ArrayBuffer) {
+    return new TextDecoder().decode(data)
+  }
+
+  if (ArrayBuffer.isView(data)) {
+    return new TextDecoder().decode(data)
+  }
+
+  throw new Error(`Unexpected checksum asset response for ${asset.name}`)
+}
+
+function isActonArchiveAsset(asset: ReleaseAsset): boolean {
+  return asset.name.startsWith("acton-") && asset.name.endsWith(ARCHIVE_SUFFIX)
+}
+
+function createManifestKey(artifactName: string, version: string): string {
+  const assetName = artifactName.slice(0, -ARCHIVE_SUFFIX.length)
+  return `${assetName}-${version}`
+}
+
+async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, release: Release): Promise<void> {
+  console.log(`Parsing release ${release.tag_name}`)
+  const checksumAssets = new Map(
+    release.assets.filter((asset) => asset.name.endsWith(CHECKSUM_SUFFIX)).map((asset) => [asset.name, asset]),
+  )
+  const artifactAssets = release.assets
+    .filter(isActonArchiveAsset)
+    .slice()
+    .sort((left, right) => {
+      return left.name.localeCompare(right.name)
+    })
+
+  for (const artifactAsset of artifactAssets) {
+    const checksumAssetName = `${artifactAsset.name}${CHECKSUM_SUFFIX}`
+    const checksumAsset = checksumAssets.get(checksumAssetName)
+    if (checksumAsset === undefined) {
+      console.log(`Skipping ${artifactAsset.name}: checksum asset ${checksumAssetName} not found`)
+      continue
+    }
+
+    console.log(`Downloading checksum ${checksumAsset.name}`)
+    const checksumContents = await downloadAssetText(octokit, checksumAsset)
+    console.log(`Parsing checksum ${checksumAsset.name}`)
+    const { checksum, assetName } = parseChecksum(checksumContents)
+    if (assetName !== artifactAsset.name) {
+      throw new Error(`Checksum asset name mismatch: expected ${artifactAsset.name}, got ${assetName}`)
+    }
+
+    manifest[createManifestKey(artifactAsset.name, release.tag_name)] = checksum
+    console.log(`Parsed checksum for ${artifactAsset.name} in ${release.tag_name}`)
+  }
+}
+
+async function createChecksumManifest(octokit: GitHub, releases: ReadonlyArray<Release>): Promise<ChecksumManifest> {
+  const manifest: ChecksumManifest = {}
+  for (const release of releases) {
+    await addReleaseChecksums(manifest, octokit, release)
+    console.log()
+  }
+  return manifest
+}
+
+function createTypeScriptFileContents(manifest: ChecksumManifest): string {
+  const sortedEntries = Object.entries(manifest).sort(([leftKey], [rightKey]) => {
+    return leftKey.localeCompare(rightKey)
+  })
+  const checksumLines = sortedEntries.map(([assetName, checksum]) => {
+    return `  ${JSON.stringify(assetName)}: ${JSON.stringify(checksum)},`
+  })
+
+  const lines = [
+    "// This file is auto-generated by scripts/download-current-checksums.ts. Do not edit manually.",
+    "export const KNOWN_CHECKSUMS: Record<string, string> = {",
+    ...checksumLines,
+    "}",
+    "",
+  ]
+
+  return lines.join("\n")
+}
+
+function writeTypeScriptFile(outputPath: string, manifest: ChecksumManifest): void {
+  fs.mkdirSync(path.dirname(path.resolve(outputPath)), { recursive: true })
+  fs.writeFileSync(outputPath, createTypeScriptFileContents(manifest))
+}
+
+async function main(): Promise<void> {
+  const octokit = getOctokit(getGitHubToken())
+  const releases = await getReleases(octokit)
+  const manifest = await createChecksumManifest(octokit, releases)
+  writeTypeScriptFile(OUTPUT_PATH, manifest)
+  console.log(`Saved ${Object.keys(manifest).length} checksums from ${releases.length} releases to ${OUTPUT_PATH}`)
+}
+
+await main()

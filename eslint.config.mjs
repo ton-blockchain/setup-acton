@@ -43,9 +43,7 @@ export default [
       sourceType: "module",
 
       parserOptions: {
-        projectService: {
-          allowDefaultProject: ["__tests__/*.ts", "eslint.config.mjs", "jest.config.js", "rollup.config.ts"],
-        },
+        project: "./tsconfig.eslint.json",
         tsconfigRootDir: import.meta.dirname,
       },
     },

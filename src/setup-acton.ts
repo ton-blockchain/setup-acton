@@ -1,7 +1,7 @@
 import * as core from "@actions/core"
 import { BINARY_NAME, OWNER, REPO } from "@/constants"
 import * as inputs from "@/inputs"
-import { downloadVersion } from "@/download"
+import { downloadVersion } from "./download/download-version"
 import { GitHub } from "@/github"
 import { resolveArchitecture } from "@/artifact/architecture"
 import { resolvePlatform } from "@/artifact/platform"

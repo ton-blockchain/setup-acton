@@ -38,6 +38,7 @@ import * as child from 'child_process';
 import { setTimeout as setTimeout$1 } from 'timers';
 import * as stream from 'stream';
 import * as fs$1 from 'node:fs';
+import { createHash } from 'node:crypto';
 import path$1 from 'node:path';
 import process$1 from 'node:process';
 
@@ -33043,16 +33044,38 @@ function _getGlobal(key, defaultValue) {
     return value !== undefined ? value : defaultValue;
 }
 
-async function downloadVersion(artifact, github) {
-    const octokit = github.getOctokit();
-    const { artifactName, artifactVersion } = artifact;
-    info$1(`Downloading ${artifactName} from ${artifactVersion} release`);
-    const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: artifactVersion });
-    const asset = release.assets.find((asset) => asset.name === artifactName);
-    if (asset === undefined) {
-        throw new Error(`Asset ${artifactName} in release ${artifactVersion} not found`);
+function parseChecksum(checksumContents) {
+    const firstLine = checksumContents.split("\n", 1)[0].trim();
+    if (firstLine === "") {
+        throw new Error("Checksum file does not contain a checksum");
     }
-    info$1(`Downloading ${artifactName} from ${asset.browser_download_url}`);
+    const parts = firstLine.split("  ");
+    if (parts.length !== 2) {
+        throw new Error("Checksum file must use '<sha256>  <asset name>' format");
+    }
+    const checksum = parts[0].toLowerCase();
+    const assetName = parts[1];
+    if (checksum === "" || assetName === "") {
+        throw new Error("Checksum file must use '<sha256>  <asset name>' format");
+    }
+    return { checksum, assetName };
+}
+function calculateSha256(filePath) {
+    return createHash("sha256").update(fs$1.readFileSync(filePath)).digest("hex").toLowerCase();
+}
+function verifyChecksum(toolchainPath, checksumPath, artifactName) {
+    const { checksum: expectedChecksum, assetName } = parseChecksum(fs$1.readFileSync(checksumPath, "utf8"));
+    if (assetName !== artifactName) {
+        throw new Error(`Checksum asset name mismatch: expected ${artifactName}, got ${assetName}`);
+    }
+    const actualChecksum = calculateSha256(toolchainPath);
+    if (actualChecksum !== expectedChecksum) {
+        throw new Error(`Checksum mismatch for ${artifactName}: expected ${expectedChecksum}, got ${actualChecksum}`);
+    }
+}
+
+async function downloadAsset(asset, github) {
+    info$1(`Downloading ${asset.name} from ${asset.browser_download_url}`);
     const downloadPath = await downloadTool(asset.url, undefined, github.getAuthToken(), {
         accept: "application/octet-stream",
     });
@@ -33060,7 +33083,27 @@ async function downloadVersion(artifact, github) {
         const stats = fs$1.statSync(downloadPath);
         debug$1(`Downloaded ${downloadPath} with size ${stats.size}`);
     }
-    const extractedPath = await extractTar(downloadPath);
+    return downloadPath;
+}
+async function downloadVersion(artifact, github) {
+    const octokit = github.getOctokit();
+    const { artifactName, artifactVersion } = artifact;
+    info$1(`Downloading ${artifactName} from ${artifactVersion} release`);
+    const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: artifactVersion });
+    const toolchainAsset = release.assets.find((asset) => asset.name === artifactName);
+    if (toolchainAsset === undefined) {
+        throw new Error(`Asset ${artifactName} in release ${artifactVersion} not found`);
+    }
+    const toolchainPath = await downloadAsset(toolchainAsset, github);
+    const checksumAssetName = `${artifactName}.sha256`;
+    const checksumAsset = release.assets.find((asset) => asset.name === checksumAssetName);
+    if (checksumAsset === undefined) {
+        throw new Error(`Checksum asset ${checksumAssetName} in release ${artifactVersion} not found`);
+    }
+    const checksumPath = await downloadAsset(checksumAsset, github);
+    verifyChecksum(toolchainPath, checksumPath, artifactName);
+    info$1(`Verified ${artifactName} SHA-256 checksum`);
+    const extractedPath = await extractTar(toolchainPath);
     const toolPath = path$1.join(extractedPath, artifact.name);
     if (isDebug$1()) {
         const stats = fs$1.statSync(toolPath);
