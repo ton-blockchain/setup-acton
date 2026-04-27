@@ -30,6 +30,7 @@ const downloadToolMock =
   jest.fn<(url: string, dest?: string, auth?: string, headers?: Record<string, string>) => Promise<string>>()
 const extractTarMock = jest.fn<(file: string) => Promise<string>>()
 const statSyncMock = jest.fn<(file: string) => { readonly size: number }>()
+const verifyChecksumMock = jest.fn<(downloadPath: string, checksumPath: string, artifactName: string) => void>()
 const getReleaseByTagMock = jest.fn<(request: GetReleaseByTagRequest) => Promise<ReleaseResponse>>()
 
 jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
@@ -53,10 +54,17 @@ jest.unstable_mockModule("node:fs", (): Record<string, unknown> => {
   }
 })
 
-const { downloadVersion } = await import("@/download")
+jest.unstable_mockModule("@/download/checksum", (): Record<string, unknown> => {
+  return {
+    verifyChecksum: verifyChecksumMock,
+  }
+})
+
+const { downloadVersion } = await import("@/download/download-version")
 
 const artifactVersion = "v1.2.3"
 const downloadPath = "/tmp/acton.tar.gz"
+const checksumPath = "/tmp/acton.tar.gz.sha256"
 const extractedPath = "/tmp/extracted"
 const expectedToolPath = path.join(extractedPath, "acton")
 
@@ -89,6 +97,16 @@ function createReleaseAsset(version: string, architecture: Architecture): Releas
   }
 }
 
+function createChecksumAsset(version: string, architecture: Architecture): ReleaseAsset {
+  const artifact = new Artifact("acton", version, "linux", architecture)
+
+  return {
+    name: `${artifact.artifactName}.sha256`,
+    url: `https://api.github.test/releases/${version}/assets/${architecture}.sha256`,
+    browser_download_url: `https://github.test/ton-blockchain/acton/releases/download/${version}/${artifact.artifactName}.sha256`,
+  }
+}
+
 function mockRelease(version: string, assets: ReadonlyArray<ReleaseAsset>): void {
   getReleaseByTagMock.mockResolvedValue({
     data: {
@@ -103,12 +121,23 @@ describe("downloadVersion", (): void => {
     jest.clearAllMocks()
 
     isDebugMock.mockReturnValue(false)
-    downloadToolMock.mockResolvedValue(downloadPath)
+    downloadToolMock.mockImplementation(async (url: string): Promise<string> => {
+      if (url === `https://api.github.test/releases/${artifactVersion}/assets/x86_64`) {
+        return downloadPath
+      }
+
+      if (url === `https://api.github.test/releases/${artifactVersion}/assets/x86_64.sha256`) {
+        return checksumPath
+      }
+
+      throw new Error(`Unexpected download URL: ${url}`)
+    })
     extractTarMock.mockResolvedValue(extractedPath)
     statSyncMock.mockReturnValue({ size: 42 })
     mockRelease(artifactVersion, [
       createReleaseAsset(artifactVersion, "aarch64"),
       createReleaseAsset(artifactVersion, "x86_64"),
+      createChecksumAsset(artifactVersion, "x86_64"),
     ])
   })
 
@@ -120,7 +149,8 @@ describe("downloadVersion", (): void => {
       repo: "acton",
       tag: artifactVersion,
     })
-    expect(downloadToolMock).toHaveBeenCalledWith(
+    expect(downloadToolMock).toHaveBeenNthCalledWith(
+      1,
       `https://api.github.test/releases/${artifactVersion}/assets/x86_64`,
       undefined,
       "token test-token",
@@ -128,6 +158,16 @@ describe("downloadVersion", (): void => {
         accept: "application/octet-stream",
       },
     )
+    expect(downloadToolMock).toHaveBeenNthCalledWith(
+      2,
+      `https://api.github.test/releases/${artifactVersion}/assets/x86_64.sha256`,
+      undefined,
+      "token test-token",
+      {
+        accept: "application/octet-stream",
+      },
+    )
+    expect(verifyChecksumMock).toHaveBeenCalledWith(downloadPath, checksumPath, "acton-x86_64-unknown-linux-gnu.tar.gz")
     expect(extractTarMock).toHaveBeenCalledWith(downloadPath)
   })
 
@@ -138,18 +178,54 @@ describe("downloadVersion", (): void => {
       `Asset acton-x86_64-unknown-linux-gnu.tar.gz in release ${artifactVersion} not found`,
     )
     expect(downloadToolMock).not.toHaveBeenCalled()
+    expect(verifyChecksumMock).not.toHaveBeenCalled()
+    expect(extractTarMock).not.toHaveBeenCalled()
+  })
+
+  it("fails before extracting when the expected checksum asset is missing", async (): Promise<void> => {
+    mockRelease(artifactVersion, [
+      createReleaseAsset(artifactVersion, "aarch64"),
+      createReleaseAsset(artifactVersion, "x86_64"),
+    ])
+
+    await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow(
+      `Checksum asset acton-x86_64-unknown-linux-gnu.tar.gz.sha256 in release ${artifactVersion} not found`,
+    )
+    expect(downloadToolMock).toHaveBeenCalledWith(
+      `https://api.github.test/releases/${artifactVersion}/assets/x86_64`,
+      undefined,
+      "token test-token",
+      {
+        accept: "application/octet-stream",
+      },
+    )
+    expect(verifyChecksumMock).not.toHaveBeenCalled()
+    expect(extractTarMock).not.toHaveBeenCalled()
+  })
+
+  it("fails before extracting when checksum verification fails", async (): Promise<void> => {
+    verifyChecksumMock.mockImplementationOnce((): void => {
+      throw new Error("Checksum mismatch")
+    })
+
+    await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow("Checksum mismatch")
     expect(extractTarMock).not.toHaveBeenCalled()
   })
 
   it("logs downloaded and extracted file sizes in debug mode", async (): Promise<void> => {
     isDebugMock.mockReturnValue(true)
-    statSyncMock.mockReturnValueOnce({ size: 100 }).mockReturnValueOnce({ size: 200 })
+    statSyncMock
+      .mockReturnValueOnce({ size: 100 })
+      .mockReturnValueOnce({ size: 200 })
+      .mockReturnValueOnce({ size: 300 })
 
     await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({ toolPath: expectedToolPath })
 
     expect(statSyncMock).toHaveBeenNthCalledWith(1, downloadPath)
-    expect(statSyncMock).toHaveBeenNthCalledWith(2, expectedToolPath)
+    expect(statSyncMock).toHaveBeenNthCalledWith(2, checksumPath)
+    expect(statSyncMock).toHaveBeenNthCalledWith(3, expectedToolPath)
     expect(debugMock).toHaveBeenCalledWith(`Downloaded ${downloadPath} with size 100`)
-    expect(debugMock).toHaveBeenCalledWith(`Extracted ${expectedToolPath} with size 200`)
+    expect(debugMock).toHaveBeenCalledWith(`Downloaded ${checksumPath} with size 200`)
+    expect(debugMock).toHaveBeenCalledWith(`Extracted ${expectedToolPath} with size 300`)
   })
 })
