@@ -1,6 +1,6 @@
 import * as core from "@actions/core"
-import { OWNER, REPO } from "@/constants"
-import type { GitHub } from "@/github"
+import { OWNER, REPO } from "@/utils/constants"
+import type { GitHub } from "@/utils/github"
 
 const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$")
 

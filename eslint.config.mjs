@@ -1,9 +1,9 @@
-import { fixupPluginRules } from "@eslint/compat"
 import { FlatCompat } from "@eslint/eslintrc"
 import js from "@eslint/js"
 import typescriptEslint from "@typescript-eslint/eslint-plugin"
 import tsParser from "@typescript-eslint/parser"
-import _import from "eslint-plugin-import"
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript"
+import { createNodeResolver, importX } from "eslint-plugin-import-x"
 import jest from "eslint-plugin-jest"
 import globals from "globals"
 
@@ -25,7 +25,7 @@ export default [
   ),
   {
     plugins: {
-      import: fixupPluginRules(_import),
+      "import-x": importX,
       jest,
       "@typescript-eslint": typescriptEslint,
     },
@@ -49,12 +49,14 @@ export default [
     },
 
     settings: {
-      "import/resolver": {
-        typescript: {
+      "import-x/internal-regex": "^@/",
+      "import-x/resolver-next": [
+        createTypeScriptImportResolver({
           alwaysTryTypes: true,
           project: "tsconfig.json",
-        },
-      },
+        }),
+        createNodeResolver(),
+      ],
     },
 
     rules: {
@@ -66,10 +68,40 @@ export default [
       "@typescript-eslint/explicit-function-return-type": "error",
       "@typescript-eslint/return-await": "error",
       "i18n-text/no-en": "off",
-      "import/no-namespace": "off",
+      "import-x/first": "error",
+      "import-x/newline-after-import": "error",
+      "import-x/no-duplicates": "error",
+      "import-x/no-namespace": "off",
+      "import-x/order": [
+        "error",
+        {
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+          groups: ["external", "builtin", "internal", ["parent", "sibling", "index"], "object", "type"],
+          "newlines-between": "never",
+          pathGroups: [
+            {
+              pattern: "@/**",
+              group: "internal",
+              position: "before",
+            },
+          ],
+          pathGroupsExcludedImportTypes: ["builtin"],
+          warnOnUnassignedImports: true,
+        },
+      ],
       "no-console": "off",
       "no-shadow": "off",
       "no-unused-vars": "off",
+      "sort-imports": [
+        "error",
+        {
+          ignoreDeclarationSort: true,
+          ignoreMemberSort: false,
+        },
+      ],
     },
   },
 ]

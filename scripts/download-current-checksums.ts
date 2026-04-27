@@ -1,8 +1,8 @@
 import { getOctokit } from "@actions/github"
 import * as fs from "node:fs"
 import path from "node:path"
-import { OWNER, REPO } from "../src/constants"
 import { parseChecksum } from "../src/download/checksum"
+import { OWNER, REPO } from "../src/utils/constants"
 
 const OUTPUT_PATH = "src/download/known-checksums.ts"
 const ARCHIVE_SUFFIX = ".tar.gz"

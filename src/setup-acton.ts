@@ -1,14 +1,14 @@
 import * as core from "@actions/core"
-import { BINARY_NAME, OWNER, REPO } from "@/constants"
-import * as inputs from "@/inputs"
-import { downloadVersion } from "./download/download-version"
-import { GitHub } from "@/github"
-import { resolveArchitecture } from "@/artifact/architecture"
-import { resolvePlatform } from "@/artifact/platform"
-import { resolveVersion } from "@/version/tag-version"
-import { Artifact } from "@/artifact/artifact"
 import path from "node:path"
+import { resolveArchitecture } from "@/artifact/architecture"
+import { Artifact } from "@/artifact/artifact"
+import { resolvePlatform } from "@/artifact/platform"
+import { BINARY_NAME, OWNER, REPO } from "@/utils/constants"
+import { GitHub } from "@/utils/github"
+import * as inputs from "@/utils/inputs"
 import { getInstalledActonVersion } from "@/version/acton-version"
+import { resolveVersion } from "@/version/tag-version"
+import { downloadVersion } from "./download/download-version"
 
 async function run(): Promise<void> {
   const inputVersion = inputs.getActonVersion()
