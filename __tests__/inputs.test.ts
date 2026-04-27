@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
-import type * as inputsModule from "@/inputs"
+import type * as inputsModule from "@/utils/inputs"
 
 type InputsModule = typeof inputsModule
 
@@ -18,7 +18,7 @@ async function importInputs(inputValues: Readonly<Record<string, string>> = {}):
     return inputValues[name] ?? ""
   })
 
-  return import("@/inputs")
+  return import("@/utils/inputs")
 }
 
 describe("inputs", (): void => {

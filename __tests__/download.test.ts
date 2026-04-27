@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
 import path from "node:path"
-import { Artifact } from "@/artifact/artifact"
 import type { Architecture } from "@/artifact/architecture"
-import type { GitHub } from "@/github"
+import { Artifact } from "@/artifact/artifact"
+import type { GitHub } from "@/utils/github"
 
 type ReleaseAsset = {
   readonly name: string

@@ -1,11 +1,11 @@
 import * as core from "@actions/core"
 import * as tc from "@actions/tool-cache"
 import * as fs from "node:fs"
-import * as checksum from "@/download/checksum"
 import path from "node:path"
-import { OWNER, REPO } from "@/constants"
-import type { GitHub } from "@/github"
 import type { Artifact } from "@/artifact/artifact"
+import * as checksum from "@/download/checksum"
+import { OWNER, REPO } from "@/utils/constants"
+import type { GitHub } from "@/utils/github"
 
 type ReleaseAsset = { name: string; url: string; browser_download_url: string }
 

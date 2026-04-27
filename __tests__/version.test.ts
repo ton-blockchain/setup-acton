@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals"
-import type { GitHub } from "@/github"
+import type { GitHub } from "@/utils/github"
 
 type LatestReleaseResponse = {
   readonly data: {
