@@ -17,7 +17,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: { }
+permissions: {}
 
 jobs:
   zizmor:
@@ -36,8 +36,8 @@ jobs:
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
         with:
-          advanced-security: 'false'
-          annotations: 'true'
-          min-severity: 'high'
-          online-audits: 'false'
-          persona: 'auditor'
+          advanced-security: "false"
+          annotations: "true"
+          min-severity: "high"
+          online-audits: "false"
+          persona: "auditor"

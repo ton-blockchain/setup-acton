@@ -5,69 +5,84 @@ import type { Platform } from "@/artifact/platform"
 
 type ArtifactCase = Readonly<{
   name: string
-  artifactVersion: string
+  version: string
   platform: Platform
   architecture: Architecture
-  artifactName: string
+  archiveName: string
+  knownName: string
+  checksumName: string
 }>
 
 const artifactCases: ReadonlyArray<ArtifactCase> = [
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "linux",
     architecture: "x86_64",
-    artifactName: "acton-x86_64-unknown-linux-gnu.tar.gz",
+    archiveName: "acton-x86_64-unknown-linux-gnu.tar.gz",
+    knownName: "acton-x86_64-unknown-linux-gnu-v1.2.3",
+    checksumName: "acton-x86_64-unknown-linux-gnu.tar.gz.sha256",
   },
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "linux",
     architecture: "aarch64",
-    artifactName: "acton-aarch64-unknown-linux-gnu.tar.gz",
+    archiveName: "acton-aarch64-unknown-linux-gnu.tar.gz",
+    knownName: "acton-aarch64-unknown-linux-gnu-v1.2.3",
+    checksumName: "acton-aarch64-unknown-linux-gnu.tar.gz.sha256",
   },
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "apple",
     architecture: "x86_64",
-    artifactName: "acton-x86_64-apple-darwin.tar.gz",
+    archiveName: "acton-x86_64-apple-darwin.tar.gz",
+    knownName: "acton-x86_64-apple-darwin-v1.2.3",
+    checksumName: "acton-x86_64-apple-darwin.tar.gz.sha256",
   },
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "apple",
     architecture: "aarch64",
-    artifactName: "acton-aarch64-apple-darwin.tar.gz",
+    archiveName: "acton-aarch64-apple-darwin.tar.gz",
+    knownName: "acton-aarch64-apple-darwin-v1.2.3",
+    checksumName: "acton-aarch64-apple-darwin.tar.gz.sha256",
   },
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "windows",
     architecture: "x86_64",
-    artifactName: "acton-x86_64-pc-windows-msvc.tar.gz",
+    archiveName: "acton-x86_64-pc-windows-msvc.tar.gz",
+    knownName: "acton-x86_64-pc-windows-msvc-v1.2.3",
+    checksumName: "acton-x86_64-pc-windows-msvc.tar.gz.sha256",
   },
   {
     name: "acton",
-    artifactVersion: "v1.2.3",
+    version: "v1.2.3",
     platform: "windows",
     architecture: "aarch64",
-    artifactName: "acton-aarch64-pc-windows-msvc.tar.gz",
+    archiveName: "acton-aarch64-pc-windows-msvc.tar.gz",
+    knownName: "acton-aarch64-pc-windows-msvc-v1.2.3",
+    checksumName: "acton-aarch64-pc-windows-msvc.tar.gz.sha256",
   },
 ]
 
 describe("Artifact", (): void => {
   it.each(artifactCases)(
     "exposes all fields and artifact name for $platform/$architecture",
-    ({ name, artifactVersion, platform, architecture, artifactName }): void => {
-      const artifact = new Artifact(name, artifactVersion, platform, architecture)
+    ({ name, version, platform, architecture, archiveName, knownName, checksumName }): void => {
+      const artifact = new Artifact(name, version, platform, architecture)
 
       expect(artifact.name).toBe(name)
-      expect(artifact.artifactVersion).toBe(artifactVersion)
+      expect(artifact.version).toBe(version)
       expect(artifact.platform).toBe(platform)
       expect(artifact.architecture).toBe(architecture)
-      expect(artifact.artifactName).toBe(artifactName)
-      expect(artifact.artifactName).not.toContain(artifactVersion)
+      expect(artifact.archiveName).toBe(archiveName)
+      expect(artifact.knownName).toBe(knownName)
+      expect(artifact.checksumName).toBe(checksumName)
     },
   )
 })
