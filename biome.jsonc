@@ -55,6 +55,8 @@
             "style": "separatedType"
           }
         },
+        "useAsConstAssertion": "error",
+        "useConsistentArrayType": "error",
         "useNodejsImportProtocol": "error",
         "useThrowNewError": "error",
         "useThrowOnlyError": "error"

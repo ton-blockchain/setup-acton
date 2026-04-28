@@ -13,7 +13,7 @@ type ArtifactCase = Readonly<{
   checksumName: string
 }>
 
-const artifactCases: ReadonlyArray<ArtifactCase> = [
+const artifactCases: readonly ArtifactCase[] = [
   {
     name: "acton",
     version: "v1.2.3",

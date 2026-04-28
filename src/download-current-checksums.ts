@@ -28,7 +28,7 @@ function isPublishedStableRelease(release: Release): boolean {
   return !release.draft && !release.prerelease && release.published_at !== null && !release.tag_name.includes("trunk")
 }
 
-async function getReleases(octokit: GitHub): Promise<ReadonlyArray<Release>> {
+async function getReleases(octokit: GitHub): Promise<readonly Release[]> {
   const releases: Release[] = []
   const perPage = 100
   let page = 1
@@ -128,7 +128,7 @@ async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, 
   }
 }
 
-async function createChecksumManifest(octokit: GitHub, releases: ReadonlyArray<Release>): Promise<ChecksumManifest> {
+async function createChecksumManifest(octokit: GitHub, releases: readonly Release[]): Promise<ChecksumManifest> {
   const manifest: ChecksumManifest = {}
   for (const release of releases) {
     await addReleaseChecksums(manifest, octokit, release)

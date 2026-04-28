@@ -14,7 +14,7 @@ type ReleaseAsset = {
 type ReleaseResponse = {
   readonly data: {
     readonly tag_name: string
-    readonly assets: ReadonlyArray<ReleaseAsset>
+    readonly assets: readonly ReleaseAsset[]
   }
 }
 
@@ -116,7 +116,7 @@ function createChecksumAsset(version: string, architecture: Architecture, assetI
   }
 }
 
-function mockRelease(version: string, assets: ReadonlyArray<ReleaseAsset>): void {
+function mockRelease(version: string, assets: readonly ReleaseAsset[]): void {
   getReleaseByTagMock.mockResolvedValue({
     data: {
       tag_name: version,
