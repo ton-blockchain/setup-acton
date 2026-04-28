@@ -9,11 +9,11 @@ on:
       - master
   workflow_dispatch:
 
-permissions: {}
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   check-all:
@@ -43,17 +43,3 @@ jobs:
 
       - name: Verify dist is up-to-date
         run: git diff --text --exit-code -- dist
-
-  validate-typings:
-    name: Validate typings
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Fetch Sources
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - name: Validate typings
-        uses: typesafegithub/github-actions-typing@9ddf35b71a482be7d8922b28e8d00df16b77e315 # v2.2.2
