@@ -2,7 +2,7 @@ import * as core from "@actions/core"
 import { OWNER, REPO } from "@/utils/constants"
 import type { GitHub } from "@/utils/github"
 
-const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$")
+const versionTagPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
 
 async function getLatestVersion(github: GitHub): Promise<string> {
   const octokit = github.getOctokit()

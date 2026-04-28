@@ -1,5 +1,5 @@
-import * as core from "@actions/core"
 import path from "node:path"
+import * as core from "@actions/core"
 import { resolveArchitecture } from "@/artifact/architecture"
 import { Artifact } from "@/artifact/artifact"
 import { resolvePlatform } from "@/artifact/platform"
@@ -60,4 +60,4 @@ async function main(): Promise<void> {
   }
 }
 
-main()
+void main()

@@ -1,5 +1,5 @@
-import * as core from "@actions/core"
 import process from "node:process"
+import * as core from "@actions/core"
 
 export type Platform = "linux" | "apple" | "windows"
 

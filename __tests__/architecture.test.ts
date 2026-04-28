@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals"
 import process from "node:process"
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals"
 import type * as architectureModule from "@/artifact/architecture"
 import type { Architecture } from "@/artifact/architecture"
 
@@ -50,25 +50,25 @@ describe("resolveArchitecture", (): void => {
     Object.defineProperty(process, "arch", originalArchitectureDescriptor)
   })
 
-  it.each(["x86_64", "aarch64"] as const)(
-    "returns explicit architecture %s without process detection",
-    (architecture): void => {
-      mockProcessArchitecture("ia32")
+  it.each([
+    "x86_64",
+    "aarch64",
+  ] as const)("returns explicit architecture %s without process detection", (architecture): void => {
+    mockProcessArchitecture("ia32")
 
-      expect(resolveArchitecture(architecture)).toBe(architecture)
-      expect(debugMock).not.toHaveBeenCalled()
-    },
-  )
+    expect(resolveArchitecture(architecture)).toBe(architecture)
+    expect(debugMock).not.toHaveBeenCalled()
+  })
 
-  it.each(detectedArchitectureCases)(
-    "maps process.arch $processArchitecture to $expectedArchitecture",
-    ({ processArchitecture, expectedArchitecture }): void => {
-      mockProcessArchitecture(processArchitecture)
+  it.each(detectedArchitectureCases)("maps process.arch $processArchitecture to $expectedArchitecture", ({
+    processArchitecture,
+    expectedArchitecture,
+  }): void => {
+    mockProcessArchitecture(processArchitecture)
 
-      expect(resolveArchitecture("")).toBe(expectedArchitecture)
-      expect(debugMock).toHaveBeenCalledWith(`Detected architecture: ${processArchitecture}`)
-    },
-  )
+    expect(resolveArchitecture("")).toBe(expectedArchitecture)
+    expect(debugMock).toHaveBeenCalledWith(`Detected architecture: ${processArchitecture}`)
+  })
 
   it("throws for unsupported detected architecture", (): void => {
     mockProcessArchitecture("ia32")

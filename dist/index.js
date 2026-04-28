@@ -1,3 +1,4 @@
+import path$1 from 'node:path';
 import * as os from 'os';
 import os__default, { EOL } from 'os';
 import * as crypto from 'crypto';
@@ -36,10 +37,9 @@ import require$$1$5 from 'node:dns';
 import require$$5$3, { StringDecoder } from 'string_decoder';
 import * as child from 'child_process';
 import { setTimeout as setTimeout$1 } from 'timers';
-import path$1 from 'node:path';
 import process$1 from 'node:process';
-import * as stream from 'stream';
 import * as fs$1 from 'node:fs';
+import * as stream from 'stream';
 import { createHash } from 'node:crypto';
 
 // We use any as a valid input type
@@ -34151,7 +34151,7 @@ function getActonVersion() {
     return "latest";
 }
 
-const actonVersionPattern = new RegExp("^acton\\s+(?<version>\\S+)(?:\\s+\\(|$)");
+const actonVersionPattern = /^acton\s+(?<version>\S+)(?:\s+\(|$)/;
 async function runActonVersion(toolPath) {
     const { stdout } = await getExecOutput(toolPath, ["--version"], {
         silent: true,
@@ -34178,7 +34178,7 @@ async function getInstalledActonVersion(toolPath) {
     }
 }
 
-const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
+const versionTagPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 async function getLatestVersion(github) {
     const octokit = github.getOctokit();
     const { data: release } = await octokit.rest.repos.getLatestRelease({ owner: OWNER, repo: REPO });
@@ -38317,4 +38317,4 @@ async function main() {
         setFailed(message);
     }
 }
-main();
+void main();

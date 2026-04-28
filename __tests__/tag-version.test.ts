@@ -21,7 +21,7 @@ jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   }
 })
 
-const { resolveVersion } = await import("@/version/tag-version")
+const { resolveVersion }: typeof import("@/version/tag-version") = await import("@/version/tag-version")
 
 function createGitHub(): GitHub {
   return {
