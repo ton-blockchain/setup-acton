@@ -1,18 +1,18 @@
-name: Security checks
+name: Check Actions Typing
 
 on:
-  pull_request:
-    paths:
-      - package.json
-      - bun.lock
-      - bunfig.toml
   push:
     branches:
       - master
     paths:
-      - package.json
-      - bun.lock
-      - bunfig.toml
+      - action.yml
+      - action-types.yml
+  pull_request:
+    branches:
+      - master
+    paths:
+      - action.yml
+      - action-types.yml
   workflow_dispatch:
 
 concurrency:
@@ -22,8 +22,8 @@ concurrency:
 permissions: {}
 
 jobs:
-  security:
-    name: Security checks
+  validate-typings:
+    name: Validate typings
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,8 +35,5 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-
-      - name: Run Bun audit
-        run: bun audit --audit-level=moderate
+      - name: Validate typings
+        uses: typesafegithub/github-actions-typing@9ddf35b71a482be7d8922b28e8d00df16b77e315 # v2.2.2
