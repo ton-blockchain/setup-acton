@@ -1,44 +1,43 @@
 {
   "name": "setup-acton",
-  "description": "GitHub Actions TypeScript template",
   "version": "0.1.0",
-  "author": "TON Core",
-  "type": "module",
   "private": true,
-  "homepage": "https://github.com/ton-blockchain/setup-acton",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ton-blockchain/setup-acton.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ton-blockchain/setup-acton/issues"
-  },
+  "description": "Set up your GitHub Actions workflow with a specific version of Acton",
   "keywords": [
     "actions",
     "setup",
     "ton",
+    "ton-blockchain",
+    "github-actions",
     "acton"
   ],
-  "exports": {
-    ".": "./dist/index.js"
+  "homepage": "https://github.com/ton-blockchain/setup-acton",
+  "bugs": {
+    "url": "https://github.com/ton-blockchain/setup-acton/issues"
   },
-  "engines": {
-    "node": ">=24.0.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ton-blockchain/setup-acton.git"
   },
+  "license": "MIT",
+  "author": "TON Core",
+  "type": "module",
+  "main": "./dist/index.js",
   "scripts": {
+    "all": "bun run format:write && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
-    "ci-test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --passWithNoTests",
+    "checksums:update": "bun run src/download-current-checksums.ts",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "package": "rimraf ./dist && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "bun run package -- --watch",
-    "checksums:update": "bun run src/download-current-checksums.ts",
-    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --passWithNoTests",
-    "all": "bun run format:write && bun run lint && bun run test && bun run package"
+    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --passWithNoTests"
   },
-  "license": "MIT",
+  "overrides": {
+    "undici": "6.25.0"
+  },
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/exec": "^3.0.0",
@@ -76,7 +75,7 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
   },
-  "overrides": {
-    "undici": "6.25.0"
+  "engines": {
+    "node": ">=24.0.0"
   }
 }
