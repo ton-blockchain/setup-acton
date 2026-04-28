@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Verify dist/index.js exists
+        run: test -f dist/index.js
+
+      - name: Verify tag matches package version
+        shell: bash
+        # language=Bash
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          tag_version="${GITHUB_REF_NAME#v}"
+
+          if [[ "${tag_version}" != "${package_version}" ]]; then
+            echo "::error title=Tag version mismatch::Tag ${GITHUB_REF_NAME} resolves to ${tag_version}, but package.json has ${package_version}"
+            exit 1
+          fi
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          no-cache: true
+
+      - name: Install dependencies
+        run: bun ci
+
+      - name: Run Bun audit
+        run: bun audit --audit-level=moderate
+
+      - name: Run all
+        run: bun run all
+
+      - name: Verify dist is up-to-date
+        run: git diff --text --exit-code -- dist
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # language=Bash
+        run: |
+          gh release create "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --title "${GITHUB_REF_NAME}" \
+            --generate-notes --verify-tag
