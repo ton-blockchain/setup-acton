@@ -8,6 +8,13 @@ type ExecOutput = {
 
 const getExecOutputMock =
   jest.fn<(commandLine: string, args?: string[], options?: Record<string, unknown>) => Promise<ExecOutput>>()
+const debugMock = jest.fn<(message: string) => void>()
+
+jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+  return {
+    debug: debugMock,
+  }
+})
 
 jest.unstable_mockModule("@actions/exec", (): Record<string, unknown> => {
   return {
@@ -60,5 +67,27 @@ describe("getInstalledActonVersion", (): void => {
     })
 
     await expect(getInstalledActonVersion("/tmp/acton")).resolves.toBe("0.3.1-trunk")
+  })
+
+  it("logs debug context and falls back to unknown when the installed version cannot be fetched", async (): Promise<void> => {
+    getExecOutputMock.mockRejectedValue(new Error("acton unavailable"))
+
+    await expect(getInstalledActonVersion("/tmp/acton")).resolves.toBe("unknown")
+
+    expect(debugMock).toHaveBeenCalledWith("Failed to get installed Acton version: acton unavailable")
+  })
+
+  it("logs debug context and falls back to unknown when the installed version cannot be parsed", async (): Promise<void> => {
+    getExecOutputMock.mockResolvedValue({
+      exitCode: 0,
+      stdout: "unexpected output",
+      stderr: "",
+    })
+
+    await expect(getInstalledActonVersion("/tmp/acton")).resolves.toBe("unknown")
+
+    expect(debugMock).toHaveBeenCalledWith(
+      'Failed to get installed Acton version: Unable to parse Acton version from output: "unexpected output"',
+    )
   })
 })

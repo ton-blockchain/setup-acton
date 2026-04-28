@@ -1,3 +1,4 @@
+import * as core from "@actions/core"
 import { getExecOutput } from "@actions/exec"
 
 const actonVersionPattern = new RegExp("^acton\\s+(?<version>\\S+)(?:\\s+\\(|$)")
@@ -21,6 +22,12 @@ export function parseActonVersion(output: string): string {
 }
 
 export async function getInstalledActonVersion(toolPath: string): Promise<string> {
-  const output = await runActonVersion(toolPath)
-  return parseActonVersion(output)
+  try {
+    const output = await runActonVersion(toolPath)
+    return parseActonVersion(output)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    core.debug(`Failed to get installed Acton version: ${message}`)
+    return "unknown"
+  }
 }
