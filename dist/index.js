@@ -38317,4 +38317,4 @@ async function main() {
         setFailed(message);
     }
 }
-main();
+void main();
