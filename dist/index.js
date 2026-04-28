@@ -38305,7 +38305,7 @@ async function run() {
     addPath(path$1.dirname(toolPath));
     setOutput("acton-path", toolPath);
     setOutput("acton-version", actonVersion);
-    info$1("setup-acton action completed successfully");
+    info$1(`Successfully installed Acton version ${actonVersion}`);
 }
 async function main() {
     debug$1("Start setup-acton action");
