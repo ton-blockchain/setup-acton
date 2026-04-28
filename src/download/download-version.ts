@@ -25,27 +25,26 @@ async function downloadAsset(asset: ReleaseAsset, github: GitHub): Promise<strin
 export async function downloadVersion(artifact: Artifact, github: GitHub): Promise<{ toolPath: string }> {
   const octokit = github.getOctokit()
 
-  const { artifactName, artifactVersion } = artifact
-  core.info(`Downloading ${artifactName} from ${artifactVersion} release`)
+  const { archiveName, version, checksumName } = artifact
+  core.info(`Downloading ${archiveName} from ${version} release`)
 
-  const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: artifactVersion })
-  const toolchainAsset = release.assets.find((asset) => asset.name === artifactName)
+  const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: version })
+
+  const toolchainAsset = release.assets.find((asset) => asset.name === archiveName)
   if (toolchainAsset === undefined) {
-    throw new Error(`Asset ${artifactName} in release ${artifactVersion} not found`)
+    throw new Error(`Asset ${archiveName} in release ${version} not found`)
   }
 
+  const checksumAsset = release.assets.find((asset) => asset.name === checksumName)
+  if (checksumAsset === undefined) {
+    throw new Error(`Checksum asset ${checksumName} in release ${version} not found`)
+  }
+
+  const expectedChecksum = await getExpectedChecksum(artifact, checksumAsset, github)
   const toolchainPath = await downloadAsset(toolchainAsset, github)
 
-  const checksumAssetName = `${artifactName}.sha256`
-  const checksumAsset = release.assets.find((asset) => asset.name === checksumAssetName)
-  if (checksumAsset === undefined) {
-    throw new Error(`Checksum asset ${checksumAssetName} in release ${artifactVersion} not found`)
-  }
-
-  const checksumPath = await downloadAsset(checksumAsset, github)
-
-  checksum.verifyChecksum(toolchainPath, checksumPath, artifactName)
-  core.info(`Verified ${artifactName} SHA-256 checksum`)
+  checksum.verifyChecksum(toolchainPath, expectedChecksum, archiveName)
+  core.info(`Verified ${archiveName} SHA-256 checksum`)
 
   const extractedPath = await tc.extractTar(toolchainPath)
 
@@ -57,4 +56,16 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
 
   core.debug(`Saved extracted path: ${toolPath}`)
   return { toolPath: toolPath }
+}
+
+async function getExpectedChecksum(artifact: Artifact, checksumAsset: ReleaseAsset, github: GitHub): Promise<string> {
+  const knownChecksum = checksum.getChecksumFromKnownList(artifact.knownName)
+  if (knownChecksum !== undefined) {
+    core.debug(`Using known checksum ${knownChecksum} for ${artifact.knownName}`)
+    return knownChecksum
+  }
+
+  core.debug(`Using checksum from file ${checksumAsset.browser_download_url} for ${artifact.archiveName}`)
+  const checksumPath = await downloadAsset(checksumAsset, github)
+  return checksum.getChecksumFromFile(checksumPath, artifact.archiveName)
 }

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto"
 import * as fs from "node:fs"
+import { KNOWN_CHECKSUMS } from "@/download/known-checksums"
 
 export type ParsedChecksum = {
   readonly checksum: string
@@ -26,14 +27,26 @@ export function parseChecksum(checksumContents: string): ParsedChecksum {
   return { checksum, assetName }
 }
 
+export function getChecksumFromFile(checksumPath: string, artifactName: string): string {
+  const { checksum, assetName } = parseChecksum(fs.readFileSync(checksumPath, "utf8"))
+  if (assetName !== artifactName) {
+    throw new Error(`Checksum asset name mismatch: expected ${artifactName}, got ${assetName}`)
+  }
+
+  return checksum
+}
+
+export function getChecksumFromKnownList(artifactName: string): string | undefined {
+  return KNOWN_CHECKSUMS[artifactName]
+}
+
 function calculateSha256(filePath: string): string {
   return createHash("sha256").update(fs.readFileSync(filePath)).digest("hex").toLowerCase()
 }
 
-export function verifyChecksum(toolchainPath: string, checksumPath: string, artifactName: string): void {
-  const { checksum: expectedChecksum, assetName } = parseChecksum(fs.readFileSync(checksumPath, "utf8"))
-  if (assetName !== artifactName) {
-    throw new Error(`Checksum asset name mismatch: expected ${artifactName}, got ${assetName}`)
+export function verifyChecksum(toolchainPath: string, expectedChecksum: string, artifactName: string): void {
+  if (expectedChecksum === "") {
+    throw new Error("Expected checksum cannot be empty")
   }
 
   const actualChecksum = calculateSha256(toolchainPath)

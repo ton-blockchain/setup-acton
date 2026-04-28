@@ -4,7 +4,7 @@ import type { Platform } from "@/artifact/platform"
 export class Artifact {
   public constructor(
     readonly name: string,
-    readonly artifactVersion: string,
+    readonly version: string,
     readonly platform: Platform,
     readonly architecture: Architecture,
   ) {}
@@ -26,6 +26,18 @@ export class Artifact {
         break
     }
 
-    return `${this.name}-${this.architecture}-${target}.tar.gz`
+    return `${this.name}-${this.architecture}-${target}`
+  }
+
+  get archiveName(): string {
+    return `${this.artifactName}.tar.gz`
+  }
+
+  get checksumName(): string {
+    return `${this.archiveName}.sha256`
+  }
+
+  get knownName(): string {
+    return `${this.artifactName}-${this.version}`
   }
 }
