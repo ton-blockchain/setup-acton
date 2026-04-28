@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
 import path from "node:path"
+import { beforeEach, describe, expect, it, jest } from "@jest/globals"
 import type { Architecture } from "@/artifact/architecture"
 import { Artifact } from "@/artifact/artifact"
 import type { GitHub } from "@/utils/github"
@@ -31,9 +31,9 @@ const downloadToolMock =
   jest.fn<(url: string, dest?: string, auth?: string, headers?: Record<string, string>) => Promise<string>>()
 const extractTarMock = jest.fn<(file: string) => Promise<string>>()
 const statSyncMock = jest.fn<(file: string) => { readonly size: number }>()
-const getChecksumFromFileMock = jest.fn<(checksumPath: string, archiveName: string) => string>()
+const getChecksumFromFileMock = jest.fn<(checksumFilePath: string, archiveName: string) => string>()
 const getChecksumFromKnownListMock = jest.fn<(archiveName: string) => string | undefined>()
-const verifyChecksumMock = jest.fn<(downloadPath: string, expectedChecksum: string, archiveName: string) => void>()
+const verifyChecksumMock = jest.fn<(archivePath: string, expectedChecksum: string, archiveName: string) => void>()
 const getReleaseByTagMock = jest.fn<(request: GetReleaseByTagRequest) => Promise<ReleaseResponse>>()
 
 jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
@@ -65,7 +65,7 @@ jest.unstable_mockModule("@/download/checksum", (): Record<string, unknown> => {
   }
 })
 
-const { downloadVersion } = await import("@/download/download-version")
+const { downloadVersion }: typeof import("@/download/download-version") = await import("@/download/download-version")
 
 const artifactVersion = "v1.2.3"
 const downloadPath = "/tmp/acton.tar.gz"

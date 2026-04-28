@@ -1,7 +1,7 @@
 import * as core from "@actions/core"
 import { getExecOutput } from "@actions/exec"
 
-const actonVersionPattern = new RegExp("^acton\\s+(?<version>\\S+)(?:\\s+\\(|$)")
+const actonVersionPattern = /^acton\s+(?<version>\S+)(?:\s+\(|$)/
 
 async function runActonVersion(toolPath: string): Promise<string> {
   const { stdout } = await getExecOutput(toolPath, ["--version"], {

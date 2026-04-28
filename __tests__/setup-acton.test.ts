@@ -8,7 +8,7 @@ const setFailedMock = jest.fn<(message: string | Error) => void>()
 const setOutputMock = jest.fn<(name: string, value: string) => void>()
 const resolveVersionMock = jest.fn<(inputVersion: string, github: unknown) => Promise<string>>()
 const downloadVersionMock = jest.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
-const getInstalledActonVersionMock = jest.fn<(toolPath: string) => Promise<string>>()
+const getInstalledActonVersionMock = jest.fn<(actonPath: string) => Promise<string>>()
 
 jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   return {

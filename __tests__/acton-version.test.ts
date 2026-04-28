@@ -22,7 +22,9 @@ jest.unstable_mockModule("@actions/exec", (): Record<string, unknown> => {
   }
 })
 
-const { getInstalledActonVersion, parseActonVersion } = await import("@/version/acton-version")
+const { getInstalledActonVersion, parseActonVersion }: typeof import("@/version/acton-version") = await import(
+  "@/version/acton-version"
+)
 
 describe("parseActonVersion", (): void => {
   it.each([

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals"
 import process from "node:process"
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals"
 import type * as platformModule from "@/artifact/platform"
 import type { Platform } from "@/artifact/platform"
 
@@ -54,25 +54,26 @@ describe("resolvePlatform", (): void => {
     Object.defineProperty(process, "platform", originalPlatformDescriptor)
   })
 
-  it.each(["linux", "apple", "windows"] as const)(
-    "returns explicit platform %s without process detection",
-    (platform): void => {
-      mockProcessPlatform("freebsd")
+  it.each([
+    "linux",
+    "apple",
+    "windows",
+  ] as const)("returns explicit platform %s without process detection", (platform): void => {
+    mockProcessPlatform("freebsd")
 
-      expect(resolvePlatform(platform)).toBe(platform)
-      expect(debugMock).not.toHaveBeenCalled()
-    },
-  )
+    expect(resolvePlatform(platform)).toBe(platform)
+    expect(debugMock).not.toHaveBeenCalled()
+  })
 
-  it.each(detectedPlatformCases)(
-    "maps process.platform $processPlatform to $expectedPlatform",
-    ({ processPlatform, expectedPlatform }): void => {
-      mockProcessPlatform(processPlatform)
+  it.each(detectedPlatformCases)("maps process.platform $processPlatform to $expectedPlatform", ({
+    processPlatform,
+    expectedPlatform,
+  }): void => {
+    mockProcessPlatform(processPlatform)
 
-      expect(resolvePlatform("")).toBe(expectedPlatform)
-      expect(debugMock).toHaveBeenCalledWith(`Detected platform: ${processPlatform}`)
-    },
-  )
+    expect(resolvePlatform("")).toBe(expectedPlatform)
+    expect(debugMock).toHaveBeenCalledWith(`Detected platform: ${processPlatform}`)
+  })
 
   it("throws for unsupported detected platform", (): void => {
     mockProcessPlatform("freebsd")

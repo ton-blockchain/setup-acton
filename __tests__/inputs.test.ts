@@ -51,18 +51,21 @@ describe("inputs", (): void => {
     expect(inputs.platformInput).toBe("")
   })
 
-  it.each([["v1.2.3"], ["1.2.3"], ["latest"], ["trunk"], ["0.3.1-trunk"]] as const)(
-    "reads the version input value %s",
-    async (version): Promise<void> => {
-      const inputs = await importInputs({
-        version,
-      })
+  it.each([
+    ["v1.2.3"],
+    ["1.2.3"],
+    ["latest"],
+    ["trunk"],
+    ["0.3.1-trunk"],
+  ] as const)("reads the version input value %s", async (version): Promise<void> => {
+    const inputs = await importInputs({
+      version,
+    })
 
-      expect(inputs.getActonVersion()).toBe(version)
-      expect(getInputMock).toHaveBeenCalledWith("version")
-      expect(getInputMock).not.toHaveBeenCalledWith("acton-version")
-    },
-  )
+    expect(inputs.getActonVersion()).toBe(version)
+    expect(getInputMock).toHaveBeenCalledWith("version")
+    expect(getInputMock).not.toHaveBeenCalledWith("acton-version")
+  })
 
   it("defaults to latest when the version input is empty", async (): Promise<void> => {
     const inputs = await importInputs()
