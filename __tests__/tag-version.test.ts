@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { GitHub } from "@/utils/github"
 
 type LatestReleaseResponse = {
@@ -12,10 +12,10 @@ type GetLatestReleaseRequest = {
   readonly repo: string
 }
 
-const getLatestReleaseMock = jest.fn<(request: GetLatestReleaseRequest) => Promise<LatestReleaseResponse>>()
-const debugMock = jest.fn<(message: string) => void>()
+const getLatestReleaseMock = vi.fn<(request: GetLatestReleaseRequest) => Promise<LatestReleaseResponse>>()
+const debugMock = vi.fn<(message: string) => void>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     debug: debugMock,
   }
@@ -39,7 +39,7 @@ function createGitHub(): GitHub {
 
 describe("resolveVersion", (): void => {
   beforeEach((): void => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     getLatestReleaseMock.mockResolvedValue({
       data: {

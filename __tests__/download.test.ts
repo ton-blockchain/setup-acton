@@ -1,5 +1,5 @@
 import path from "node:path"
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { Architecture } from "@/artifact/architecture"
 import { Artifact } from "@/artifact/artifact"
 import type { GitHub } from "@/utils/github"
@@ -24,19 +24,19 @@ type GetReleaseByTagRequest = {
   readonly tag: string
 }
 
-const infoMock = jest.fn<(message: string) => void>()
-const debugMock = jest.fn<(message: string) => void>()
-const isDebugMock = jest.fn<() => boolean>()
+const infoMock = vi.fn<(message: string) => void>()
+const debugMock = vi.fn<(message: string) => void>()
+const isDebugMock = vi.fn<() => boolean>()
 const downloadToolMock =
-  jest.fn<(url: string, dest?: string, auth?: string, headers?: Record<string, string>) => Promise<string>>()
-const extractTarMock = jest.fn<(file: string) => Promise<string>>()
-const statSyncMock = jest.fn<(file: string) => { readonly size: number }>()
-const getChecksumFromFileMock = jest.fn<(checksumFilePath: string, archiveName: string) => string>()
-const getChecksumFromKnownListMock = jest.fn<(archiveName: string) => string | undefined>()
-const verifyChecksumMock = jest.fn<(archivePath: string, expectedChecksum: string, archiveName: string) => void>()
-const getReleaseByTagMock = jest.fn<(request: GetReleaseByTagRequest) => Promise<ReleaseResponse>>()
+  vi.fn<(url: string, dest?: string, auth?: string, headers?: Record<string, string>) => Promise<string>>()
+const extractTarMock = vi.fn<(file: string) => Promise<string>>()
+const statSyncMock = vi.fn<(file: string) => { readonly size: number }>()
+const getChecksumFromFileMock = vi.fn<(checksumFilePath: string, archiveName: string) => string>()
+const getChecksumFromKnownListMock = vi.fn<(archiveName: string) => string | undefined>()
+const verifyChecksumMock = vi.fn<(archivePath: string, expectedChecksum: string, archiveName: string) => void>()
+const getReleaseByTagMock = vi.fn<(request: GetReleaseByTagRequest) => Promise<ReleaseResponse>>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     info: infoMock,
     debug: debugMock,
@@ -44,20 +44,20 @@ jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   }
 })
 
-jest.unstable_mockModule("@actions/tool-cache", (): Record<string, unknown> => {
+vi.doMock("@actions/tool-cache", (): Record<string, unknown> => {
   return {
     downloadTool: downloadToolMock,
     extractTar: extractTarMock,
   }
 })
 
-jest.unstable_mockModule("node:fs", (): Record<string, unknown> => {
+vi.doMock("node:fs", (): Record<string, unknown> => {
   return {
     statSync: statSyncMock,
   }
 })
 
-jest.unstable_mockModule("@/download/checksum", (): Record<string, unknown> => {
+vi.doMock("@/download/checksum", (): Record<string, unknown> => {
   return {
     getChecksumFromFile: getChecksumFromFileMock,
     getChecksumFromKnownList: getChecksumFromKnownListMock,
@@ -127,7 +127,7 @@ function mockRelease(version: string, assets: readonly ReleaseAsset[]): void {
 
 describe("downloadVersion", (): void => {
   beforeEach((): void => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     isDebugMock.mockReturnValue(false)
     downloadToolMock.mockImplementation(async (url: string): Promise<string> => {

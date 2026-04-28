@@ -1,13 +1,13 @@
 import process from "node:process"
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type * as architectureModule from "@/artifact/architecture"
 import type { Architecture } from "@/artifact/architecture"
 
 type ArchitectureModule = typeof architectureModule
 
-const debugMock = jest.fn<(message: string) => void>()
+const debugMock = vi.fn<(message: string) => void>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     debug: debugMock,
   }

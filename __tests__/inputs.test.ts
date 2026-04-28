@@ -1,18 +1,18 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type * as inputsModule from "@/utils/inputs"
 
 type InputsModule = typeof inputsModule
 
-const getInputMock = jest.fn<(name: string, options?: Record<string, unknown>) => string>()
+const getInputMock = vi.fn<(name: string, options?: Record<string, unknown>) => string>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     getInput: getInputMock,
   }
 })
 
 async function importInputs(inputValues: Readonly<Record<string, string>> = {}): Promise<InputsModule> {
-  jest.resetModules()
+  vi.resetModules()
   getInputMock.mockReset()
   getInputMock.mockImplementation((name: string): string => {
     return inputValues[name] ?? ""

@@ -1,16 +1,16 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const toolPath = "/tmp/setup-acton/bin/acton"
-const addPathMock = jest.fn<(path: string) => void>()
-const debugMock = jest.fn<(message: string) => void>()
-const infoMock = jest.fn<(message: string) => void>()
-const setFailedMock = jest.fn<(message: string | Error) => void>()
-const setOutputMock = jest.fn<(name: string, value: string) => void>()
-const resolveVersionMock = jest.fn<(inputVersion: string, github: unknown) => Promise<string>>()
-const downloadVersionMock = jest.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
-const getInstalledActonVersionMock = jest.fn<(actonPath: string) => Promise<string>>()
+const addPathMock = vi.fn<(path: string) => void>()
+const debugMock = vi.fn<(message: string) => void>()
+const infoMock = vi.fn<(message: string) => void>()
+const setFailedMock = vi.fn<(message: string | Error) => void>()
+const setOutputMock = vi.fn<(name: string, value: string) => void>()
+const resolveVersionMock = vi.fn<(inputVersion: string, github: unknown) => Promise<string>>()
+const downloadVersionMock = vi.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
+const getInstalledActonVersionMock = vi.fn<(actonPath: string) => Promise<string>>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     addPath: addPathMock,
     debug: debugMock,
@@ -20,7 +20,7 @@ jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
   }
 })
 
-jest.unstable_mockModule("@/utils/inputs", (): Record<string, unknown> => {
+vi.doMock("@/utils/inputs", (): Record<string, unknown> => {
   return {
     architectureInput: "x86_64",
     getActonVersion: (): string => "v1.2.3",
@@ -29,7 +29,7 @@ jest.unstable_mockModule("@/utils/inputs", (): Record<string, unknown> => {
   }
 })
 
-jest.unstable_mockModule("@/utils/github", (): Record<string, unknown> => {
+vi.doMock("@/utils/github", (): Record<string, unknown> => {
   return {
     GitHub: class GitHubMock {
       public readonly token: string
@@ -41,26 +41,26 @@ jest.unstable_mockModule("@/utils/github", (): Record<string, unknown> => {
   }
 })
 
-jest.unstable_mockModule("@/version/tag-version", (): Record<string, unknown> => {
+vi.doMock("@/version/tag-version", (): Record<string, unknown> => {
   return {
     resolveVersion: resolveVersionMock,
   }
 })
 
-jest.unstable_mockModule("@/download/download-version", (): Record<string, unknown> => {
+vi.doMock("@/download/download-version", (): Record<string, unknown> => {
   return {
     downloadVersion: downloadVersionMock,
   }
 })
 
-jest.unstable_mockModule("@/version/acton-version", (): Record<string, unknown> => {
+vi.doMock("@/version/acton-version", (): Record<string, unknown> => {
   return {
     getInstalledActonVersion: getInstalledActonVersionMock,
   }
 })
 
 async function importSetupActon(): Promise<void> {
-  jest.resetModules()
+  vi.resetModules()
   await import("@/setup-acton")
   await new Promise<void>((resolve): void => {
     setImmediate(resolve)
@@ -69,7 +69,7 @@ async function importSetupActon(): Promise<void> {
 
 describe("setup-acton entrypoint", (): void => {
   beforeEach((): void => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     resolveVersionMock.mockResolvedValue("v1.2.3")
     downloadVersionMock.mockResolvedValue({ toolPath })
     getInstalledActonVersionMock.mockResolvedValue("1.2.3")
