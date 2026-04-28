@@ -34167,8 +34167,15 @@ function parseActonVersion(output) {
     return version;
 }
 async function getInstalledActonVersion(toolPath) {
-    const output = await runActonVersion(toolPath);
-    return parseActonVersion(output);
+    try {
+        const output = await runActonVersion(toolPath);
+        return parseActonVersion(output);
+    }
+    catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        debug$1(`Failed to get installed Acton version: ${message}`);
+        return "unknown";
+    }
 }
 
 const versionTagPattern = new RegExp("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$");
@@ -34191,15 +34198,7 @@ async function resolveVersion(inputVersion, github) {
         return versionNormalize(inputVersion);
     }
     debug$1("Fetching latest version from GitHub...");
-    try {
-        const version = await getLatestVersion(github);
-        return version;
-    }
-    catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        debug$1(`Failed to fetch latest version from GitHub: ${message}`);
-        return "unknown";
-    }
+    return getLatestVersion(github);
 }
 
 // We use any as a valid input type
