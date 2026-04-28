@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 type ExecOutput = {
   readonly exitCode: number
@@ -7,16 +7,16 @@ type ExecOutput = {
 }
 
 const getExecOutputMock =
-  jest.fn<(commandLine: string, args?: string[], options?: Record<string, unknown>) => Promise<ExecOutput>>()
-const debugMock = jest.fn<(message: string) => void>()
+  vi.fn<(commandLine: string, args?: string[], options?: Record<string, unknown>) => Promise<ExecOutput>>()
+const debugMock = vi.fn<(message: string) => void>()
 
-jest.unstable_mockModule("@actions/core", (): Record<string, unknown> => {
+vi.doMock("@actions/core", (): Record<string, unknown> => {
   return {
     debug: debugMock,
   }
 })
 
-jest.unstable_mockModule("@actions/exec", (): Record<string, unknown> => {
+vi.doMock("@actions/exec", (): Record<string, unknown> => {
   return {
     getExecOutput: getExecOutputMock,
   }
@@ -44,7 +44,7 @@ describe("parseActonVersion", (): void => {
 
 describe("getInstalledActonVersion", (): void => {
   beforeEach((): void => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it("runs the installed Acton binary silently through @actions/exec", async (): Promise<void> => {

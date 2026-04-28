@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from "vitest"
 import type { Architecture } from "@/artifact/architecture"
 import { Artifact } from "@/artifact/artifact"
 import type { Platform } from "@/artifact/platform"

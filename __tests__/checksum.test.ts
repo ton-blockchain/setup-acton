@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import * as fs from "node:fs"
 import * as os from "node:os"
 import path from "node:path"
-import { afterEach, describe, expect, it } from "@jest/globals"
+import { afterEach, describe, expect, it } from "vitest"
 import { getChecksumFromFile, getChecksumFromKnownList, parseChecksum, verifyChecksum } from "@/download/checksum"
 
 const artifactName = "acton-x86_64-unknown-linux-gnu.tar.gz"

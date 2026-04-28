@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type * as githubModule from "@/utils/github"
 
 type GitHubModule = typeof githubModule
@@ -14,9 +14,9 @@ const octokitMock: OctokitMock = {
     repos: {},
   },
 }
-const getOctokitMock = jest.fn<(token: string) => OctokitMock>()
+const getOctokitMock = vi.fn<(token: string) => OctokitMock>()
 
-jest.unstable_mockModule("@actions/github", (): Record<string, unknown> => {
+vi.doMock("@actions/github", (): Record<string, unknown> => {
   return {
     getOctokit: getOctokitMock,
   }
@@ -26,7 +26,7 @@ const { GitHub } = (await import("@/utils/github")) as GitHubModule
 
 describe("GitHub", (): void => {
   beforeEach((): void => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     getOctokitMock.mockReturnValue(octokitMock)
   })
 
