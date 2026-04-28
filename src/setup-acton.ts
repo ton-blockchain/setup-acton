@@ -46,7 +46,7 @@ async function run(): Promise<void> {
   core.addPath(path.dirname(toolPath))
   core.setOutput("acton-path", toolPath)
   core.setOutput("acton-version", actonVersion)
-  core.info("setup-acton action completed successfully")
+  core.info(`Successfully installed Acton version ${actonVersion}`)
 }
 
 async function main(): Promise<void> {
