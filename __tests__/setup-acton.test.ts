@@ -81,7 +81,7 @@ describe("setup-acton entrypoint", (): void => {
     expect(addPathMock).toHaveBeenCalledWith("/tmp/setup-acton/bin")
     expect(setOutputMock).toHaveBeenCalledWith("acton-path", toolPath)
     expect(setOutputMock).toHaveBeenCalledWith("acton-version", "1.2.3")
-    expect(infoMock).toHaveBeenCalledWith("setup-acton action completed successfully")
+    expect(infoMock).toHaveBeenCalledWith("Successfully installed Acton version 1.2.3")
     expect(infoMock.mock.invocationCallOrder[0]).toBeGreaterThan(setOutputMock.mock.invocationCallOrder.at(-1) ?? 0)
     expect(setFailedMock).not.toHaveBeenCalled()
   })
