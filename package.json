@@ -33,7 +33,7 @@
     "lint:fix": "biome check --write .",
     "package": "rimraf ./dist && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "bun run package -- --watch",
-    "test": "vitest run --coverage --passWithNoTests"
+    "test": "vitest run --coverage"
   },
   "overrides": {
     "undici": "6.25.0"

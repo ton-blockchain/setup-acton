@@ -1,6 +1,12 @@
 import type { Architecture } from "@/artifact/architecture"
 import type { Platform } from "@/artifact/platform"
 
+const platformTargets: Readonly<Record<Platform, string>> = {
+  apple: "apple-darwin",
+  linux: "unknown-linux-gnu",
+  windows: "pc-windows-msvc",
+}
+
 export class Artifact {
   public constructor(
     public readonly name: string,
@@ -10,21 +16,7 @@ export class Artifact {
   ) {}
 
   public get artifactName(): string {
-    let target: string
-    switch (this.platform) {
-      case "linux":
-        target = "unknown-linux-gnu"
-        break
-      case "apple":
-        target = "apple-darwin"
-        break
-      case "windows":
-        target = "pc-windows-msvc"
-        break
-      default:
-        target = this.platform
-        break
-    }
+    const target = platformTargets[this.platform] ?? this.platform
 
     return `${this.name}-${this.architecture}-${target}`
   }
