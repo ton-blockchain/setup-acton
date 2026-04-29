@@ -4,8 +4,8 @@ import * as core from "@actions/core"
 export type Platform = "linux" | "apple" | "windows"
 
 function getPlatform(): Platform {
-  const { platform } = process
-  core.debug(`Detected platform: ${platform}`)
+  const { platform: nodePlatform } = process
+  core.debug(`Detected platform: ${nodePlatform}`)
 
   const platformMapping: { [P in NodeJS.Platform]?: Platform } = {
     darwin: "apple",
@@ -13,12 +13,12 @@ function getPlatform(): Platform {
     linux: "linux",
   } as const
 
-  const plat = platformMapping[platform]
-  if (plat !== undefined) {
-    return plat
+  const platform = platformMapping[nodePlatform]
+  if (platform !== undefined) {
+    return platform
   }
 
-  throw new Error(`Unsupported platform: ${platform}`)
+  throw new Error(`Unsupported platform: ${nodePlatform}`)
 }
 
 export function resolvePlatform(inputPlatform: string): Platform {

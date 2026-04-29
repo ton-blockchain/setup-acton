@@ -29093,17 +29093,17 @@ function info$1(message) {
 }
 
 function getArchitecture() {
-    const architecture = process$1.arch;
-    debug$1(`Detected architecture: ${architecture}`);
+    const { arch: nodeArchitecture } = process$1;
+    debug$1(`Detected architecture: ${nodeArchitecture}`);
     const architectureMapping = {
         x64: "x86_64",
         arm64: "aarch64",
     };
-    const arch = architectureMapping[architecture];
-    if (arch !== undefined) {
-        return arch;
+    const architecture = architectureMapping[nodeArchitecture];
+    if (architecture !== undefined) {
+        return architecture;
     }
-    throw new Error(`Unsupported architecture: ${architecture}`);
+    throw new Error(`Unsupported architecture: ${nodeArchitecture}`);
 }
 function resolveArchitecture(inputArchitecture) {
     if (inputArchitecture !== "") {
@@ -29153,18 +29153,18 @@ class Artifact {
 }
 
 function getPlatform() {
-    const { platform } = process$1;
-    debug$1(`Detected platform: ${platform}`);
+    const { platform: nodePlatform } = process$1;
+    debug$1(`Detected platform: ${nodePlatform}`);
     const platformMapping = {
         darwin: "apple",
         win32: "windows",
         linux: "linux",
     };
-    const plat = platformMapping[platform];
-    if (plat !== undefined) {
-        return plat;
+    const platform = platformMapping[nodePlatform];
+    if (platform !== undefined) {
+        return platform;
     }
-    throw new Error(`Unsupported platform: ${platform}`);
+    throw new Error(`Unsupported platform: ${nodePlatform}`);
 }
 function resolvePlatform(inputPlatform) {
     if (inputPlatform !== "") {
@@ -34198,7 +34198,7 @@ async function resolveVersion(inputVersion, github) {
         return versionNormalize(inputVersion);
     }
     debug$1("Fetching latest version from GitHub...");
-    return getLatestVersion(github);
+    return await getLatestVersion(github);
 }
 
 // We use any as a valid input type
@@ -38317,4 +38317,4 @@ async function main() {
         setFailed(message);
     }
 }
-void main();
+await main();

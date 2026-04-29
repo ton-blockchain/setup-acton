@@ -132,16 +132,16 @@ describe("downloadVersion", (): void => {
     vi.clearAllMocks()
 
     isDebugMock.mockReturnValue(false)
-    downloadToolMock.mockImplementation(async (url: string): Promise<string> => {
+    downloadToolMock.mockImplementation((url: string): Promise<string> => {
       if (url === "https://api.github.com/repos/ton-blockchain/acton/releases/assets/297813425") {
-        return downloadPath
+        return Promise.resolve(downloadPath)
       }
 
       if (url === "https://api.github.com/repos/ton-blockchain/acton/releases/assets/297813426") {
-        return checksumPath
+        return Promise.resolve(checksumPath)
       }
 
-      throw new Error(`Unexpected download URL: ${url}`)
+      return Promise.reject(new Error(`Unexpected download URL: ${url}`))
     })
     extractTarMock.mockResolvedValue(extractedPath)
     getChecksumFromFileMock.mockReturnValue(fileChecksum)
