@@ -4,7 +4,7 @@ import * as core from "@actions/core"
 export type Platform = "linux" | "apple" | "windows"
 
 function getPlatform(): Platform {
-  const platform = process.platform
+  const { platform } = process
   core.debug(`Detected platform: ${platform}`)
 
   const platformMapping: { [P in NodeJS.Platform]?: Platform } = {

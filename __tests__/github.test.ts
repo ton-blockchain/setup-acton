@@ -16,11 +16,12 @@ const octokitMock: OctokitMock = {
 }
 const getOctokitMock = vi.fn<(token: string) => OctokitMock>()
 
-vi.doMock("@actions/github", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/github",
+  (): Record<string, unknown> => ({
     getOctokit: getOctokitMock,
-  }
-})
+  }),
+)
 
 const { GitHub } = (await import("@/utils/github")) as GitHubModule
 

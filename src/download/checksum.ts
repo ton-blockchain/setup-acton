@@ -18,8 +18,8 @@ export function parseChecksum(checksumContents: string): ParsedChecksum {
     throw new Error("Checksum file must use '<sha256>  <asset name>' format")
   }
 
-  const checksum = parts[0].toLowerCase()
-  const assetName = parts[1]
+  const [rawChecksum, assetName] = parts
+  const checksum = rawChecksum.toLowerCase()
   if (checksum === "" || assetName === "") {
     throw new Error("Checksum file must use '<sha256>  <asset name>' format")
   }

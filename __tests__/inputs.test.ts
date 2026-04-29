@@ -5,18 +5,17 @@ type InputsModule = typeof inputsModule
 
 const getInputMock = vi.fn<(name: string, options?: Record<string, unknown>) => string>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     getInput: getInputMock,
-  }
-})
+  }),
+)
 
 async function importInputs(inputValues: Readonly<Record<string, string>> = {}): Promise<InputsModule> {
   vi.resetModules()
   getInputMock.mockReset()
-  getInputMock.mockImplementation((name: string): string => {
-    return inputValues[name] ?? ""
-  })
+  getInputMock.mockImplementation((name: string): string => inputValues[name] ?? "")
 
   return import("@/utils/inputs")
 }

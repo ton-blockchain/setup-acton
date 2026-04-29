@@ -15,25 +15,24 @@ type GetLatestReleaseRequest = {
 const getLatestReleaseMock = vi.fn<(request: GetLatestReleaseRequest) => Promise<LatestReleaseResponse>>()
 const debugMock = vi.fn<(message: string) => void>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     debug: debugMock,
-  }
-})
+  }),
+)
 
 const { resolveVersion }: typeof import("@/version/tag-version") = await import("@/version/tag-version")
 
 function createGitHub(): GitHub {
   return {
-    getOctokit: (): unknown => {
-      return {
-        rest: {
-          repos: {
-            getLatestRelease: getLatestReleaseMock,
-          },
+    getOctokit: (): unknown => ({
+      rest: {
+        repos: {
+          getLatestRelease: getLatestReleaseMock,
         },
-      }
-    },
+      },
+    }),
   } as unknown as GitHub
 }
 

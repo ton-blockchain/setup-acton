@@ -10,17 +10,19 @@ const getExecOutputMock =
   vi.fn<(commandLine: string, args?: string[], options?: Record<string, unknown>) => Promise<ExecOutput>>()
 const debugMock = vi.fn<(message: string) => void>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     debug: debugMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@actions/exec", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/exec",
+  (): Record<string, unknown> => ({
     getExecOutput: getExecOutputMock,
-  }
-})
+  }),
+)
 
 const { getInstalledActonVersion, parseActonVersion }: typeof import("@/version/acton-version") = await import(
   "@/version/acton-version"
