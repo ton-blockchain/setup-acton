@@ -8,8 +8,8 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 ## Contents
 
 - [Usage](#usage)
-  - [Install Acton](#install-acton)
-  - [Using outputs](#using-outputs)
+    - [Install Acton](#install-acton)
+    - [Using outputs](#using-outputs)
 - [Inputs](#inputs)
 - [Outputs](#outputs)
 - [Supported version syntax](#supported-version-syntax)
@@ -79,10 +79,12 @@ steps:
 
 ## Outputs
 
-| Name            | Description                                                                                                 |
-|-----------------|-------------------------------------------------------------------------------------------------------------|
-| `acton-path`    | Full path to the installed `acton` binary.                                                                  |
-| `acton-version` | Installed Acton version parsed from `acton --version`; returns `unknown` if the version cannot be detected. |
+| Name            | Description                                            |
+|-----------------|--------------------------------------------------------|
+| `acton-path`    | Full path to the installed `acton` binary.             |
+| `acton-version` | Installed Acton version parsed from `acton --version`. |
+
+> **Note**: `acton-version` returns `unknown` if the version cannot be detected.
 
 ## Supported version syntax
 
@@ -149,7 +151,8 @@ bun run all
 
 ## Code of Conduct
 
-This project follows the [Acton Code of Conduct](https://github.com/ton-blockchain/acton/blob/master/CODE_OF_CONDUCT.md).
+This project follows
+the [Acton Code of Conduct](https://github.com/ton-blockchain/acton/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
