@@ -7,11 +7,12 @@ type PlatformModule = typeof platformModule
 
 const debugMock = vi.fn<(message: string) => void>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     debug: debugMock,
-  }
-})
+  }),
+)
 
 const { resolvePlatform } = (await import("@/artifact/platform")) as PlatformModule
 

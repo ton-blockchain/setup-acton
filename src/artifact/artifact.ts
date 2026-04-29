@@ -3,13 +3,13 @@ import type { Platform } from "@/artifact/platform"
 
 export class Artifact {
   public constructor(
-    readonly name: string,
-    readonly version: string,
-    readonly platform: Platform,
-    readonly architecture: Architecture,
+    public readonly name: string,
+    public readonly version: string,
+    public readonly platform: Platform,
+    public readonly architecture: Architecture,
   ) {}
 
-  get artifactName(): string {
+  public get artifactName(): string {
     let target: string
     switch (this.platform) {
       case "linux":
@@ -29,15 +29,15 @@ export class Artifact {
     return `${this.name}-${this.architecture}-${target}`
   }
 
-  get archiveName(): string {
+  public get archiveName(): string {
     return `${this.artifactName}.tar.gz`
   }
 
-  get checksumName(): string {
+  public get checksumName(): string {
     return `${this.archiveName}.sha256`
   }
 
-  get knownName(): string {
+  public get knownName(): string {
     return `${this.artifactName}-${this.version}`
   }
 }

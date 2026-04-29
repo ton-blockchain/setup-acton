@@ -36,34 +36,38 @@ const getChecksumFromKnownListMock = vi.fn<(archiveName: string) => string | und
 const verifyChecksumMock = vi.fn<(archivePath: string, expectedChecksum: string, archiveName: string) => void>()
 const getReleaseByTagMock = vi.fn<(request: GetReleaseByTagRequest) => Promise<ReleaseResponse>>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     info: infoMock,
     debug: debugMock,
     isDebug: isDebugMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@actions/tool-cache", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/tool-cache",
+  (): Record<string, unknown> => ({
     downloadTool: downloadToolMock,
     extractTar: extractTarMock,
-  }
-})
+  }),
+)
 
-vi.doMock("node:fs", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "node:fs",
+  (): Record<string, unknown> => ({
     statSync: statSyncMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@/download/checksum", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/download/checksum",
+  (): Record<string, unknown> => ({
     getChecksumFromFile: getChecksumFromFileMock,
     getChecksumFromKnownList: getChecksumFromKnownListMock,
     verifyChecksum: verifyChecksumMock,
-  }
-})
+  }),
+)
 
 const { downloadVersion }: typeof import("@/download/download-version") = await import("@/download/download-version")
 
@@ -77,15 +81,13 @@ const expectedToolPath = path.join(extractedPath, "acton")
 
 function createGitHub(): GitHub {
   return {
-    getOctokit: (): unknown => {
-      return {
-        rest: {
-          repos: {
-            getReleaseByTag: getReleaseByTagMock,
-          },
+    getOctokit: (): unknown => ({
+      rest: {
+        repos: {
+          getReleaseByTag: getReleaseByTagMock,
         },
-      }
-    },
+      },
+    }),
     getAuthToken: (): string => "token test-token",
   } as unknown as GitHub
 }

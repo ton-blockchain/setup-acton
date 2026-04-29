@@ -29153,7 +29153,7 @@ class Artifact {
 }
 
 function getPlatform() {
-    const platform = process$1.platform;
+    const { platform } = process$1;
     debug$1(`Detected platform: ${platform}`);
     const platformMapping = {
         darwin: "apple",
@@ -38201,8 +38201,8 @@ function parseChecksum(checksumContents) {
     if (parts.length !== 2) {
         throw new Error("Checksum file must use '<sha256>  <asset name>' format");
     }
-    const checksum = parts[0].toLowerCase();
-    const assetName = parts[1];
+    const [rawChecksum, assetName] = parts;
+    const checksum = rawChecksum.toLowerCase();
     if (checksum === "" || assetName === "") {
         throw new Error("Checksum file must use '<sha256>  <asset name>' format");
     }
@@ -38266,7 +38266,7 @@ async function downloadVersion(artifact, github) {
         debug$1(`Extracted ${toolPath} with size ${stats.size}`);
     }
     debug$1(`Saved extracted path: ${toolPath}`);
-    return { toolPath: toolPath };
+    return { toolPath };
 }
 async function getExpectedChecksum(artifact, checksumAsset, github) {
     const knownChecksum = getChecksumFromKnownList(artifact.knownName);

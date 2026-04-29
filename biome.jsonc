@@ -43,8 +43,18 @@
       "correctness": {
         "noProcessGlobal": "error",
         "noUndeclaredDependencies": "error",
+        "noUnusedFunctionParameters": "error",
         "noUnusedImports": "error",
         "noUnusedVariables": "error"
+      },
+      "complexity": {
+        "noUselessRename": "error",
+        "noUselessStringConcat": "error",
+        "noUselessTernary": "error",
+        "noUselessUndefined": "error",
+        "useLiteralKeys": "error",
+        "useOptionalChain": "error",
+        "useSimplifiedLogicExpression": "error"
       },
       "style": {
         "noNonNullAssertion": "error",
@@ -57,7 +67,30 @@
         },
         "useAsConstAssertion": "error",
         "useConsistentArrayType": "error",
+        "useConsistentObjectDefinitions": {
+          "level": "error",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useConst": "error",
+        "useConsistentArrowReturn": "error",
         "useNodejsImportProtocol": "error",
+        "useObjectSpread": "error",
+        "useShorthandAssign": "error",
+        "useTemplate": "error",
+        "useConsistentMemberAccessibility": {
+          "level": "error",
+          "options": {
+            "accessibility": "explicit"
+          }
+        },
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "type"
+          }
+        },
         "useThrowNewError": "error",
         "useThrowOnlyError": "error"
       },
@@ -79,9 +112,15 @@
         "noNestedPromises": "error",
         "noReturnAssign": "error",
         "noUnsafePlusOperands": "error",
+        "noUselessReturn": "error",
+        "noUselessTypeConversion": "error",
         "useArraySortCompare": "error",
+        "useDestructuring": "error",
         "useExhaustiveSwitchCases": "error",
-        "useExplicitType": "error"
+        "useExplicitType": "error",
+        "useNullishCoalescing": "error",
+        "useSpread": "error",
+        "useStringStartsEndsWith": "error"
       }
     }
   },

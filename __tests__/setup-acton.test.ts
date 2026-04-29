@@ -10,27 +10,30 @@ const resolveVersionMock = vi.fn<(inputVersion: string, github: unknown) => Prom
 const downloadVersionMock = vi.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
 const getInstalledActonVersionMock = vi.fn<(actonPath: string) => Promise<string>>()
 
-vi.doMock("@actions/core", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@actions/core",
+  (): Record<string, unknown> => ({
     addPath: addPathMock,
     debug: debugMock,
     info: infoMock,
     setFailed: setFailedMock,
     setOutput: setOutputMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@/utils/inputs", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/utils/inputs",
+  (): Record<string, unknown> => ({
     architectureInput: "x86_64",
     getActonVersion: (): string => "v1.2.3",
     githubTokenInput: "ghs_test",
     platformInput: "linux",
-  }
-})
+  }),
+)
 
-vi.doMock("@/utils/github", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/utils/github",
+  (): Record<string, unknown> => ({
     GitHub: class GitHubMock {
       public readonly token: string
 
@@ -38,26 +41,29 @@ vi.doMock("@/utils/github", (): Record<string, unknown> => {
         this.token = token
       }
     },
-  }
-})
+  }),
+)
 
-vi.doMock("@/version/tag-version", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/version/tag-version",
+  (): Record<string, unknown> => ({
     resolveVersion: resolveVersionMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@/download/download-version", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/download/download-version",
+  (): Record<string, unknown> => ({
     downloadVersion: downloadVersionMock,
-  }
-})
+  }),
+)
 
-vi.doMock("@/version/acton-version", (): Record<string, unknown> => {
-  return {
+vi.doMock(
+  "@/version/acton-version",
+  (): Record<string, unknown> => ({
     getInstalledActonVersion: getInstalledActonVersionMock,
-  }
-})
+  }),
+)
 
 async function importSetupActon(): Promise<void> {
   vi.resetModules()

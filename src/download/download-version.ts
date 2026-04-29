@@ -55,7 +55,7 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
   }
 
   core.debug(`Saved extracted path: ${toolPath}`)
-  return { toolPath: toolPath }
+  return { toolPath }
 }
 
 async function getExpectedChecksum(artifact: Artifact, checksumAsset: ReleaseAsset, github: GitHub): Promise<string> {
