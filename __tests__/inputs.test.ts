@@ -17,7 +17,7 @@ async function importInputs(inputValues: Readonly<Record<string, string>> = {}):
   getInputMock.mockReset()
   getInputMock.mockImplementation((name: string): string => inputValues[name] ?? "")
 
-  return import("@/utils/inputs")
+  return await import("@/utils/inputs")
 }
 
 describe("inputs", (): void => {

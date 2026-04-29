@@ -4,20 +4,20 @@ import * as core from "@actions/core"
 export type Architecture = "x86_64" | "aarch64"
 
 function getArchitecture(): Architecture {
-  const architecture = process.arch
-  core.debug(`Detected architecture: ${architecture}`)
+  const { arch: nodeArchitecture } = process
+  core.debug(`Detected architecture: ${nodeArchitecture}`)
 
   const architectureMapping: { [A in NodeJS.Architecture]?: Architecture } = {
     x64: "x86_64",
     arm64: "aarch64",
   } as const
 
-  const arch = architectureMapping[architecture]
-  if (arch !== undefined) {
-    return arch
+  const architecture = architectureMapping[nodeArchitecture]
+  if (architecture !== undefined) {
+    return architecture
   }
 
-  throw new Error(`Unsupported architecture: ${architecture}`)
+  throw new Error(`Unsupported architecture: ${nodeArchitecture}`)
 }
 
 export function resolveArchitecture(inputArchitecture: string): Architecture {
