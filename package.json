@@ -26,6 +26,7 @@
   "scripts": {
     "all": "bun run format && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
+    "changelog:check": "bun run src/check-changelog.ts",
     "checksums:update": "bun run src/download-current-checksums.ts",
     "format": "biome format .",
     "format:write": "biome format --write .",
@@ -55,6 +56,7 @@
     "@types/node": "^25.2.0",
     "@vitest/coverage-v8": "^4.1.0",
     "make-coverage-badge": "^1.2.0",
+    "remark": "^15.0.0",
     "rimraf": "^6.1.0",
     "rollup": "^4.57.0",
     "typescript": "^5.9.0",

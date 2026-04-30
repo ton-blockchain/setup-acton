@@ -11,7 +11,7 @@ export default defineConfig({
     clearMocks: true,
     coverage: {
       all: true,
-      exclude: ["dist/**", "node_modules/**", "src/download-current-checksums.ts"],
+      exclude: ["dist/**", "node_modules/**", "src/download-current-checksums.ts", "src/check-changelog.ts"],
       include: ["src/**"],
       provider: "v8",
       reportsDirectory: "./coverage",

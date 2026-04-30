@@ -13,7 +13,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: {}
+permissions: { }
 
 jobs:
   check-all:
@@ -43,3 +43,6 @@ jobs:
 
       - name: Verify dist is up-to-date
         run: git diff --text --exit-code -- dist
+
+      - name: Verify changelog
+        run: bun run changelog:check

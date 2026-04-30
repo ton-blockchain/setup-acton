@@ -245,11 +245,35 @@
   },
   "overrides": [
     {
-      "includes": ["rollup.config.ts", "vitest.config.ts"],
+      "includes": ["rollup.config.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useExplicitReturnType": "off",
+            "useExplicitType": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["vitest.config.ts"],
       "linter": {
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/check-changelog.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noCommonJs": "off"
           }
         }
       }
@@ -263,17 +287,6 @@
           },
           "suspicious": {
             "noConsole": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["rollup.config.ts"],
-      "linter": {
-        "rules": {
-          "nursery": {
-            "useExplicitReturnType": "off",
-            "useExplicitType": "off"
           }
         }
       }
