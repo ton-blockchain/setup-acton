@@ -6,7 +6,26 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- No unreleased entries yet.
+- Added full project documentation for usage, outputs, supported version syntax, supported targets, recommended
+  permissions, checksum verification, contributing, releasing, security, and code of conduct expectations.
+
+### Changed
+
+- Migrated tests from Jest to Vitest with V8 coverage, and migrated formatting and linting from ESLint/Prettier to
+  Biome with stricter rules and organized imports.
+- Split action typing validation out of the main build workflow and narrowed dependency audit triggers to dependency
+  files.
+- Updated package metadata and bundled action startup, including top-level `await` entrypoint execution and clearer
+  install success logging.
+- Simplified artifact target mapping while keeping Acton archive and checksum naming consistent across supported
+  platforms.
+
+### Fixed
+
+- Fixed installed Acton version detection so execution or parsing failures return `unknown` with debug logging instead
+  of failing an otherwise successful installation.
+- Fixed latest-version resolution so GitHub release lookup failures surface directly instead of silently resolving to
+  `unknown`.
 
 ## [0.1.0] - 28.04.2026
 
