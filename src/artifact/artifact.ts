@@ -5,14 +5,14 @@ const platformTargets: Readonly<Record<Platform, string>> = {
   apple: "apple-darwin",
   linux: "unknown-linux-gnu",
   windows: "pc-windows-msvc",
-}
+} as const
 
 export class Artifact {
   public constructor(
     public readonly name: string,
     public readonly version: string,
-    public readonly platform: Platform,
     public readonly architecture: Architecture,
+    public readonly platform: Platform,
   ) {}
 
   public get artifactName(): string {

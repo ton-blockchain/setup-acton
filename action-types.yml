@@ -3,8 +3,6 @@
 inputs:
   version:
     type: string
-  github-token:
-    type: string
   architecture:
     type: enum
     allowed-values:
@@ -16,6 +14,10 @@ inputs:
       - linux
       - apple
       - windows
+  working-directory:
+    type: string
+  github-token:
+    type: string
 
 outputs:
   acton-path:
