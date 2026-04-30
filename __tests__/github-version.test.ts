@@ -1,7 +1,4 @@
-import * as fs from "node:fs"
-import * as os from "node:os"
-import path from "node:path"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { GitHub } from "@/utils/github"
 
 type LatestReleaseResponse = {
@@ -25,20 +22,7 @@ vi.doMock(
   }),
 )
 
-const { resolveVersion }: typeof import("@/version/resolve") = await import("@/version/resolve")
-
-let tempDir: string | undefined
-
-function createTempDir(): string {
-  tempDir ??= fs.mkdtempSync(path.join(os.tmpdir(), "setup-acton-resolve-"))
-  return tempDir
-}
-
-function writeActonToml(contents: string): string {
-  const workspacePath = createTempDir()
-  fs.writeFileSync(path.join(workspacePath, "Acton.toml"), contents)
-  return workspacePath
-}
+const { getLatestVersion }: typeof import("@/version/github-version") = await import("@/version/github-version")
 
 function createGitHub(): GitHub {
   return {
@@ -52,14 +36,7 @@ function createGitHub(): GitHub {
   } as unknown as GitHub
 }
 
-describe("resolveVersion", (): void => {
-  afterEach((): void => {
-    if (tempDir !== undefined) {
-      fs.rmSync(tempDir, { force: true, recursive: true })
-      tempDir = undefined
-    }
-  })
-
+describe("getLatestVersion", (): void => {
   beforeEach((): void => {
     vi.clearAllMocks()
 
@@ -70,20 +47,8 @@ describe("resolveVersion", (): void => {
     })
   })
 
-  it.each([
-    ["1.2.3", "v1.2.3"],
-    ["0.1.11", "v0.1.11"],
-    ["v1.2.3", "v1.2.3"],
-    ["trunk", "trunk"],
-  ] as const)("normalizes %s to %s without calling GitHub", async (inputVersion, expectedVersion): Promise<void> => {
-    await expect(resolveVersion(inputVersion, "", createGitHub())).resolves.toBe(expectedVersion)
-
-    expect(getLatestReleaseMock).not.toHaveBeenCalled()
-    expect(debugMock).not.toHaveBeenCalled()
-  })
-
-  it("resolves latest from the GitHub latest release", async (): Promise<void> => {
-    await expect(resolveVersion("latest", "", createGitHub())).resolves.toBe("v1.2.3")
+  it("gets the latest version from the GitHub latest release", async (): Promise<void> => {
+    await expect(getLatestVersion(createGitHub())).resolves.toBe("v1.2.3")
 
     expect(getLatestReleaseMock).toHaveBeenCalledWith({
       owner: "ton-blockchain",
@@ -92,33 +57,11 @@ describe("resolveVersion", (): void => {
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
   })
 
-  it("resolves the version from Acton.toml when input version is empty", async (): Promise<void> => {
-    const workspacePath = writeActonToml(`
-[toolchain]
-acton = "0.3.2"
-`)
-
-    await expect(resolveVersion("", workspacePath, createGitHub())).resolves.toBe("v0.3.2")
-
-    expect(getLatestReleaseMock).not.toHaveBeenCalled()
-    expect(debugMock).not.toHaveBeenCalled()
-  })
-
-  it("resolves latest from GitHub when input version is empty and Acton.toml has no version", async (): Promise<void> => {
-    await expect(resolveVersion("", createTempDir(), createGitHub())).resolves.toBe("v1.2.3")
-
-    expect(getLatestReleaseMock).toHaveBeenCalledWith({
-      owner: "ton-blockchain",
-      repo: "acton",
-    })
-    expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
-  })
-
-  it("propagates errors when latest version cannot be fetched", async (): Promise<void> => {
+  it("propagates errors when the latest release cannot be fetched", async (): Promise<void> => {
     const error = new Error("GitHub API unavailable")
     getLatestReleaseMock.mockRejectedValue(error)
 
-    await expect(resolveVersion("latest", "", createGitHub())).rejects.toThrow("GitHub API unavailable")
+    await expect(getLatestVersion(createGitHub())).rejects.toThrow("GitHub API unavailable")
 
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
   })

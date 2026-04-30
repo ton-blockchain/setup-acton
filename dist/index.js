@@ -35096,6 +35096,7 @@ function parseActonTomlVersion(contents) {
 }
 function readActonTomlVersion(workspacePath) {
     const actonTomlPath = path$1.join(workspacePath, ACTON_TOML_FILE_NAME);
+    debug$1(`Reading Acton version from ${actonTomlPath}`);
     if (!fs$1.existsSync(actonTomlPath)) {
         return undefined;
     }
@@ -39229,16 +39230,17 @@ async function run() {
         "working-directory": inputWorkingDirectory,
         "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
     })}`);
-    debug$1(`Action constants: ${JSON.stringify({
-        owner: OWNER,
-        repo: REPO,
-        binaryName: BINARY_NAME,
-    })}`);
     const github = new GitHub(githubToken);
     const version = await resolveVersion(inputVersion, inputWorkingDirectory, github);
     const architecture = resolveArchitecture(inputArchitecture);
     const platform = resolvePlatform(inputPlatform);
     const artifact = new Artifact(BINARY_NAME, version, architecture, platform);
+    debug$1(`Resolved version: ${JSON.stringify({
+        version,
+        architecture,
+        platform,
+        knownName: artifact.knownName,
+    })}`);
     const { toolPath } = await downloadVersion(artifact, github);
     const actonVersion = await getInstalledActonVersion(toolPath);
     addPath(path$1.dirname(toolPath));

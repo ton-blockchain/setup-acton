@@ -30,6 +30,7 @@ export function parseActonTomlVersion(contents: string): string | undefined {
 
 export function readActonTomlVersion(workspacePath: string): string | undefined {
   const actonTomlPath = path.join(workspacePath, ACTON_TOML_FILE_NAME)
+  core.debug(`Reading Acton version from ${actonTomlPath}`)
   if (!fs.existsSync(actonTomlPath)) {
     return undefined
   }

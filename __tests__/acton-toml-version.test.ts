@@ -3,11 +3,13 @@ import * as os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
+const debugMock = vi.fn<(message: string) => void>()
 const warningMock = vi.fn<(message: string) => void>()
 
 vi.doMock(
   "@actions/core",
   (): Record<string, unknown> => ({
+    debug: debugMock,
     warning: warningMock,
   }),
 )
@@ -30,6 +32,7 @@ function writeActonToml(contents: string): void {
 
 describe("parseActonTomlVersion", (): void => {
   beforeEach((): void => {
+    debugMock.mockClear()
     warningMock.mockClear()
   })
 
@@ -111,6 +114,11 @@ ${line}
 })
 
 describe("readActonTomlVersion", (): void => {
+  beforeEach((): void => {
+    debugMock.mockClear()
+    warningMock.mockClear()
+  })
+
   afterEach((): void => {
     if (tempDir !== undefined) {
       fs.rmSync(tempDir, { force: true, recursive: true })
@@ -119,7 +127,10 @@ describe("readActonTomlVersion", (): void => {
   })
 
   it("returns undefined when Acton.toml does not exist", (): void => {
-    expect(readActonTomlVersion(createTempDir())).toBeUndefined()
+    const workspacePath = createTempDir()
+
+    expect(readActonTomlVersion(workspacePath)).toBeUndefined()
+    expect(debugMock).toHaveBeenCalledWith(`Reading Acton version from ${path.join(workspacePath, "Acton.toml")}`)
   })
 
   it("reads Acton.toml from the provided workspace path", (): void => {
@@ -128,6 +139,9 @@ describe("readActonTomlVersion", (): void => {
 acton = "0.3.2"
 `)
 
-    expect(readActonTomlVersion(createTempDir())).toBe("0.3.2")
+    const workspacePath = createTempDir()
+
+    expect(readActonTomlVersion(workspacePath)).toBe("0.3.2")
+    expect(debugMock).toHaveBeenCalledWith(`Reading Acton version from ${path.join(workspacePath, "Acton.toml")}`)
   })
 })
