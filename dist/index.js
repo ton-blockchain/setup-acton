@@ -29112,6 +29112,11 @@ function resolveArchitecture(inputArchitecture) {
     return getArchitecture();
 }
 
+const platformTargets = {
+    apple: "apple-darwin",
+    linux: "unknown-linux-gnu",
+    windows: "pc-windows-msvc",
+};
 class Artifact {
     name;
     version;
@@ -29124,21 +29129,7 @@ class Artifact {
         this.architecture = architecture;
     }
     get artifactName() {
-        let target;
-        switch (this.platform) {
-            case "linux":
-                target = "unknown-linux-gnu";
-                break;
-            case "apple":
-                target = "apple-darwin";
-                break;
-            case "windows":
-                target = "pc-windows-msvc";
-                break;
-            default:
-                target = this.platform;
-                break;
-        }
+        const target = platformTargets[this.platform] ?? this.platform;
         return `${this.name}-${this.architecture}-${target}`;
     }
     get archiveName() {

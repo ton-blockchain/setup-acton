@@ -8,15 +8,14 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 ## Contents
 
 - [Usage](#usage)
-    - [Install Acton](#install-acton)
-    - [Using outputs](#using-outputs)
+  - [Install Acton](#install-acton)
+  - [Using outputs](#using-outputs)
 - [Inputs](#inputs)
 - [Outputs](#outputs)
 - [Supported version syntax](#supported-version-syntax)
 - [Supported targets](#supported-targets)
 - [Recommended permissions](#recommended-permissions)
 - [Checksum verification](#checksum-verification)
-- [Development](#development)
 
 ## Usage
 
@@ -138,10 +137,6 @@ permissions:
 The downloaded Acton archive must match the expected `SHA-256` checksum. If the checksum does not match, the action
 fails before extracting or adding `acton` to `PATH`.
 
-## Development
-
-This repository uses Bun for local development.
-
 ```bash
 bun ci
 bun run all
@@ -149,10 +144,17 @@ bun run all
 
 `dist/index.js` is committed because GitHub Actions runs the bundled file declared in [action.yml](action.yml).
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, pull request expectations, and release asset maintenance notes.
+
+## Security
+
+Please report suspected vulnerabilities privately. See [SECURITY.md](SECURITY.md).
+
 ## Code of Conduct
 
-This project follows
-the [Acton Code of Conduct](https://github.com/ton-blockchain/acton/blob/master/CODE_OF_CONDUCT.md).
+This project follows the [Acton Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
