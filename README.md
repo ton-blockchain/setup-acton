@@ -24,7 +24,7 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 ```yaml
 steps:
   - name: Setup Acton
-    uses: ton-blockchain/setup-acton@b38f91528737c5b0d459c9dde674474b9edbe0c8 # v0.1.0
+    uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
 ```
 
 If you do not specify a version, this action installs the latest Acton release.
@@ -33,7 +33,7 @@ See [action.yml](action.yml).
 
 ```yaml
 - name: Setup Acton
-  uses: ton-blockchain/setup-acton@b38f91528737c5b0d459c9dde674474b9edbe0c8 # v0.1.0
+  uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
   with:
     # Acton version to install.
     # Supported values include 'latest', a release tag such as 'v1.0.0',
@@ -57,7 +57,7 @@ See [action.yml](action.yml).
 ```yaml
 steps:
   - name: Setup Acton
-    uses: ton-blockchain/setup-acton@b38f91528737c5b0d459c9dde674474b9edbe0c8 # v0.1.0
+    uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
     id: setup-acton
     with:
       version: '1.0.0'

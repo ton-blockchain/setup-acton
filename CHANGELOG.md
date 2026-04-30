@@ -6,8 +6,21 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- No unreleased entries yet.
+
+## [0.2.0] - 01.05.2026
+
+setup-acton 0.2.0 focuses on project hardening and release readiness. It adds the public project documentation,
+ownership and security guidance, moves local quality checks to Biome and Vitest, narrows workflow triggers, and makes
+version reporting and release lookup behavior more explicit.
+
+### Added
+
 - Added full project documentation for usage, outputs, supported version syntax, supported targets, recommended
   permissions, checksum verification, contributing, releasing, security, and code of conduct expectations.
+- Added `CODEOWNERS` and a dedicated GitHub Actions typing workflow scoped to action metadata changes.
+- Added broader unit coverage for platform, architecture, GitHub client, artifact naming, download, inputs, installed
+  version parsing, and setup behavior.
 
 ### Changed
 
