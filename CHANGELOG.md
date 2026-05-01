@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- No unreleased entries yet.
+- Added `working-directory` for resolving project-local `Acton.toml`.
+- Added Acton version resolution from `[toolchain].acton` in `Acton.toml` when the `version` input is omitted.
 
 ## [0.2.0] - 01.05.2026
 

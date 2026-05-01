@@ -7,20 +7,22 @@ import { BINARY_NAME, OWNER, REPO } from "@/utils/constants"
 import { GitHub } from "@/utils/github"
 import * as inputs from "@/utils/inputs"
 import { getInstalledActonVersion } from "@/version/acton-version"
-import { resolveVersion } from "@/version/tag-version"
+import { resolveVersion } from "@/version/resolve"
 import { downloadVersion } from "./download/download-version"
 
 async function run(): Promise<void> {
-  const inputVersion = inputs.getActonVersion()
-  const inputPlatform = inputs.platformInput
+  const inputVersion = inputs.versionInput
   const inputArchitecture = inputs.architectureInput
+  const inputPlatform = inputs.platformInput
+  const inputWorkingDirectory = inputs.workingDirectoryInput
   const githubToken = inputs.githubTokenInput
 
   core.debug(
     `Action inputs: ${JSON.stringify({
       version: inputVersion,
-      platform: inputPlatform,
       architecture: inputArchitecture,
+      platform: inputPlatform,
+      "working-directory": inputWorkingDirectory,
       "github-token": githubToken === "" ? "(empty)" : "[REDACTED]",
     })}`,
   )
@@ -34,11 +36,11 @@ async function run(): Promise<void> {
 
   const github = new GitHub(githubToken)
 
-  const version = await resolveVersion(inputVersion, github)
-  const platform = resolvePlatform(inputPlatform)
+  const version = await resolveVersion(inputVersion, inputWorkingDirectory, github)
   const architecture = resolveArchitecture(inputArchitecture)
+  const platform = resolvePlatform(inputPlatform)
 
-  const artifact = new Artifact(BINARY_NAME, version, platform, architecture)
+  const artifact = new Artifact(BINARY_NAME, version, architecture, platform)
 
   const { toolPath } = await downloadVersion(artifact, github)
   const actonVersion = await getInstalledActonVersion(toolPath)

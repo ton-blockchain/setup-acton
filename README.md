@@ -12,7 +12,7 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
   - [Using outputs](#using-outputs)
 - [Inputs](#inputs)
 - [Outputs](#outputs)
-- [Supported version syntax](#supported-version-syntax)
+- [Version resolution](#version-resolution)
 - [Supported targets](#supported-targets)
 - [Recommended permissions](#recommended-permissions)
 - [Checksum verification](#checksum-verification)
@@ -27,7 +27,8 @@ steps:
     uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
 ```
 
-If you do not specify a version, this action installs the latest Acton release.
+If you do not specify a version, this action reads `Acton.toml` from `working-directory` first and falls back to the
+latest Acton release when no project version is configured.
 
 See [action.yml](action.yml).
 
@@ -38,6 +39,7 @@ See [action.yml](action.yml).
     # Acton version to install.
     # Supported values include 'latest', a release tag such as 'v1.0.0',
     # or a bare semantic version such as '1.0.0'.
+    # Defaults to the version in Acton.toml or 'latest'.
     version: '1.0.0'
 
     # Target architecture. Auto-detected from the runner if not specified.
@@ -47,6 +49,9 @@ See [action.yml](action.yml).
     # Target platform. Auto-detected from the runner if not specified.
     # Supported values: linux, apple, windows.
     platform: 'linux'
+
+    # Working directory for the Acton project. Defaults to the GitHub workspace.
+    working-directory: ${{ github.workspace }}
 
     # GitHub token for authenticated release metadata and asset downloads.
     github-token: ${{ github.token }}
@@ -69,12 +74,13 @@ steps:
 
 ## Inputs
 
-| Name           | Required | Default               | Description                                                                          |
-|----------------|----------|-----------------------|--------------------------------------------------------------------------------------|
-| `version`      | No       | `latest`              | Acton version to install. See [Supported version syntax](#supported-version-syntax). |
-| `architecture` | No       | Runner architecture   | Target architecture. See [Supported targets](#supported-targets).                    |
-| `platform`     | No       | Runner platform       | Target platform. See [Supported targets](#supported-targets).                        |
-| `github-token` | No       | `${{ github.token }}` | GitHub token used to fetch release metadata and release assets.                      |
+| Name                | Required | Default                   | Description                                                                          |
+|---------------------|----------|---------------------------|--------------------------------------------------------------------------------------|
+| `version`           | No       | `Acton.toml` or `latest`  | Acton version to install. See [Version resolution](#version-resolution).             |
+| `architecture`      | No       | Runner architecture       | Target architecture. See [Supported targets](#supported-targets).                    |
+| `platform`          | No       | Runner platform           | Target platform. See [Supported targets](#supported-targets).                        |
+| `working-directory` | No       | `${{ github.workspace }}` | Working directory for the Acton project.                                             |
+| `github-token`      | No       | `${{ github.token }}`     | GitHub token used to fetch release metadata and release assets.                      |
 
 ## Outputs
 
@@ -85,20 +91,33 @@ steps:
 
 > **Note**: `acton-version` returns `unknown` if the version cannot be detected.
 
-## Supported version syntax
+## Version resolution
 
-The `version` input supports the following syntax and resolution behavior:
+The action resolves the Acton version in this order:
 
-- **Latest release** - If `version` is `latest` or omitted, the action fetches the latest GitHub release from
-  `ton-blockchain/acton`.
+- **`version` input** - If `version` is set, the action uses it. If the value is `latest`, the action fetches the latest
+  GitHub release from `ton-blockchain/acton`.
+- **`Acton.toml`** - If `version` is omitted, the action reads `[toolchain].acton` from `Acton.toml` in
+  `working-directory`.
+- **Latest release** - If no version is configured, the action gets the latest version from `ton-blockchain/acton`.
+
+`Acton.toml` example:
+
+```toml
+[toolchain]
+acton = "0.3.2"
+```
+
+The resolved version supports the following syntax:
+
 - **Release tag** - If `version` starts with `v`, the value is used as the release tag, for example `v1.0.0`.
 - **Bare semantic version** - If `version` is a plain semantic version such as `1.0.0`, it is normalized to `v1.0.0`.
 - **Custom release tag** - Any other value is passed through unchanged and must match an existing Acton release tag.
 
 After resolving the release tag, the action downloads the matching archive for the selected platform and architecture.
 
-> **Warning**: We recommend pinning a versioned Acton release for reproducible workflows. Use `latest` or other
-> non-version tags only when you explicitly want the workflow to track a moving release.
+> **Warning**: We recommend pinning a versioned Acton release in `version` or `Acton.toml` for reproducible workflows.
+> Use `latest` or other non-version tags only when you explicitly want the workflow to track a moving release.
 
 > **Note**: It is recommended to wrap version values in single quotation marks to avoid YAML parsing surprises:
 >

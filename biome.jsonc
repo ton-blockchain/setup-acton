@@ -72,14 +72,14 @@
         "noUselessStringConcat": "error",
         "noUselessTernary": "error",
         "noUselessTypeConstraint": "error",
-        "noUselessUndefined": "error",
         "noUselessUndefinedInitialization": "error",
         "useDateNow": "error",
         "useLiteralKeys": "error",
         "useNumericLiterals": "error",
         "useOptionalChain": "error",
         "useRegexLiterals": "error",
-        "useSimplifiedLogicExpression": "error"
+        "useSimplifiedLogicExpression": "error",
+        "noUselessUndefined": "off"
       },
       "style": {
         "recommended": true,
@@ -91,7 +91,12 @@
         "noNestedTernary": "error",
         "noNamespace": "error",
         "noNonNullAssertion": "error",
-        "noParameterAssign": "error",
+        "noParameterAssign": {
+          "level": "error",
+          "options": {
+            "propertyAssignment": "deny"
+          }
+        },
         "noSubstr": "error",
         "noUnusedTemplateLiteral": "error",
         "noUselessElse": "error",
@@ -253,6 +258,9 @@
       "includes": ["src/download-current-checksums.ts"],
       "linter": {
         "rules": {
+          "style": {
+            "noParameterAssign": "off"
+          },
           "suspicious": {
             "noConsole": "off"
           }

@@ -6,7 +6,7 @@ const debugMock = vi.fn<(message: string) => void>()
 const infoMock = vi.fn<(message: string) => void>()
 const setFailedMock = vi.fn<(message: string | Error) => void>()
 const setOutputMock = vi.fn<(name: string, value: string) => void>()
-const resolveVersionMock = vi.fn<(inputVersion: string, github: unknown) => Promise<string>>()
+const resolveVersionMock = vi.fn<(inputVersion: string, workspacePath: string, github: unknown) => Promise<string>>()
 const downloadVersionMock = vi.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
 const getInstalledActonVersionMock = vi.fn<(actonPath: string) => Promise<string>>()
 
@@ -24,10 +24,11 @@ vi.doMock(
 vi.doMock(
   "@/utils/inputs",
   (): Record<string, unknown> => ({
+    versionInput: "v1.2.3",
     architectureInput: "x86_64",
-    getActonVersion: (): string => "v1.2.3",
-    githubTokenInput: "ghs_test",
     platformInput: "linux",
+    workingDirectoryInput: "contracts",
+    githubTokenInput: "ghs_test",
   }),
 )
 
@@ -45,7 +46,7 @@ vi.doMock(
 )
 
 vi.doMock(
-  "@/version/tag-version",
+  "@/version/resolve",
   (): Record<string, unknown> => ({
     resolveVersion: resolveVersionMock,
   }),
@@ -84,6 +85,7 @@ describe("setup-acton entrypoint", (): void => {
   it("logs a successful completion message after setting outputs", async (): Promise<void> => {
     await importSetupActon()
 
+    expect(resolveVersionMock).toHaveBeenCalledWith("v1.2.3", "contracts", expect.anything())
     expect(addPathMock).toHaveBeenCalledWith("/tmp/setup-acton/bin")
     expect(setOutputMock).toHaveBeenCalledWith("acton-path", toolPath)
     expect(setOutputMock).toHaveBeenCalledWith("acton-version", "1.2.3")

@@ -93,11 +93,11 @@ function createGitHub(): GitHub {
 }
 
 function createArtifact(): Artifact {
-  return new Artifact("acton", artifactVersion, "linux", "x86_64")
+  return new Artifact("acton", artifactVersion, "x86_64", "linux")
 }
 
 function createReleaseAsset(version: string, architecture: Architecture, assetId: number): ReleaseAsset {
-  const artifact = new Artifact("acton", version, "linux", architecture)
+  const artifact = new Artifact("acton", version, architecture, "linux")
 
   return {
     id: assetId,
@@ -108,7 +108,7 @@ function createReleaseAsset(version: string, architecture: Architecture, assetId
 }
 
 function createChecksumAsset(version: string, architecture: Architecture, assetId: number): ReleaseAsset {
-  const artifact = new Artifact("acton", version, "linux", architecture)
+  const artifact = new Artifact("acton", version, architecture, "linux")
 
   return {
     id: assetId,

@@ -1,18 +1,19 @@
 import type { Architecture } from "@/artifact/architecture"
 import type { Platform } from "@/artifact/platform"
+import type { Version } from "@/version/resolve"
 
 const platformTargets: Readonly<Record<Platform, string>> = {
   apple: "apple-darwin",
   linux: "unknown-linux-gnu",
   windows: "pc-windows-msvc",
-}
+} as const
 
 export class Artifact {
   public constructor(
     public readonly name: string,
-    public readonly version: string,
-    public readonly platform: Platform,
+    public readonly version: Version,
     public readonly architecture: Architecture,
+    public readonly platform: Platform,
   ) {}
 
   public get artifactName(): string {

@@ -1,14 +1,7 @@
 import * as core from "@actions/core"
 
-export const githubTokenInput = core.getInput("github-token", { required: true })
+export const versionInput = core.getInput("version")
 export const architectureInput = core.getInput("architecture")
 export const platformInput = core.getInput("platform")
-
-export function getActonVersion(): string {
-  const version = core.getInput("version")
-  if (version !== "") {
-    return version
-  }
-
-  return "latest"
-}
+export const workingDirectoryInput = core.getInput("working-directory")
+export const githubTokenInput = core.getInput("github-token", { required: true })

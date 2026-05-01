@@ -27,17 +27,23 @@ describe("inputs", (): void => {
 
   it("reads top-level action inputs on module load", async (): Promise<void> => {
     const inputs = await importInputs({
+      version: "v1.2.3",
       architecture: "aarch64",
-      "github-token": "ghs_test",
       platform: "linux",
+      "working-directory": "contracts",
+      "github-token": "ghs_test",
     })
 
-    expect(inputs.githubTokenInput).toBe("ghs_test")
+    expect(inputs.versionInput).toBe("v1.2.3")
     expect(inputs.architectureInput).toBe("aarch64")
     expect(inputs.platformInput).toBe("linux")
-    expect(getInputMock).toHaveBeenCalledWith("github-token", { required: true })
+    expect(inputs.workingDirectoryInput).toBe("contracts")
+    expect(inputs.githubTokenInput).toBe("ghs_test")
+    expect(getInputMock).toHaveBeenCalledWith("version")
     expect(getInputMock).toHaveBeenCalledWith("architecture")
     expect(getInputMock).toHaveBeenCalledWith("platform")
+    expect(getInputMock).toHaveBeenCalledWith("working-directory")
+    expect(getInputMock).toHaveBeenCalledWith("github-token", { required: true })
   })
 
   it("uses empty strings for optional top-level inputs when they are not provided", async (): Promise<void> => {
@@ -45,9 +51,11 @@ describe("inputs", (): void => {
       "github-token": "ghs_test",
     })
 
-    expect(inputs.githubTokenInput).toBe("ghs_test")
+    expect(inputs.versionInput).toBe("")
     expect(inputs.architectureInput).toBe("")
     expect(inputs.platformInput).toBe("")
+    expect(inputs.workingDirectoryInput).toBe("")
+    expect(inputs.githubTokenInput).toBe("ghs_test")
   })
 
   it.each([
@@ -61,15 +69,15 @@ describe("inputs", (): void => {
       version,
     })
 
-    expect(inputs.getActonVersion()).toBe(version)
+    expect(inputs.versionInput).toBe(version)
     expect(getInputMock).toHaveBeenCalledWith("version")
     expect(getInputMock).not.toHaveBeenCalledWith("acton-version")
   })
 
-  it("defaults to latest when the version input is empty", async (): Promise<void> => {
+  it("uses an empty string when the version input is empty", async (): Promise<void> => {
     const inputs = await importInputs()
 
-    expect(inputs.getActonVersion()).toBe("latest")
+    expect(inputs.versionInput).toBe("")
     expect(getInputMock).toHaveBeenCalledWith("version")
   })
 
@@ -78,6 +86,6 @@ describe("inputs", (): void => {
       version: "  v1.2.3  ",
     })
 
-    expect(inputs.getActonVersion()).toBe("  v1.2.3  ")
+    expect(inputs.versionInput).toBe("  v1.2.3  ")
   })
 })

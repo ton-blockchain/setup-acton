@@ -80,7 +80,7 @@ describe("Artifact", (): void => {
     knownName,
     checksumName,
   }): void => {
-    const artifact = new Artifact(name, version, platform, architecture)
+    const artifact = new Artifact(name, version, architecture, platform)
 
     expect(artifact.name).toBe(name)
     expect(artifact.version).toBe(version)
@@ -92,7 +92,7 @@ describe("Artifact", (): void => {
   })
 
   it("uses the raw platform value for unsupported platform variants", (): void => {
-    const artifact = new Artifact("acton", "v1.2.3", "freebsd" as Platform, "x86_64")
+    const artifact = new Artifact("acton", "v1.2.3", "x86_64", "freebsd" as Platform)
 
     expect(artifact.archiveName).toBe("acton-x86_64-freebsd.tar.gz")
     expect(artifact.knownName).toBe("acton-x86_64-freebsd-v1.2.3")

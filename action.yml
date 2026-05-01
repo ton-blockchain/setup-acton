@@ -4,8 +4,7 @@ author: "TON Core"
 
 inputs:
   version:
-    description: "The Acton version to install. Defaults to 'latest'."
-    default: "latest"
+    description: "The version of Acton to install e.g., `0.3.2`. Defaults to the version in Acton.toml or 'latest'."
     required: false
   architecture:
     description:
@@ -14,6 +13,10 @@ inputs:
   platform:
     description:
       "Target platform. Supported values: linux, apple, windows. Auto-detected from the runner if not specified."
+    required: false
+  working-directory:
+    description: "Working directory for the Acton project. Defaults to the GitHub workspace."
+    default: ${{ github.workspace }}
     required: false
   github-token:
     description: "GitHub token used to authenticate API requests when fetching releases."
