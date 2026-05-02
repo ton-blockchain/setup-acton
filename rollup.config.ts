@@ -2,13 +2,13 @@ import commonjs from "@rollup/plugin-commonjs"
 import nodeResolve from "@rollup/plugin-node-resolve"
 import typescript from "@rollup/plugin-typescript"
 
-const config = {
-  input: "src/setup-acton.ts",
+const buildConfig = (input, output) => ({
+  input,
   output: {
-    file: "dist/index.js",
+    file: output,
     format: "es",
   },
   plugins: [typescript(), nodeResolve({ preferBuiltins: true }), commonjs()],
-}
+})
 
-export default config
+export default [buildConfig("src/setup-acton.ts", "dist/setup/index.js")]

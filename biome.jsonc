@@ -266,6 +266,17 @@
           }
         }
       }
+    },
+    {
+      "includes": ["rollup.config.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useExplicitReturnType": "off",
+            "useExplicitType": "off"
+          }
+        }
+      }
     }
   ]
 }
