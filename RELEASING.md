@@ -8,7 +8,7 @@ This document covers maintainer release steps for versioned `setup-acton` releas
 - the worktree is clean
 - `CHANGELOG.md` has a section for the target version
 - `package.json` version matches the target release version
-- `dist/index.js` is up to date
+- `dist/setup/index.js` is up to date
 - GitHub Actions checks pass on `master`
 
 ## Local Verification
@@ -30,8 +30,8 @@ git tag -a vX.Y.Z -m "vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
-The release workflow validates the package version, runs the full check suite, verifies `dist/index.js`, and creates the
-GitHub release.
+The release workflow validates the package version, runs the full check suite, verifies `dist/setup/index.js`, and
+creates the GitHub release.
 
 ## After Release
 

@@ -25,8 +25,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Verify dist/index.js exists
-        run: test -f dist/index.js
+      - name: Verify dist/setup/index.js exists
+        run: test -f dist/setup/index.js
 
       - name: Verify tag matches package version
         shell: bash

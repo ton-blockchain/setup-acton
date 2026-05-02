@@ -161,7 +161,7 @@ bun ci
 bun run all
 ```
 
-`dist/index.js` is committed because GitHub Actions runs the bundled file declared in [action.yml](action.yml).
+`dist/setup/index.js` is committed because GitHub Actions runs the bundled file declared in [action.yml](action.yml).
 
 ## Contributing
 

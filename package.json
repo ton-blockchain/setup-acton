@@ -22,7 +22,7 @@
   "license": "MIT",
   "author": "TON Core",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/setup/index.js",
   "scripts": {
     "all": "bun run format && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
