@@ -179,7 +179,10 @@ describe("downloadVersion", (): void => {
   })
 
   it("downloads the matching release checksum and toolchain assets through the GitHub API URL", async (): Promise<void> => {
-    await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({ toolPath: expectedToolPath })
+    await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({
+      toolPath: expectedToolPath,
+      useCache: false,
+    })
 
     expect(getReleaseByTagMock).toHaveBeenCalledWith({
       owner: "ton-blockchain",
@@ -217,6 +220,7 @@ describe("downloadVersion", (): void => {
 
     await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({
       toolPath: expectedToolPath,
+      useCache: false,
     })
 
     expect(downloadToolMock).toHaveBeenCalledTimes(1)
@@ -311,7 +315,10 @@ describe("downloadVersion", (): void => {
       .mockReturnValueOnce({ size: 200 })
       .mockReturnValueOnce({ size: 300 })
 
-    await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({ toolPath: expectedToolPath })
+    await expect(downloadVersion(createArtifact(), createGitHub())).resolves.toEqual({
+      toolPath: expectedToolPath,
+      useCache: false,
+    })
 
     expect(statSyncMock).toHaveBeenNthCalledWith(1, checksumPath)
     expect(statSyncMock).toHaveBeenNthCalledWith(2, downloadPath)

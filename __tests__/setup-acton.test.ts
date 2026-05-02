@@ -5,9 +5,17 @@ const addPathMock = vi.fn<(path: string) => void>()
 const debugMock = vi.fn<(message: string) => void>()
 const infoMock = vi.fn<(message: string) => void>()
 const setFailedMock = vi.fn<(message: string | Error) => void>()
-const setOutputMock = vi.fn<(name: string, value: string) => void>()
+const setOutputMock = vi.fn<(name: string, value: unknown) => void>()
 const resolveVersionMock = vi.fn<(inputVersion: string, workspacePath: string, github: unknown) => Promise<string>>()
-const downloadVersionMock = vi.fn<(artifact: unknown, github: unknown) => Promise<{ readonly toolPath: string }>>()
+const saveCacheInputMock = vi.fn<() => boolean>()
+const resolveToolchainMock =
+  vi.fn<
+    (
+      artifact: unknown,
+      cache: unknown,
+      github: unknown,
+    ) => Promise<{ readonly toolPath: string; readonly useCache: boolean }>
+  >()
 const getInstalledActonVersionMock = vi.fn<(actonPath: string) => Promise<string>>()
 
 vi.doMock(
@@ -29,6 +37,7 @@ vi.doMock(
     platformInput: "linux",
     workingDirectoryInput: "contracts",
     githubTokenInput: "ghs_test",
+    saveCacheInput: saveCacheInputMock,
   }),
 )
 
@@ -55,7 +64,7 @@ vi.doMock(
 vi.doMock(
   "@/download/download-version",
   (): Record<string, unknown> => ({
-    downloadVersion: downloadVersionMock,
+    resolveToolchain: resolveToolchainMock,
   }),
 )
 
@@ -77,8 +86,9 @@ async function importSetupActon(): Promise<void> {
 describe("setup-acton entrypoint", (): void => {
   beforeEach((): void => {
     vi.clearAllMocks()
+    saveCacheInputMock.mockReturnValue(false)
     resolveVersionMock.mockResolvedValue("v1.2.3")
-    downloadVersionMock.mockResolvedValue({ toolPath })
+    resolveToolchainMock.mockResolvedValue({ toolPath, useCache: false })
     getInstalledActonVersionMock.mockResolvedValue("1.2.3")
   })
 
@@ -89,6 +99,7 @@ describe("setup-acton entrypoint", (): void => {
     expect(addPathMock).toHaveBeenCalledWith("/tmp/setup-acton/bin")
     expect(setOutputMock).toHaveBeenCalledWith("acton-path", toolPath)
     expect(setOutputMock).toHaveBeenCalledWith("acton-version", "1.2.3")
+    expect(setOutputMock).toHaveBeenCalledWith("cache-hit", false)
     expect(infoMock).toHaveBeenCalledWith("Successfully installed Acton version 1.2.3")
     expect(infoMock.mock.invocationCallOrder[0]).toBeGreaterThan(setOutputMock.mock.invocationCallOrder.at(-1) ?? 0)
     expect(setFailedMock).not.toHaveBeenCalled()

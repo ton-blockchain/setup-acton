@@ -4,10 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+Unreleased changes improve project-local configuration support. The action can now resolve `Acton.toml` from a caller
+selected working directory, use that file as the fallback source for the requested Acton version, and cache installed
+Acton toolchains between workflow runs.
+
 ### Added
 
-- Added `working-directory` for resolving project-local `Acton.toml`.
+- Added a `working-directory` input for resolving project-local `Acton.toml` files outside the repository root.
 - Added Acton version resolution from `[toolchain].acton` in `Acton.toml` when the `version` input is omitted.
+- Added caching for downloaded and extracted Acton toolchains to speed up repeated workflow runs.
 
 ## [0.2.0] - 01.05.2026
 
