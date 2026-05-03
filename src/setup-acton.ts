@@ -43,6 +43,10 @@ async function run(): Promise<void> {
     })}`,
   )
 
+  if (version === "trunk") {
+    core.warning("Using 'trunk' version is not recommended for production use. Consider using a specific version.")
+  }
+
   const { toolPath } = await downloadVersion(artifact, github)
   const actonVersion = await getInstalledActonVersion(toolPath)
 
