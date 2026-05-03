@@ -3,6 +3,7 @@ import path from "node:path"
 import process from "node:process"
 import { getOctokit } from "@actions/github"
 import { parseChecksum } from "@/download/checksum"
+import { KNOWN_CHECKSUMS } from "@/download/known-checksums"
 import { OWNER, REPO } from "@/utils/constants"
 
 const OUTPUT_PATH = "src/download/known-checksums.ts"
@@ -14,6 +15,11 @@ type Release = Awaited<ReturnType<GitHub["rest"]["repos"]["listReleases"]>>["dat
 type ReleaseAsset = Release["assets"][number]
 
 type ChecksumManifest = Record<string, string>
+type ChecksumChange = {
+  readonly key: string
+  readonly previousChecksum: string
+  readonly currentChecksum?: string
+}
 
 function getGitHubToken(): string {
   const token = process.env.GH_TOKEN
@@ -95,6 +101,53 @@ function createManifestKey(artifactName: string, version: string): string {
   return `${assetName}-${version}`
 }
 
+function readKnownChecksumManifest(): ChecksumManifest {
+  const manifest: ChecksumManifest = {}
+  for (const [key, checksum] of Object.entries(KNOWN_CHECKSUMS)) {
+    if (checksum === undefined) {
+      continue
+    }
+
+    manifest[key] = checksum
+  }
+
+  return manifest
+}
+
+function formatKnownChecksumChange(change: ChecksumChange): string {
+  const currentState =
+    change.currentChecksum === undefined ? "missing after refresh" : `changed to ${change.currentChecksum}`
+
+  return `- ${change.key}: was ${change.previousChecksum}, ${currentState}`
+}
+
+function assertKnownChecksumsUnchanged(
+  previousManifest: Readonly<ChecksumManifest>,
+  currentManifest: Readonly<ChecksumManifest>,
+): void {
+  const changes: ChecksumChange[] = []
+  for (const [key, previousChecksum] of Object.entries(previousManifest)) {
+    const currentChecksum = currentManifest[key]
+    if (currentChecksum === previousChecksum) {
+      continue
+    }
+
+    changes.push({ key, previousChecksum, currentChecksum })
+  }
+
+  if (changes.length === 0) {
+    return
+  }
+
+  throw new Error(
+    [
+      "Known checksum manifest changed for existing entries.",
+      "Refreshes may add new checksums, but existing checksums must stay unchanged.",
+      ...changes.map(formatKnownChecksumChange),
+    ].join("\n"),
+  )
+}
+
 async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, release: Release): Promise<void> {
   console.log(`Parsing release ${release.tag_name}`)
   const checksumAssets = new Map(
@@ -158,9 +211,11 @@ function writeTypeScriptFile(outputPath: string, manifest: ChecksumManifest): vo
 }
 
 async function main(): Promise<void> {
+  const knownManifest = readKnownChecksumManifest()
   const octokit = getOctokit(getGitHubToken())
   const releases = await getReleases(octokit)
   const manifest = await createChecksumManifest(octokit, releases)
+  assertKnownChecksumsUnchanged(knownManifest, manifest)
   writeTypeScriptFile(OUTPUT_PATH, manifest)
   console.log(`Saved ${Object.keys(manifest).length} checksums from ${releases.length} releases to ${OUTPUT_PATH}`)
 }
