@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -208,6 +208,7 @@
         "noFloatingPromises": "error",
         "noDuplicateEnumValues": "error",
         "noIdenticalTestTitle": "error",
+        "noLoopFunc": "error",
         "noMisusedPromises": "error",
         "noMultiAssign": "error",
         "noMultiStr": "error",
@@ -215,6 +216,7 @@
         "noForIn": "error",
         "noProto": "error",
         "noReturnAssign": "error",
+        "noUnnecessaryTemplateExpression": "error",
         "noUnsafePlusOperands": "error",
         "noUselessReturn": "error",
         "noUselessTypeConversion": "error",
@@ -232,6 +234,7 @@
         "useNullishCoalescing": "error",
         "useReduceTypeParameter": "error",
         "useRegexpExec": "error",
+        "useRegexpTest": "error",
         "useSpread": "error",
         "useStringStartsEndsWith": "error"
       },
