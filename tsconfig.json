@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "declaration": false,
     "declarationMap": false,
     "esModuleInterop": true,
@@ -21,6 +20,7 @@
     },
     "pretty": true,
     "resolveJsonModule": true,
+    "rootDir": "./src",
     "strict": true,
     "strictNullChecks": true,
     "target": "es2022"
