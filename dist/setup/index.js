@@ -39242,6 +39242,9 @@ async function run() {
         platform,
         knownName: artifact.knownName,
     })}`);
+    if (version === "trunk") {
+        warning("Using 'trunk' version is not recommended for production use. Consider using a specific version.");
+    }
     const { toolPath } = await downloadVersion(artifact, github);
     const actonVersion = await getInstalledActonVersion(toolPath);
     addPath(path$1.dirname(toolPath));

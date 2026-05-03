@@ -2,7 +2,7 @@ import type { GitHub } from "@/utils/github"
 import { readActonTomlVersion } from "@/version/acton-toml-version"
 import { getLatestVersion } from "./github-version"
 
-export type Version = "latest" | "draft" | string
+export type Version = "latest" | "trunk" | string
 
 const versionTagPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
 
