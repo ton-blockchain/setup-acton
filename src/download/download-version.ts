@@ -32,12 +32,12 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
 
   const toolchainAsset = release.assets.find((asset) => asset.name === archiveName)
   if (toolchainAsset === undefined) {
-    throw new Error(`Asset ${archiveName} in release ${version} not found`)
+    throw new Error(`Archive ${archiveName} not found in release ${version}`)
   }
 
   const checksumAsset = release.assets.find((asset) => asset.name === checksumName)
   if (checksumAsset === undefined) {
-    throw new Error(`Checksum asset ${checksumName} in release ${version} not found`)
+    throw new Error(`Checksum file ${checksumName} not found in release ${version}`)
   }
 
   const expectedChecksum = await getExpectedChecksum(artifact, checksumAsset, github)

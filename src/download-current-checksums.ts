@@ -83,7 +83,7 @@ async function downloadAssetText(octokit: GitHub, asset: ReleaseAsset): Promise<
     return new TextDecoder().decode(bytes)
   }
 
-  throw new Error(`Unexpected checksum asset response for ${asset.name}`)
+  throw new Error(`Unexpected checksum file response for ${asset.name}`)
 }
 
 function isActonArchiveAsset(asset: ReleaseAsset): boolean {
@@ -109,7 +109,7 @@ async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, 
     const checksumAssetName = `${artifactAsset.name}${CHECKSUM_SUFFIX}`
     const checksumAsset = checksumAssets.get(checksumAssetName)
     if (checksumAsset === undefined) {
-      console.log(`Skipping ${artifactAsset.name}: checksum asset ${checksumAssetName} not found`)
+      console.log(`Skipping ${artifactAsset.name}: checksum file ${checksumAssetName} not found`)
       continue
     }
 
@@ -118,7 +118,7 @@ async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, 
     console.log(`Parsing checksum ${checksumAsset.name}`)
     const { checksum, assetName } = parseChecksum(checksumContents)
     if (assetName !== artifactAsset.name) {
-      throw new Error(`Checksum asset name mismatch: expected ${artifactAsset.name}, got ${assetName}`)
+      throw new Error(`Checksum file name mismatch: expected ${artifactAsset.name}, got ${assetName}`)
     }
 
     manifest[createManifestKey(artifactAsset.name, release.tag_name)] = checksum

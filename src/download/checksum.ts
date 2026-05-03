@@ -15,13 +15,13 @@ export function parseChecksum(checksumContents: string): ParsedChecksum {
 
   const parts = firstLine.split("  ")
   if (parts.length !== 2) {
-    throw new Error("Checksum file must use '<sha256>  <asset name>' format")
+    throw new Error("Checksum file must use '<sha256>  <archive name>' format")
   }
 
   const [rawChecksum, assetName] = parts
   const checksum = rawChecksum.toLowerCase()
   if (checksum === "" || assetName === "") {
-    throw new Error("Checksum file must use '<sha256>  <asset name>' format")
+    throw new Error("Checksum file must use '<sha256>  <archive name>' format")
   }
 
   return { checksum, assetName }
@@ -30,7 +30,7 @@ export function parseChecksum(checksumContents: string): ParsedChecksum {
 export function getChecksumFromFile(checksumPath: string, artifactName: string): string {
   const { checksum, assetName } = parseChecksum(fs.readFileSync(checksumPath, "utf8"))
   if (assetName !== artifactName) {
-    throw new Error(`Checksum asset name mismatch: expected ${artifactName}, got ${assetName}`)
+    throw new Error(`Checksum file name mismatch: expected ${artifactName}, got ${assetName}`)
   }
 
   return checksum

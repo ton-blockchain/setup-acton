@@ -42,13 +42,13 @@ describe("parseChecksum", (): void => {
   it("fails when the first line does not contain exactly two parts", (): void => {
     expect((): void => {
       parseChecksum(`${artifactChecksum}\n`)
-    }).toThrow("Checksum file must use '<sha256>  <asset name>' format")
+    }).toThrow("Checksum file must use '<sha256>  <archive name>' format")
   })
 
   it("fails when the first line uses one space between checksum and asset name", (): void => {
     expect((): void => {
       parseChecksum(`${artifactChecksum} ${artifactName}\n`)
-    }).toThrow("Checksum file must use '<sha256>  <asset name>' format")
+    }).toThrow("Checksum file must use '<sha256>  <archive name>' format")
   })
 })
 
@@ -63,7 +63,7 @@ describe("getChecksumFromFile", (): void => {
     const checksumPath = writeTempFile(checksumAssetName, `not-a-checksum\n${artifactChecksum}  ${artifactName}\n`)
 
     expect((): void => getChecksumFromFile(checksumPath, artifactName)).toThrow(
-      "Checksum file must use '<sha256>  <asset name>' format",
+      "Checksum file must use '<sha256>  <archive name>' format",
     )
   })
 
@@ -71,7 +71,7 @@ describe("getChecksumFromFile", (): void => {
     const checksumPath = writeTempFile(checksumAssetName, `${artifactChecksum}  other-artifact.tar.gz\n`)
 
     expect((): void => getChecksumFromFile(checksumPath, artifactName)).toThrow(
-      `Checksum asset name mismatch: expected ${artifactName}, got other-artifact.tar.gz`,
+      `Checksum file name mismatch: expected ${artifactName}, got other-artifact.tar.gz`,
     )
   })
 
