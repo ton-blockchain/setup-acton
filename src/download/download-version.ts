@@ -1,6 +1,8 @@
 import * as fs from "node:fs"
+import * as os from "node:os"
 import path from "node:path"
 import * as core from "@actions/core"
+import * as io from "@actions/io"
 import * as tc from "@actions/tool-cache"
 import type { Artifact } from "@/artifact/artifact"
 import * as checksum from "@/download/checksum"
@@ -46,9 +48,16 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
   checksum.verifyChecksum(toolchainPath, expectedChecksum, archiveName)
   core.info(`Verified ${archiveName} SHA-256 checksum`)
 
-  const extractedPath = await tc.extractTar(toolchainPath)
+  const installedPath = path.join(os.homedir(), ".acton", "bin")
+  {
+    const extractedPath = await tc.extractTar(toolchainPath)
+    const sourcePath = path.join(extractedPath, artifact.name)
 
-  const toolPath = path.join(extractedPath, artifact.name)
+    await io.mkdirP(installedPath)
+    await io.mv(sourcePath, installedPath)
+  }
+
+  const toolPath = path.join(installedPath, artifact.name)
   if (core.isDebug()) {
     const stats = fs.statSync(toolPath)
     core.debug(`Extracted ${toolPath} with size ${stats.size}`)

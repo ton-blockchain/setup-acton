@@ -30,6 +30,9 @@ const isDebugMock = vi.fn<() => boolean>()
 const downloadToolMock =
   vi.fn<(url: string, dest?: string, auth?: string, headers?: Record<string, string>) => Promise<string>>()
 const extractTarMock = vi.fn<(file: string) => Promise<string>>()
+const mkdirPMock = vi.fn<(dest: string) => Promise<void>>()
+const mvMock = vi.fn<(source: string, dest: string) => Promise<void>>()
+const homedirMock = vi.fn<() => string>()
 const statSyncMock = vi.fn<(file: string) => { readonly size: number }>()
 const getChecksumFromFileMock = vi.fn<(checksumFilePath: string, archiveName: string) => string>()
 const getChecksumFromKnownListMock = vi.fn<(archiveName: string) => string | undefined>()
@@ -54,9 +57,24 @@ vi.doMock(
 )
 
 vi.doMock(
+  "@actions/io",
+  (): Record<string, unknown> => ({
+    mkdirP: mkdirPMock,
+    mv: mvMock,
+  }),
+)
+
+vi.doMock(
   "node:fs",
   (): Record<string, unknown> => ({
     statSync: statSyncMock,
+  }),
+)
+
+vi.doMock(
+  "node:os",
+  (): Record<string, unknown> => ({
+    homedir: homedirMock,
   }),
 )
 
@@ -77,7 +95,10 @@ const checksumPath = "/tmp/acton.tar.gz.sha256"
 const fileChecksum = "a".repeat(64)
 const knownChecksum = "b".repeat(64)
 const extractedPath = "/tmp/extracted"
-const expectedToolPath = path.join(extractedPath, "acton")
+const homePath = "/home/test-user"
+const installedPath = path.join(homePath, ".acton", "bin")
+const extractedToolPath = path.join(extractedPath, "acton")
+const expectedToolPath = path.join(installedPath, "acton")
 
 function createGitHub(): GitHub {
   return {
@@ -144,6 +165,9 @@ describe("downloadVersion", (): void => {
       return Promise.reject(new Error(`Unexpected download URL: ${url}`))
     })
     extractTarMock.mockResolvedValue(extractedPath)
+    mkdirPMock.mockResolvedValue(undefined)
+    mvMock.mockResolvedValue(undefined)
+    homedirMock.mockReturnValue(homePath)
     getChecksumFromFileMock.mockReturnValue(fileChecksum)
     getChecksumFromKnownListMock.mockReturnValue(undefined)
     statSyncMock.mockReturnValue({ size: 42 })
@@ -184,6 +208,8 @@ describe("downloadVersion", (): void => {
     expect(getChecksumFromFileMock).toHaveBeenCalledWith(checksumPath, "acton-x86_64-unknown-linux-gnu.tar.gz")
     expect(verifyChecksumMock).toHaveBeenCalledWith(downloadPath, fileChecksum, "acton-x86_64-unknown-linux-gnu.tar.gz")
     expect(extractTarMock).toHaveBeenCalledWith(downloadPath)
+    expect(mkdirPMock).toHaveBeenCalledWith(installedPath)
+    expect(mvMock).toHaveBeenCalledWith(extractedToolPath, installedPath)
   })
 
   it("uses a known checksum without downloading the release checksum asset", async (): Promise<void> => {
@@ -210,6 +236,8 @@ describe("downloadVersion", (): void => {
       "acton-x86_64-unknown-linux-gnu.tar.gz",
     )
     expect(extractTarMock).toHaveBeenCalledWith(downloadPath)
+    expect(mkdirPMock).toHaveBeenCalledWith(installedPath)
+    expect(mvMock).toHaveBeenCalledWith(extractedToolPath, installedPath)
   })
 
   it("fails before downloading when the expected asset is missing", async (): Promise<void> => {
@@ -222,6 +250,8 @@ describe("downloadVersion", (): void => {
     expect(getChecksumFromKnownListMock).not.toHaveBeenCalled()
     expect(verifyChecksumMock).not.toHaveBeenCalled()
     expect(extractTarMock).not.toHaveBeenCalled()
+    expect(mkdirPMock).not.toHaveBeenCalled()
+    expect(mvMock).not.toHaveBeenCalled()
   })
 
   it("fails before downloading when the expected checksum asset is missing", async (): Promise<void> => {
@@ -238,6 +268,8 @@ describe("downloadVersion", (): void => {
     expect(getChecksumFromFileMock).not.toHaveBeenCalled()
     expect(verifyChecksumMock).not.toHaveBeenCalled()
     expect(extractTarMock).not.toHaveBeenCalled()
+    expect(mkdirPMock).not.toHaveBeenCalled()
+    expect(mvMock).not.toHaveBeenCalled()
   })
 
   it("fails before downloading the toolchain when the release checksum file cannot be parsed", async (): Promise<void> => {
@@ -257,6 +289,8 @@ describe("downloadVersion", (): void => {
     )
     expect(verifyChecksumMock).not.toHaveBeenCalled()
     expect(extractTarMock).not.toHaveBeenCalled()
+    expect(mkdirPMock).not.toHaveBeenCalled()
+    expect(mvMock).not.toHaveBeenCalled()
   })
 
   it("fails before extracting when checksum verification fails", async (): Promise<void> => {
@@ -266,6 +300,8 @@ describe("downloadVersion", (): void => {
 
     await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow("Checksum mismatch")
     expect(extractTarMock).not.toHaveBeenCalled()
+    expect(mkdirPMock).not.toHaveBeenCalled()
+    expect(mvMock).not.toHaveBeenCalled()
   })
 
   it("logs downloaded and extracted file sizes in debug mode", async (): Promise<void> => {

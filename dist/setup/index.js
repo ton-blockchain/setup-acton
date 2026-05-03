@@ -39,6 +39,7 @@ import * as child from 'child_process';
 import { setTimeout as setTimeout$1 } from 'timers';
 import process$1 from 'node:process';
 import * as fs$1 from 'node:fs';
+import * as os$1 from 'node:os';
 import * as stream from 'stream';
 import { createHash } from 'node:crypto';
 
@@ -28053,6 +28054,12 @@ function exists(fsPath) {
         return true;
     });
 }
+function isDirectory(fsPath_1) {
+    return __awaiter$7(this, arguments, void 0, function* (fsPath, useStat = false) {
+        const stats = useStat ? yield stat(fsPath) : yield lstat(fsPath);
+        return stats.isDirectory();
+    });
+}
 /**
  * On OSX/Linux, true if path starts with '/'. On Windows, true for paths like:
  * \, \hello, \\hello\share, C:, and C:\hello (and corresponding alternate separator cases).
@@ -28177,6 +28184,35 @@ var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _argu
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+/**
+ * Moves a path.
+ *
+ * @param     source    source path
+ * @param     dest      destination path
+ * @param     options   optional. See MoveOptions.
+ */
+function mv(source_1, dest_1) {
+    return __awaiter$6(this, arguments, void 0, function* (source, dest, options = {}) {
+        if (yield exists(dest)) {
+            let destExists = true;
+            if (yield isDirectory(dest)) {
+                // If dest is directory copy src into dest
+                dest = path.join(dest, path.basename(source));
+                destExists = yield exists(dest);
+            }
+            if (destExists) {
+                if (options.force == null || options.force) {
+                    yield rmRF(dest);
+                }
+                else {
+                    throw new Error('Destination already exists');
+                }
+            }
+        }
+        yield mkdirP(path.dirname(dest));
+        yield rename(source, dest);
+    });
+}
 /**
  * Remove a path recursively with force
  *
@@ -39198,8 +39234,14 @@ async function downloadVersion(artifact, github) {
     const toolchainPath = await downloadAsset(toolchainAsset, github);
     verifyChecksum(toolchainPath, expectedChecksum, archiveName);
     info$1(`Verified ${archiveName} SHA-256 checksum`);
-    const extractedPath = await extractTar(toolchainPath);
-    const toolPath = path$1.join(extractedPath, artifact.name);
+    const installedPath = path$1.join(os$1.homedir(), ".acton", "bin");
+    {
+        const extractedPath = await extractTar(toolchainPath);
+        const sourcePath = path$1.join(extractedPath, artifact.name);
+        await mkdirP(installedPath);
+        await mv(sourcePath, installedPath);
+    }
+    const toolPath = path$1.join(installedPath, artifact.name);
     if (isDebug$1()) {
         const stats = fs$1.statSync(toolPath);
         debug$1(`Extracted ${toolPath} with size ${stats.size}`);
