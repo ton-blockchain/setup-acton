@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.3.0] - 04.05.2026
 
-Unreleased changes improve project-local configuration support. The action can now resolve `Acton.toml` from a caller
+setup-acton 0.3.0 improves project-local configuration support. The action can now resolve `Acton.toml` from a caller
 selected working directory, use that file as the fallback source for the requested Acton version, and cache installed
 Acton toolchains between workflow runs.
 
