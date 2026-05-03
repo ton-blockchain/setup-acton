@@ -55,6 +55,7 @@ describe("getLatestVersion", (): void => {
       repo: "acton",
     })
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
+    expect(debugMock).toHaveBeenCalledWith("Fetched latest Acton release: v1.2.3")
   })
 
   it("propagates errors when the latest release cannot be fetched", async (): Promise<void> => {
@@ -64,5 +65,6 @@ describe("getLatestVersion", (): void => {
     await expect(getLatestVersion(createGitHub())).rejects.toThrow("GitHub API unavailable")
 
     expect(debugMock).toHaveBeenCalledWith("Fetching latest version from GitHub...")
+    expect(debugMock).not.toHaveBeenCalledWith("Fetched latest Acton release: v1.2.3")
   })
 })

@@ -35108,6 +35108,7 @@ async function getLatestVersion(github) {
     debug$1("Fetching latest version from GitHub...");
     const octokit = github.getOctokit();
     const { data: release } = await octokit.rest.repos.getLatestRelease({ owner: OWNER, repo: REPO });
+    debug$1(`Fetched latest Acton release: ${release.tag_name}`);
     return release.tag_name;
 }
 
@@ -39137,19 +39138,19 @@ function parseChecksum(checksumContents) {
     }
     const parts = firstLine.split("  ");
     if (parts.length !== 2) {
-        throw new Error("Checksum file must use '<sha256>  <asset name>' format");
+        throw new Error("Checksum file must use '<sha256>  <archive name>' format");
     }
     const [rawChecksum, assetName] = parts;
     const checksum = rawChecksum.toLowerCase();
     if (checksum === "" || assetName === "") {
-        throw new Error("Checksum file must use '<sha256>  <asset name>' format");
+        throw new Error("Checksum file must use '<sha256>  <archive name>' format");
     }
     return { checksum, assetName };
 }
 function getChecksumFromFile(checksumPath, artifactName) {
     const { checksum, assetName } = parseChecksum(fs$1.readFileSync(checksumPath, "utf8"));
     if (assetName !== artifactName) {
-        throw new Error(`Checksum asset name mismatch: expected ${artifactName}, got ${assetName}`);
+        throw new Error(`Checksum file name mismatch: expected ${artifactName}, got ${assetName}`);
     }
     return checksum;
 }
@@ -39187,11 +39188,11 @@ async function downloadVersion(artifact, github) {
     const { data: release } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: version });
     const toolchainAsset = release.assets.find((asset) => asset.name === archiveName);
     if (toolchainAsset === undefined) {
-        throw new Error(`Asset ${archiveName} in release ${version} not found`);
+        throw new Error(`Archive ${archiveName} not found in release ${version}`);
     }
     const checksumAsset = release.assets.find((asset) => asset.name === checksumName);
     if (checksumAsset === undefined) {
-        throw new Error(`Checksum asset ${checksumName} in release ${version} not found`);
+        throw new Error(`Checksum file ${checksumName} not found in release ${version}`);
     }
     const expectedChecksum = await getExpectedChecksum(artifact, checksumAsset, github);
     const toolchainPath = await downloadAsset(toolchainAsset, github);

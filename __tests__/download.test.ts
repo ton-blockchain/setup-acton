@@ -216,7 +216,7 @@ describe("downloadVersion", (): void => {
     mockRelease(artifactVersion, [createReleaseAsset(artifactVersion, "aarch64", 297813424)])
 
     await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow(
-      `Asset acton-x86_64-unknown-linux-gnu.tar.gz in release ${artifactVersion} not found`,
+      `Archive acton-x86_64-unknown-linux-gnu.tar.gz not found in release ${artifactVersion}`,
     )
     expect(downloadToolMock).not.toHaveBeenCalled()
     expect(getChecksumFromKnownListMock).not.toHaveBeenCalled()
@@ -231,7 +231,7 @@ describe("downloadVersion", (): void => {
     ])
 
     await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow(
-      `Checksum asset acton-x86_64-unknown-linux-gnu.tar.gz.sha256 in release ${artifactVersion} not found`,
+      `Checksum file acton-x86_64-unknown-linux-gnu.tar.gz.sha256 not found in release ${artifactVersion}`,
     )
     expect(downloadToolMock).not.toHaveBeenCalled()
     expect(getChecksumFromKnownListMock).not.toHaveBeenCalled()
