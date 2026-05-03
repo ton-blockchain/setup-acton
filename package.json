@@ -26,8 +26,8 @@
   "scripts": {
     "all": "bun run format && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
-    "changelog:check": "bun run src/check-changelog.ts",
-    "checksums:update": "bun run src/download-current-checksums.ts",
+    "changelog:check": "bun run scripts/check-changelog.ts",
+    "checksums:update": "bun run scripts/download-current-checksums.ts",
     "format": "biome format .",
     "format:write": "biome format --write .",
     "lint": "biome check .",

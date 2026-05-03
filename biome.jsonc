@@ -272,7 +272,7 @@
       }
     },
     {
-      "includes": ["src/check-changelog.ts"],
+      "includes": ["scripts/check-changelog.ts"],
       "linter": {
         "rules": {
           "style": {
@@ -282,7 +282,7 @@
       }
     },
     {
-      "includes": ["src/download-current-checksums.ts"],
+      "includes": ["scripts/download-current-checksums.ts"],
       "linter": {
         "rules": {
           "style": {
