@@ -9,7 +9,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-permissions: {}
+permissions: { }
 
 jobs:
   release:
@@ -56,6 +56,9 @@ jobs:
 
       - name: Verify dist is up-to-date
         run: git diff --text --exit-code -- dist
+
+      - name: Verify changelog
+        run: bun run changelog:check
 
       - name: Create GitHub release
         env:
