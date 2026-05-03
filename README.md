@@ -3,6 +3,7 @@
 This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in GitHub Actions by:
 
 - Downloading a requested Acton release archive and adding `acton` to the `PATH`
+- Restoring and saving the installed `acton` binary with the GitHub Actions cache
 - Exposing the installed binary path and detected Acton version as outputs
 
 ## Contents
@@ -13,6 +14,7 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 - [Inputs](#inputs)
 - [Outputs](#outputs)
 - [Version resolution](#version-resolution)
+- [Caching](#caching)
 - [Supported targets](#supported-targets)
 - [Recommended permissions](#recommended-permissions)
 - [Checksum verification](#checksum-verification)
@@ -38,7 +40,7 @@ See [action.yml](action.yml).
   with:
     # Acton version to install.
     # Supported values include 'latest', a release tag such as 'v1.0.0',
-    # or a bare semantic version such as '1.0.0'.
+    # a bare semantic version such as '1.0.0', or 'trunk'.
     # Defaults to the version in Acton.toml or 'latest'.
     version: '1.0.0'
 
@@ -52,6 +54,9 @@ See [action.yml](action.yml).
 
     # Working directory for the Acton project. Defaults to the GitHub workspace.
     working-directory: ${{ github.workspace }}
+
+    # Restore and save the resolved Acton binary with the GitHub Actions cache.
+    save-cache: true
 
     # GitHub token for authenticated release metadata and asset downloads.
     github-token: ${{ github.token }}
@@ -74,13 +79,14 @@ steps:
 
 ## Inputs
 
-| Name                | Required | Default                   | Description                                                                          |
-|---------------------|----------|---------------------------|--------------------------------------------------------------------------------------|
-| `version`           | No       | `Acton.toml` or `latest`  | Acton version to install. See [Version resolution](#version-resolution).             |
-| `architecture`      | No       | Runner architecture       | Target architecture. See [Supported targets](#supported-targets).                    |
-| `platform`          | No       | Runner platform           | Target platform. See [Supported targets](#supported-targets).                        |
-| `working-directory` | No       | `${{ github.workspace }}` | Working directory for the Acton project.                                             |
-| `github-token`      | No       | `${{ github.token }}`     | GitHub token used to fetch release metadata and release assets.                      |
+| Name                | Required | Default                   | Description                                                               |
+|---------------------|----------|---------------------------|---------------------------------------------------------------------------|
+| `version`           | No       | `Acton.toml` or `latest`  | Acton version to install. See [Version resolution](#version-resolution).  |
+| `architecture`      | No       | Runner architecture       | Target architecture. See [Supported targets](#supported-targets).         |
+| `platform`          | No       | Runner platform           | Target platform. See [Supported targets](#supported-targets).             |
+| `working-directory` | No       | `${{ github.workspace }}` | Working directory for the Acton project.                                  |
+| `save-cache`        | No       | `true`                    | Restore and save the resolved Acton binary with the GitHub Actions cache. |
+| `github-token`      | No       | `${{ github.token }}`     | GitHub token used to fetch release metadata and release assets.           |
 
 ## Outputs
 
@@ -88,6 +94,7 @@ steps:
 |-----------------|--------------------------------------------------------|
 | `acton-path`    | Full path to the installed `acton` binary.             |
 | `acton-version` | Installed Acton version parsed from `acton --version`. |
+| `cache-hit`     | Whether the Acton binary was restored from cache.      |
 
 > **Note**: `acton-version` returns `unknown` if the version cannot be detected.
 
@@ -112,6 +119,7 @@ The resolved version supports the following syntax:
 
 - **Release tag** - If `version` starts with `v`, the value is used as the release tag, for example `v1.0.0`.
 - **Bare semantic version** - If `version` is a plain semantic version such as `1.0.0`, it is normalized to `v1.0.0`.
+- **Trunk** - `trunk` installs the moving `trunk` release. Do **not** use `trunk` in production workflows.
 - **Custom release tag** - Any other value is passed through unchanged and must match an existing Acton release tag.
 
 After resolving the release tag, the action downloads the matching archive for the selected platform and architecture.
@@ -124,6 +132,24 @@ After resolving the release tag, the action downloads the matching archive for t
 > ```yaml
 > version: '1.0.0'
 > ```
+
+## Caching
+
+By default, this action restores and saves the resolved Acton binary with the GitHub Actions cache. The cache key
+includes the binary name, resolved version, platform target, and architecture. The cache is saved by the action's post
+step only when the job succeeds.
+
+When the same cache key is restored, the post-step skips saving the cache again.
+
+> **Note**: When the explicit `version` input is `trunk`, the post-step skips saving the cache because `trunk` is a
+> moving target.
+
+Disable caching with:
+
+```yaml
+with:
+  save-cache: false
+```
 
 ## Supported targets
 

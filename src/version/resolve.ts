@@ -1,3 +1,4 @@
+import * as core from "@actions/core"
 import type { GitHub } from "@/utils/github"
 import { readActonTomlVersion } from "@/version/acton-toml-version"
 import { getLatestVersion } from "./github-version"
@@ -19,20 +20,22 @@ export function versionNormalize(version: string): Version {
 }
 
 async function getVersion(inputVersion: string, workspacePath: string, github: GitHub): Promise<Version> {
-  if (inputVersion !== "") {
-    if (inputVersion === "latest") {
-      return await getLatestVersion(github)
+  if (inputVersion === "") {
+    const actonTomlVersion = readActonTomlVersion(workspacePath)
+    if (actonTomlVersion !== undefined) {
+      core.debug(`Resolved version from Acton.toml: ${actonTomlVersion}`)
+      return actonTomlVersion
     }
 
-    return inputVersion
+    return await getLatestVersion(github)
   }
 
-  const actonTomlVersion = readActonTomlVersion(workspacePath)
-  if (actonTomlVersion !== undefined) {
-    return actonTomlVersion
+  if (inputVersion === "latest") {
+    return await getLatestVersion(github)
   }
 
-  return await getLatestVersion(github)
+  core.debug(`Using explicit input version: ${inputVersion}`)
+  return inputVersion
 }
 
 export async function resolveVersion(inputVersion: string, workspacePath: string, github: GitHub): Promise<Version> {

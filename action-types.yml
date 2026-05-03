@@ -14,6 +14,8 @@ inputs:
       - linux
       - apple
       - windows
+  save-cache:
+    type: boolean
   working-directory:
     type: string
   github-token:
@@ -24,3 +26,5 @@ outputs:
     type: string
   acton-version:
     type: string
+  cache-hit:
+    type: boolean

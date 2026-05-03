@@ -5,11 +5,17 @@ import * as core from "@actions/core"
 import * as io from "@actions/io"
 import * as tc from "@actions/tool-cache"
 import type { Artifact } from "@/artifact/artifact"
+import type { Cache } from "@/cache/cache"
 import * as checksum from "@/download/checksum"
 import { OWNER, REPO } from "@/utils/constants"
 import type { GitHub } from "@/utils/github"
 
+type Toolchain = { toolPath: string; useCache: boolean }
 type ReleaseAsset = { name: string; url: string; browser_download_url: string }
+
+function getInstalledPath(): string {
+  return path.join(os.homedir(), ".acton", "bin")
+}
 
 async function downloadAsset(asset: ReleaseAsset, github: GitHub): Promise<string> {
   core.info(`Downloading ${asset.name} from ${asset.browser_download_url}`)
@@ -24,7 +30,7 @@ async function downloadAsset(asset: ReleaseAsset, github: GitHub): Promise<strin
   return downloadPath
 }
 
-export async function downloadVersion(artifact: Artifact, github: GitHub): Promise<{ toolPath: string }> {
+export async function downloadVersion(artifact: Artifact, github: GitHub): Promise<Toolchain> {
   const octokit = github.getOctokit()
 
   const { archiveName, version, checksumName } = artifact
@@ -48,7 +54,7 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
   checksum.verifyChecksum(toolchainPath, expectedChecksum, archiveName)
   core.info(`Verified ${archiveName} SHA-256 checksum`)
 
-  const installedPath = path.join(os.homedir(), ".acton", "bin")
+  const installedPath = getInstalledPath()
   {
     const extractedPath = await tc.extractTar(toolchainPath)
     const sourcePath = path.join(extractedPath, artifact.name)
@@ -64,7 +70,7 @@ export async function downloadVersion(artifact: Artifact, github: GitHub): Promi
   }
 
   core.debug(`Saved extracted path: ${toolPath}`)
-  return { toolPath }
+  return { toolPath, useCache: false }
 }
 
 async function getExpectedChecksum(artifact: Artifact, checksumAsset: ReleaseAsset, github: GitHub): Promise<string> {
@@ -77,4 +83,19 @@ async function getExpectedChecksum(artifact: Artifact, checksumAsset: ReleaseAss
   core.debug(`Using checksum from file ${checksumAsset.browser_download_url} for ${artifact.archiveName}`)
   const checksumPath = await downloadAsset(checksumAsset, github)
   return checksum.getChecksumFromFile(checksumPath, artifact.archiveName)
+}
+
+export async function resolveToolchain(artifact: Artifact, cache: Cache, github: GitHub): Promise<Toolchain> {
+  if (!cache.saveCache) {
+    return await downloadVersion(artifact, github)
+  }
+
+  const toolPath = path.join(getInstalledPath(), artifact.name)
+  const actonCache = await cache.restore(toolPath, artifact.cacheKey)
+  if (actonCache) {
+    return { toolPath, useCache: true }
+  }
+
+  core.debug(`Cache miss for key ${artifact.cacheKey}; downloading toolchain from GitHub`)
+  return await downloadVersion(artifact, github)
 }

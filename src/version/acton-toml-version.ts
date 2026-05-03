@@ -12,11 +12,13 @@ function isTomlTable(value: TomlValue | undefined): value is TomlTable {
 export function parseActonTomlVersion(contents: string): string | undefined {
   const { toolchain } = parse(contents)
   if (!isTomlTable(toolchain)) {
+    core.debug("Acton.toml has no [toolchain] table. Falling back to default version resolution.")
     return undefined
   }
 
   const { acton: version } = toolchain
   if (version === undefined) {
+    core.debug("Acton.toml [toolchain] section exists but has no acton key.")
     return undefined
   }
 

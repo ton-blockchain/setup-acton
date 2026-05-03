@@ -33,4 +33,8 @@ export class Artifact {
   public get knownName(): string {
     return `${this.artifactName}-${this.version}`
   }
+
+  public get cacheKey(): string {
+    return `${this.artifactName}-${this.version}`
+  }
 }

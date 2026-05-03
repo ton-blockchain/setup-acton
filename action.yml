@@ -14,6 +14,10 @@ inputs:
     description:
       "Target platform. Supported values: linux, apple, windows. Auto-detected from the runner if not specified."
     required: false
+  save-cache:
+    description: "Enable cache restore and post-run save of the resolved Acton binary path. Defaults to true."
+    default: "true"
+    required: false
   working-directory:
     description: "Working directory for the Acton project. Defaults to the GitHub workspace."
     default: ${{ github.workspace }}
@@ -28,10 +32,14 @@ outputs:
     description: "Path to the installed Acton binary."
   acton-version:
     description: "The installed Acton version reported by acton --version."
+  cache-hit:
+    description: "Whether the Acton binary was restored from GitHub Actions cache."
 
 runs:
   using: "node24"
   main: "dist/setup/index.js"
+  post: "dist/save-cache/index.js"
+  post-if: success()
 
 branding:
   icon: "package"
