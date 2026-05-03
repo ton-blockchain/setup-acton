@@ -1,6 +1,6 @@
 {
   "name": "setup-acton",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Set up your GitHub Actions workflow with a specific version of Acton",
   "keywords": [
