@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.0] - 11.05.2026
+
+setup-acton 1.0.0 marks the first stable release.
+
 ## [0.3.0] - 04.05.2026
 
 setup-acton 0.3.0 improves project-local configuration support. The action can now resolve `Acton.toml` from a caller
