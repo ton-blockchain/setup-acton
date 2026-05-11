@@ -37,6 +37,7 @@
     "test": "vitest run --coverage"
   },
   "overrides": {
+    "fast-xml-builder": ">=1.1.7",
     "undici": ">=6.24.0"
   },
   "dependencies": {
