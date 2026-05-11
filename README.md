@@ -4,7 +4,7 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 
 - Downloading a requested Acton release archive and adding `acton` to the `PATH`
 - Restoring and saving the installed `acton` binary with the GitHub Actions cache
-- Exposing the installed binary path and detected Acton version as outputs
+- Exposing the installed binary path, detected Acton version, and cache status as outputs
 
 ## Contents
 
@@ -26,7 +26,7 @@ This action sets up [Acton](https://github.com/ton-blockchain/acton) for use in 
 ```yaml
 steps:
   - name: Setup Acton
-    uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
+    uses: ton-blockchain/setup-acton@005f3ac616cd74b0b16d40884502e231e14f5f2d # v0.3.0
 ```
 
 If you do not specify a version, this action reads `Acton.toml` from `working-directory` first and falls back to the
@@ -36,7 +36,7 @@ See [action.yml](action.yml).
 
 ```yaml
 - name: Setup Acton
-  uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
+  uses: ton-blockchain/setup-acton@005f3ac616cd74b0b16d40884502e231e14f5f2d # v0.3.0
   with:
     # Acton version to install.
     # Supported values include 'latest', a release tag such as 'v1.0.0',
@@ -67,7 +67,7 @@ See [action.yml](action.yml).
 ```yaml
 steps:
   - name: Setup Acton
-    uses: ton-blockchain/setup-acton@f4da2bdcbadcb64cd678b171d9888ad16946100e # v0.2.0
+    uses: ton-blockchain/setup-acton@005f3ac616cd74b0b16d40884502e231e14f5f2d # v0.3.0
     id: setup-acton
     with:
       version: '1.0.0'
@@ -75,6 +75,7 @@ steps:
   - run: |
       echo "Acton path: ${{ steps.setup-acton.outputs.acton-path }}"
       echo "Acton version: ${{ steps.setup-acton.outputs.acton-version }}"
+      echo "Cache hit: ${{ steps.setup-acton.outputs.cache-hit }}"
 ```
 
 ## Inputs
