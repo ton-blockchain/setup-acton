@@ -24,7 +24,7 @@
   "type": "module",
   "main": "./dist/setup/index.js",
   "scripts": {
-    "all": "bun run format && bun run lint && bun run test && bun run package",
+    "all": "bun prune --dry-run && bun run format && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
     "changelog:check": "bun run scripts/check-changelog.ts",
     "checksums:update": "bun run scripts/download-current-checksums.ts",
