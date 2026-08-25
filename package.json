@@ -60,9 +60,6 @@
     "typescript": "^6.0.0",
     "vitest": "^4.1.0"
   },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "*"
-  },
   "engines": {
     "node": ">=24.0.0"
   },
