@@ -1,0 +1,56 @@
+name: Runtime Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: { }
+
+jobs:
+  install-acton:
+    name: Install Acton (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Acton
+        id: setup-acton
+        uses: ./
+        with:
+          version: "1.1.0"
+          save-cache: false
+          github-token: ${{ github.token }}
+
+      - name: Verify runtime
+        env:
+          ACTON_PATH: ${{ steps.setup-acton.outputs.acton-path }}
+          ACTON_VERSION: ${{ steps.setup-acton.outputs.acton-version }}
+          CACHE_HIT: ${{ steps.setup-acton.outputs.cache-hit }}
+        run: |
+          test -x "${ACTON_PATH}"
+          test "${ACTON_VERSION}" = "1.1.0"
+          test "${CACHE_HIT}" = "false"
+          acton --version
