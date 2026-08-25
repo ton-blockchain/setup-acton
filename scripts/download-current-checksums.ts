@@ -2,6 +2,7 @@ import * as fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
 import { getOctokit } from "@actions/github"
+import { GitHub as GitHubClient } from "@actions/github/lib/utils"
 import { parseChecksum } from "@/download/checksum"
 import { KNOWN_CHECKSUMS } from "@/download/known-checksums"
 import { OWNER, REPO } from "@/utils/constants"
@@ -10,7 +11,7 @@ const OUTPUT_PATH = "src/download/known-checksums.ts"
 const ARCHIVE_SUFFIX = ".tar.gz"
 const CHECKSUM_SUFFIX = ".sha256"
 
-type GitHub = ReturnType<typeof getOctokit>
+type GitHub = InstanceType<typeof GitHubClient>
 type Release = Awaited<ReturnType<GitHub["rest"]["repos"]["listReleases"]>>["data"][number]
 type ReleaseAsset = Release["assets"][number]
 
@@ -21,13 +22,21 @@ type ChecksumChange = {
   readonly currentChecksum?: string
 }
 
-function getGitHubToken(): string {
-  const token = process.env.GH_TOKEN
+function createGitHubClient(): GitHub {
+  const token = process.env.GH_TOKEN?.trim()
   if (token === undefined || token === "") {
-    throw new Error("GH_TOKEN environment variable is required")
+    console.warn(
+      [
+        "GH_TOKEN is not set.",
+        "GitHub API requests will be unauthenticated and subject to lower rate limits.",
+        'Run with: GH_TOKEN="$(gh auth token)" bun run checksums:update',
+        "",
+      ].join("\n"),
+    )
+    return new GitHubClient()
   }
 
-  return token
+  return getOctokit(token)
 }
 
 function isPublishedStableRelease(release: Release): boolean {
@@ -211,12 +220,14 @@ function writeTypeScriptFile(outputPath: string, manifest: ChecksumManifest): vo
 }
 
 async function main(): Promise<void> {
-  const knownManifest = readKnownChecksumManifest()
-  const octokit = getOctokit(getGitHubToken())
+  const octokit = createGitHubClient()
   const releases = await getReleases(octokit)
+
+  const knownManifest = readKnownChecksumManifest()
   const manifest = await createChecksumManifest(octokit, releases)
   assertKnownChecksumsUnchanged(knownManifest, manifest)
   writeTypeScriptFile(OUTPUT_PATH, manifest)
+
   console.log(`Saved ${Object.keys(manifest).length} checksums from ${releases.length} releases to ${OUTPUT_PATH}`)
 }
 
