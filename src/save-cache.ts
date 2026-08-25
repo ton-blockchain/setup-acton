@@ -23,13 +23,10 @@ async function run(): Promise<void> {
 
 async function main(): Promise<void> {
   core.debug("Start save-cache")
-
-  try {
-    await run()
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error : String(error)
-    core.setFailed(message)
-  }
+  await run()
 }
 
-await main()
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error : String(error)
+  core.setFailed(message)
+})

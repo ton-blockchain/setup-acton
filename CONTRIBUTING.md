@@ -4,7 +4,7 @@ Thanks for contributing to `setup-acton`.
 
 This repository contains a GitHub Action that installs [Acton](https://github.com/ton-blockchain/acton) in GitHub
 Actions workflows.
-The action is written in TypeScript, bundled into `dist/setup/index.js`, and executed by GitHub Actions from the bundled
+The action is written in TypeScript, bundled into `dist/setup/index.cjs`, and executed by GitHub Actions from the bundled
 file declared in `action.yml`.
 
 ## Development Setup
@@ -29,8 +29,8 @@ bun run test
 bun run package
 ```
 
-`dist/setup/index.js` is committed on purpose. If you change `src/**`, run `bun run package` and include the generated
-`dist/setup/index.js` update.
+`dist/setup/index.cjs` is committed on purpose. If you change `src/**`, run `bun run package` and include the generated
+`dist/setup/index.cjs` update.
 
 ## Project Layout
 

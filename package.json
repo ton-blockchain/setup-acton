@@ -22,7 +22,7 @@
   "license": "MIT",
   "author": "TON Core",
   "type": "module",
-  "main": "./dist/setup/index.js",
+  "main": "./dist/setup/index.cjs",
   "scripts": {
     "all": "bun prune --dry-run && bun run format && bun run lint && bun run test && bun run package",
     "bundle": "bun run format:write && bun run package",
@@ -32,9 +32,10 @@
     "format:write": "biome format --write .",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "package": "rimraf ./dist && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "package": "bun run typecheck && bun run scripts/build-dist.ts",
     "package:watch": "bun run package -- --watch",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@actions/cache": "^6.2.0",
@@ -48,16 +49,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.0",
-    "@rollup/plugin-commonjs": "^29.0.0",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.2.0",
     "@vitest/coverage-v8": "^4.1.0",
+    "esbuild": "^0.28.1",
     "remark": "^15.0.0",
-    "rimraf": "^6.1.0",
-    "rollup": "^4.62.4",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.0"
   },
   "engines": {
