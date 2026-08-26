@@ -94,19 +94,18 @@ python = "3.12"
     expect(warningMock).not.toHaveBeenCalled()
   })
 
-  it.each([
-    "acton = 1",
-    'acton = ""',
-    "acton = []",
-  ] as const)("warns and returns undefined when [toolchain].acton is not a non-empty string: %s", (line): void => {
-    expect(
-      parseActonTomlVersion(`
+  it.each(["acton = 1", 'acton = ""', "acton = []"] as const)(
+    "warns and returns undefined when [toolchain].acton is not a non-empty string: %s",
+    (line): void => {
+      expect(
+        parseActonTomlVersion(`
 [toolchain]
 ${line}
 `),
-    ).toBeUndefined()
-    expect(warningMock).toHaveBeenCalledWith(invalidActonVersionMessage)
-  })
+      ).toBeUndefined()
+      expect(warningMock).toHaveBeenCalledWith(invalidActonVersionMessage)
+    },
+  )
 
   it("propagates TOML parser errors", (): void => {
     expect((): string | undefined => parseActonTomlVersion("[toolchain]\nacton = 0.3.2")).toThrow()

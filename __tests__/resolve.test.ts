@@ -36,12 +36,15 @@ describe("resolveVersion", (): void => {
     ["0.1.11", "v0.1.11"],
     ["v1.2.3", "v1.2.3"],
     ["trunk", "trunk"],
-  ] as const)("normalizes %s to %s without reading fallback versions", async (inputVersion, expectedVersion): Promise<void> => {
-    await expect(resolveVersion(inputVersion, workspacePath, github)).resolves.toBe(expectedVersion)
+  ] as const)(
+    "normalizes %s to %s without reading fallback versions",
+    async (inputVersion, expectedVersion): Promise<void> => {
+      await expect(resolveVersion(inputVersion, workspacePath, github)).resolves.toBe(expectedVersion)
 
-    expect(readActonTomlVersionMock).not.toHaveBeenCalled()
-    expect(getLatestVersionMock).not.toHaveBeenCalled()
-  })
+      expect(readActonTomlVersionMock).not.toHaveBeenCalled()
+      expect(getLatestVersionMock).not.toHaveBeenCalled()
+    },
+  )
 
   it("resolves latest from GitHub when input version is latest", async (): Promise<void> => {
     await expect(resolveVersion("latest", workspacePath, github)).resolves.toBe("v1.2.3")

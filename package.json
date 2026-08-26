@@ -30,8 +30,8 @@
     "checksums:update": "bun run scripts/download-current-checksums.ts",
     "format": "biome format .",
     "format:write": "biome format --write .",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
+    "lint": "biome check --formatter-enabled=false .",
+    "lint:fix": "biome check --formatter-enabled=false --write .",
     "package": "bun run typecheck && bun run scripts/build-dist.ts",
     "package:watch": "bun run package -- --watch",
     "test": "vitest run --coverage",
@@ -48,7 +48,7 @@
     "smol-toml": "^1.6.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.0",
+    "@biomejs/biome": "^2.5.10",
     "@types/node": "^25.2.0",
     "@vitest/coverage-v8": "^4.1.0",
     "esbuild": "^0.28.1",

@@ -71,25 +71,20 @@ const artifactCases: readonly ArtifactCase[] = [
 ]
 
 describe("Artifact", (): void => {
-  it.each(artifactCases)("exposes all fields and artifact name for $platform/$architecture", ({
-    name,
-    version,
-    platform,
-    architecture,
-    archiveName,
-    knownName,
-    checksumName,
-  }): void => {
-    const artifact = new Artifact(name, version, architecture, platform)
+  it.each(artifactCases)(
+    "exposes all fields and artifact name for $platform/$architecture",
+    ({ name, version, platform, architecture, archiveName, knownName, checksumName }): void => {
+      const artifact = new Artifact(name, version, architecture, platform)
 
-    expect(artifact.name).toBe(name)
-    expect(artifact.version).toBe(version)
-    expect(artifact.platform).toBe(platform)
-    expect(artifact.architecture).toBe(architecture)
-    expect(artifact.archiveName).toBe(archiveName)
-    expect(artifact.knownName).toBe(knownName)
-    expect(artifact.checksumName).toBe(checksumName)
-  })
+      expect(artifact.name).toBe(name)
+      expect(artifact.version).toBe(version)
+      expect(artifact.platform).toBe(platform)
+      expect(artifact.architecture).toBe(architecture)
+      expect(artifact.archiveName).toBe(archiveName)
+      expect(artifact.knownName).toBe(knownName)
+      expect(artifact.checksumName).toBe(checksumName)
+    },
+  )
 
   it("uses the raw platform value for unsupported platform variants", (): void => {
     const artifact = new Artifact("acton", "v1.2.3", "x86_64", "freebsd" as Platform)

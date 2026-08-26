@@ -1,9 +1,12 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": false
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedKeys": "off"
+      }
+    },
+    "enabled": true
   },
   "files": {
     "includes": ["**", "!!**/coverage", "!!dist"]
@@ -26,223 +29,40 @@
       "trailingCommas": "all"
     }
   },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "recommended": true,
-      "source": {
-        "organizeImports": "on",
-        "useSortedInterfaceMembers": "on"
-      }
-    }
-  },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "correctness": {
-        "recommended": true,
-        "noGlobalDirnameFilename": "error",
-        "noInvalidUseBeforeDeclaration": "error",
-        "noProcessGlobal": "error",
-        "noPrivateImports": "error",
-        "noSwitchDeclarations": "error",
-        "noUndeclaredDependencies": "error",
-        "noUnreachable": "error",
-        "noUnsafeOptionalChaining": "error",
-        "noUnusedFunctionParameters": "error",
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "noVoidTypeReturn": "error",
-        "useIsNan": "error",
-        "useParseIntRadix": "error",
-        "useSingleJsDocAsterisk": "error",
-        "useValidTypeof": "error"
-      },
       "complexity": {
-        "recommended": true,
-        "noArguments": "error",
-        "noCommaOperator": "error",
-        "noImplicitCoercions": "error",
-        "noUselessCatch": "error",
-        "noUselessConstructor": "error",
-        "noUselessSwitchCase": "error",
-        "noVoid": "error",
-        "noUselessRename": "error",
-        "noUselessStringConcat": "error",
-        "noUselessTernary": "error",
-        "noUselessTypeConstraint": "error",
-        "noUselessUndefinedInitialization": "error",
-        "useDateNow": "error",
-        "useLiteralKeys": "error",
-        "useNumericLiterals": "error",
-        "useOptionalChain": "error",
-        "useRegexLiterals": "error",
-        "useSimplifiedLogicExpression": "error",
-        "noUselessUndefined": "off"
+        "noExcessiveCognitiveComplexity": "off",
+        "noExcessiveLinesPerFunction": "off"
       },
-      "style": {
-        "recommended": true,
-        "noCommonJs": "error",
-        "noDefaultExport": "error",
-        "noExportedImports": "error",
-        "noInferrableTypes": "error",
-        "noNegationElse": "error",
-        "noNestedTernary": "error",
-        "noNamespace": "error",
-        "noNonNullAssertion": "error",
-        "noParameterAssign": {
-          "level": "error",
-          "options": {
-            "propertyAssignment": "deny"
-          }
-        },
-        "noSubstr": "error",
-        "noUnusedTemplateLiteral": "error",
-        "noUselessElse": "error",
-        "noYodaExpression": "error",
-        "useImportType": {
-          "level": "error",
-          "options": {
-            "style": "separatedType"
-          }
-        },
-        "useAsConstAssertion": "error",
-        "useAtIndex": "error",
-        "useBlockStatements": "error",
-        "useCollapsedElseIf": "error",
-        "useCollapsedIf": "error",
-        "useConsistentBuiltinInstantiation": "error",
-        "useConsistentArrayType": {
-          "level": "error",
-          "options": {
-            "syntax": "shorthand"
-          }
-        },
-        "useConsistentObjectDefinitions": {
-          "level": "error",
-          "options": {
-            "syntax": "shorthand"
-          }
-        },
-        "useConst": "error",
-        "useConsistentArrowReturn": "error",
-        "useNodejsImportProtocol": "error",
-        "useDefaultParameterLast": "error",
-        "useEnumInitializers": "error",
-        "useExponentiationOperator": "error",
-        "useExportType": "error",
-        "useExplicitLengthCheck": "error",
-        "useGroupedAccessorPairs": "error",
-        "useNumberNamespace": "error",
-        "useObjectSpread": "error",
-        "useReadonlyClassProperties": "error",
-        "useShorthandAssign": "error",
-        "useShorthandFunctionType": "error",
-        "useSingleVarDeclarator": "error",
-        "useSymbolDescription": "error",
-        "useTemplate": "error",
-        "useTrimStartEnd": "error",
-        "useConsistentMemberAccessibility": {
-          "level": "error",
-          "options": {
-            "accessibility": "explicit"
-          }
-        },
-        "useConsistentTypeDefinitions": {
-          "level": "error",
-          "options": {
-            "style": "type"
-          }
-        },
-        "useUnifiedTypeSignatures": "error",
-        "useThrowNewError": "error",
-        "useThrowOnlyError": "error"
-      },
-      "suspicious": {
-        "recommended": true,
-        "noAssignInExpressions": "error",
-        "noAsyncPromiseExecutor": "error",
-        "noConstantBinaryExpressions": "error",
-        "noDebugger": "error",
-        "noDeprecatedImports": "error",
-        "noDuplicateCase": "error",
-        "noDuplicateDependencies": "error",
-        "noDuplicateElseIf": "error",
-        "noDuplicateObjectKeys": "error",
-        "noDuplicateParameters": "error",
-        "noDuplicateTestHooks": "error",
-        "noDoubleEquals": {
-          "level": "error",
-          "options": {
-            "ignoreNull": false
-          }
-        },
-        "noEmptyBlockStatements": "error",
-        "noEvolvingTypes": "error",
-        "noFallthroughSwitchClause": "error",
-        "noFocusedTests": "error",
-        "noConsole": "error",
-        "noExplicitAny": "error",
-        "noGlobalIsFinite": "error",
-        "noGlobalIsNan": "error",
-        "noImplicitAnyLet": "error",
-        "noImportCycles": "error",
-        "noPrototypeBuiltins": "error",
-        "noSkippedTests": "error",
-        "noTsIgnore": "error",
-        "noUnassignedVariables": "error",
-        "noUnusedExpressions": "error",
-        "noVar": "error",
-        "useAwait": "error",
-        "useDefaultSwitchClauseLast": "error",
-        "useErrorMessage": "error",
-        "useGetterReturn": "error",
-        "useGuardForIn": "error",
-        "useIsArray": "error",
-        "useIterableCallbackReturn": "error",
-        "useNumberToFixedDigitsArgument": "error"
-      },
-      "nursery": {
-        "recommended": true,
-        "noFloatingPromises": "error",
-        "noDuplicateEnumValues": "error",
-        "noIdenticalTestTitle": "error",
-        "noLoopFunc": "error",
-        "noMisusedPromises": "error",
-        "noMultiAssign": "error",
-        "noMultiStr": "error",
-        "noNestedPromises": "error",
-        "noForIn": "error",
-        "noProto": "error",
-        "noReturnAssign": "error",
-        "noUnnecessaryTemplateExpression": "error",
-        "noUnsafePlusOperands": "error",
-        "noUselessReturn": "error",
-        "noUselessTypeConversion": "error",
-        "useArraySome": "error",
-        "useArraySortCompare": "error",
-        "useAwaitThenable": "error",
-        "useConsistentEnumValueType": "error",
-        "useConsistentMethodSignatures": "error",
-        "useDestructuring": "error",
-        "useErrorCause": "error",
-        "useExhaustiveSwitchCases": "error",
-        "useExplicitReturnType": "error",
-        "useExplicitType": "error",
-        "useFind": "error",
-        "useNullishCoalescing": "error",
-        "useReduceTypeParameter": "error",
-        "useRegexpExec": "error",
-        "useRegexpTest": "error",
-        "useSpread": "error",
-        "useStringStartsEndsWith": "error"
+      "correctness": {
+        "noNodejsModules": "off",
+        "useImportExtensions": "off"
       },
       "performance": {
-        "recommended": true,
-        "noBarrelFile": "error",
-        "noDelete": "error",
-        "useTopLevelRegex": "error"
+        "noAwaitInLoops": "off",
+        "noNamespaceImport": "off"
+      },
+      "preset": "all",
+      "security": {
+        "noSecrets": "off"
+      },
+      "style": {
+        "noContinue": "off",
+        "noExcessiveLinesPerFile": "off",
+        "noMagicNumbers": "off",
+        "noParameterProperties": "off",
+        "noProcessEnv": "off",
+        "noTernary": "off",
+        "useConsistentMemberAccessibility": "off",
+        "useConsistentTypeDefinitions": "off",
+        "useExportsLast": "off",
+        "useNamingConvention": "off",
+        "useNumericSeparators": "off"
+      },
+      "suspicious": {
+        "noUnnecessaryConditions": "off"
       }
     }
   },
@@ -280,5 +100,10 @@
         }
       }
     }
-  ]
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": false
+  }
 }
