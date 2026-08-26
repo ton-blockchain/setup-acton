@@ -70418,7 +70418,7 @@ async function runActonVersion(toolPath) {
 }
 function parseActonVersion(output) {
   const trimmedOutput = output.trim();
-  const version3 = actonVersionPattern.exec(trimmedOutput)?.groups?.version;
+  const { version: version3 } = actonVersionPattern.exec(trimmedOutput)?.groups ?? {};
   if (version3 === void 0) {
     throw new Error(`Unable to parse Acton version from output: ${JSON.stringify(trimmedOutput)}`);
   }
@@ -71541,7 +71541,7 @@ var KNOWN_CHECKSUMS = {
 
 // src/download/checksum.ts
 function parseChecksum(checksumContents) {
-  const firstLine = checksumContents.split("\n", 1)[0].trim();
+  const firstLine = checksumContents.split("\n", 1).at(0)?.trim() ?? "";
   if (firstLine === "") {
     throw new Error("Checksum file does not contain a checksum");
   }
@@ -71549,7 +71549,7 @@ function parseChecksum(checksumContents) {
   if (parts.length !== 2) {
     throw new Error("Checksum file must use '<sha256>  <archive name>' format");
   }
-  const [rawChecksum, assetName] = parts;
+  const [rawChecksum = "", assetName = ""] = parts;
   const checksum = rawChecksum.toLowerCase();
   if (checksum === "" || assetName === "") {
     throw new Error("Checksum file must use '<sha256>  <archive name>' format");

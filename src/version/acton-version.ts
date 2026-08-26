@@ -13,7 +13,7 @@ async function runActonVersion(toolPath: string): Promise<string> {
 
 export function parseActonVersion(output: string): string {
   const trimmedOutput = output.trim()
-  const version = actonVersionPattern.exec(trimmedOutput)?.groups?.version
+  const { version } = actonVersionPattern.exec(trimmedOutput)?.groups ?? {}
   if (version === undefined) {
     throw new Error(`Unable to parse Acton version from output: ${JSON.stringify(trimmedOutput)}`)
   }

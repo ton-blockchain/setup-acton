@@ -25,6 +25,7 @@
   "main": "./dist/setup/index.cjs",
   "scripts": {
     "all": "bun prune --dry-run && bun run format && bun run lint && bun run test && bun run package",
+    "build": "bun run scripts/build-dist.ts",
     "bundle": "bun run format:write && bun run package",
     "changelog:check": "bun run scripts/check-changelog.ts",
     "checksums:update": "bun run scripts/download-current-checksums.ts",
@@ -32,10 +33,10 @@
     "format:write": "biome format --write .",
     "lint": "biome check --formatter-enabled=false .",
     "lint:fix": "biome check --formatter-enabled=false --write .",
-    "package": "bun run typecheck && bun run scripts/build-dist.ts",
+    "package": "bun run typecheck && bun run build",
     "package:watch": "bun run package -- --watch",
     "test": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json"
   },
   "dependencies": {
     "@actions/cache": "^6.2.0",

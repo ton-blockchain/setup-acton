@@ -8,7 +8,7 @@ export type ParsedChecksum = {
 }
 
 export function parseChecksum(checksumContents: string): ParsedChecksum {
-  const firstLine = checksumContents.split("\n", 1)[0].trim()
+  const firstLine = checksumContents.split("\n", 1).at(0)?.trim() ?? ""
   if (firstLine === "") {
     throw new Error("Checksum file does not contain a checksum")
   }
@@ -18,7 +18,7 @@ export function parseChecksum(checksumContents: string): ParsedChecksum {
     throw new Error("Checksum file must use '<sha256>  <archive name>' format")
   }
 
-  const [rawChecksum, assetName] = parts
+  const [rawChecksum = "", assetName = ""] = parts
   const checksum = rawChecksum.toLowerCase()
   if (checksum === "" || assetName === "") {
     throw new Error("Checksum file must use '<sha256>  <archive name>' format")
