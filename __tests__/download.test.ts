@@ -172,9 +172,9 @@ describe("downloadVersion", (): void => {
     getChecksumFromKnownListMock.mockReturnValue(undefined)
     statSyncMock.mockReturnValue({ size: 42 })
     mockRelease(artifactVersion, [
-      createReleaseAsset(artifactVersion, "aarch64", 297813424),
-      createReleaseAsset(artifactVersion, "x86_64", 297813425),
-      createChecksumAsset(artifactVersion, "x86_64", 297813426),
+      createReleaseAsset(artifactVersion, "aarch64", 297_813_424),
+      createReleaseAsset(artifactVersion, "x86_64", 297_813_425),
+      createChecksumAsset(artifactVersion, "x86_64", 297_813_426),
     ])
   })
 
@@ -245,7 +245,7 @@ describe("downloadVersion", (): void => {
   })
 
   it("fails before downloading when the expected asset is missing", async (): Promise<void> => {
-    mockRelease(artifactVersion, [createReleaseAsset(artifactVersion, "aarch64", 297813424)])
+    mockRelease(artifactVersion, [createReleaseAsset(artifactVersion, "aarch64", 297_813_424)])
 
     await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow(
       `Archive acton-x86_64-unknown-linux-gnu.tar.gz not found in release ${artifactVersion}`,
@@ -260,8 +260,8 @@ describe("downloadVersion", (): void => {
 
   it("fails before downloading when the expected checksum asset is missing", async (): Promise<void> => {
     mockRelease(artifactVersion, [
-      createReleaseAsset(artifactVersion, "aarch64", 297813424),
-      createReleaseAsset(artifactVersion, "x86_64", 297813425),
+      createReleaseAsset(artifactVersion, "aarch64", 297_813_424),
+      createReleaseAsset(artifactVersion, "x86_64", 297_813_425),
     ])
 
     await expect(downloadVersion(createArtifact(), createGitHub())).rejects.toThrow(

@@ -56,8 +56,8 @@
     "typescript": "^7.0.2",
     "vitest": "^4.1.0"
   },
+  "packageManager": "bun@1.4.0",
   "engines": {
     "node": ">=24.0.0"
-  },
-  "packageManager": "bun@1.4.0"
+  }
 }

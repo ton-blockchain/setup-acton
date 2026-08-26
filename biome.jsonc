@@ -2,6 +2,7 @@
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "assist": {
     "actions": {
+      "preset": "all",
       "source": {
         "useSortedKeys": "off"
       }
@@ -32,6 +33,7 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "preset": "all",
       "complexity": {
         "noExcessiveCognitiveComplexity": "off",
         "noExcessiveLinesPerFunction": "off"
@@ -44,22 +46,16 @@
         "noAwaitInLoops": "off",
         "noNamespaceImport": "off"
       },
-      "preset": "all",
-      "security": {
-        "noSecrets": "off"
-      },
       "style": {
         "noContinue": "off",
         "noExcessiveLinesPerFile": "off",
         "noMagicNumbers": "off",
         "noParameterProperties": "off",
-        "noProcessEnv": "off",
         "noTernary": "off",
         "useConsistentMemberAccessibility": "off",
         "useConsistentTypeDefinitions": "off",
         "useExportsLast": "off",
-        "useNamingConvention": "off",
-        "useNumericSeparators": "off"
+        "useNamingConvention": "off"
       },
       "suspicious": {
         "noUnnecessaryConditions": "off"
@@ -73,6 +69,16 @@
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/download/known-checksums.ts", "__tests__/checksum.test.ts"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noSecrets": "off"
           }
         }
       }
@@ -92,6 +98,7 @@
       "linter": {
         "rules": {
           "style": {
+            "noProcessEnv": "off",
             "noParameterAssign": "off"
           },
           "suspicious": {
