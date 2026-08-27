@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0] - 27.08.2026
+
+setup-acton 1.1.0 modernizes the build toolchain and strengthens release validation. It migrates the bundled action to
+TypeScript 7 and esbuild, adds cross-platform installation tests, and tightens linting, type checking, and dependency
+maintenance.
+
+### Added
+
+- Added a runtime workflow that installs Acton and verifies the action outputs on Linux and macOS runners.
+- Added dependency pruning to the full local and CI check suite.
+
+### Changed
+
+- Migrated action bundling from Rollup to esbuild and changed the Node 24 entrypoints to CommonJS bundles.
+- Upgraded the project to TypeScript 7 and Bun 1.4, and refreshed GitHub Actions, Biome, Vitest, and other dependencies.
+- Enabled stricter TypeScript compiler checks and the full Biome lint rule preset.
+- Updated the known checksum manifest for current stable Acton releases.
+
+### Fixed
+
+- Updated vulnerable `brace-expansion` transitive dependencies.
+
 ## [1.0.0] - 11.05.2026
 
 setup-acton 1.0.0 marks the first stable release.
