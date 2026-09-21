@@ -158,6 +158,10 @@ function assertKnownChecksumsUnchanged(
 }
 
 async function addReleaseChecksums(manifest: ChecksumManifest, octokit: GitHub, release: Release): Promise<void> {
+  if (release.immutable !== true) {
+    throw new Error(`Cannot save checksums for mutable release ${release.tag_name}`)
+  }
+
   console.log(`Parsing release ${release.tag_name}`)
   const checksumAssets = new Map(
     release.assets.filter((asset) => asset.name.endsWith(CHECKSUM_SUFFIX)).map((asset) => [asset.name, asset]),
