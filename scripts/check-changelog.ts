@@ -129,10 +129,11 @@ function checkChangelog(markdown: string): ChangelogError[] | undefined {
   }
 
   const packageVersion = getPackageVersion()
-  if (!versions.includes(packageVersion)) {
+  const latestVersion = releaseEntries.at(0)?.version ?? "no release entries"
+  if (latestVersion !== packageVersion) {
     errors.push({
       title: "Invalid version format",
-      message: `Missing changelog entry for current version ${packageVersion}`,
+      message: `Expected latest changelog version to be ${packageVersion}, got ${latestVersion}`,
     })
   }
 
