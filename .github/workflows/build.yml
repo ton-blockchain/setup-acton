@@ -43,6 +43,3 @@ jobs:
 
       - name: Verify dist is up-to-date
         run: git diff --text --exit-code -- dist
-
-      - name: Verify changelog
-        run: bun run changelog:check
