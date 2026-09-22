@@ -62,6 +62,15 @@ describe("resolveVersion", (): void => {
     expect(getLatestVersionMock).not.toHaveBeenCalled()
   })
 
+  it("preserves trunk resolved from Acton.toml", async (): Promise<void> => {
+    readActonTomlVersionMock.mockReturnValue("trunk")
+
+    await expect(resolveVersion("", workspacePath, github)).resolves.toBe("trunk")
+
+    expect(readActonTomlVersionMock).toHaveBeenCalledWith(workspacePath)
+    expect(getLatestVersionMock).not.toHaveBeenCalled()
+  })
+
   it("resolves latest from GitHub when input version is empty and Acton.toml has no version", async (): Promise<void> => {
     await expect(resolveVersion("", workspacePath, github)).resolves.toBe("v1.2.3")
 

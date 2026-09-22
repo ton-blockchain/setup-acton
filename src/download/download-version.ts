@@ -90,6 +90,11 @@ export async function resolveToolchain(artifact: Artifact, cache: Cache, github:
     return await downloadVersion(artifact, github)
   }
 
+  if (artifact.version === "trunk") {
+    core.debug("Cache is disabled for trunk version")
+    return await downloadVersion(artifact, github)
+  }
+
   const toolPath = path.join(getInstalledPath(), artifact.name)
   const actonCache = await cache.restore(toolPath, artifact.cacheKey)
   if (actonCache) {

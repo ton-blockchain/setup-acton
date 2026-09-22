@@ -2,6 +2,7 @@ import path from "node:path"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { Architecture } from "@/artifact/architecture"
 import { Artifact } from "@/artifact/artifact"
+import type { Cache } from "@/cache/cache"
 import type { GitHub } from "@/utils/github"
 
 type ReleaseAsset = {
@@ -87,7 +88,9 @@ vi.doMock(
   }),
 )
 
-const { downloadVersion }: typeof import("@/download/download-version") = await import("@/download/download-version")
+const { downloadVersion, resolveToolchain }: typeof import("@/download/download-version") = await import(
+  "@/download/download-version"
+)
 
 const artifactVersion = "v1.2.3"
 const downloadPath = "/tmp/acton.tar.gz"
@@ -326,5 +329,27 @@ describe("downloadVersion", (): void => {
     expect(debugMock).toHaveBeenCalledWith(`Downloaded ${checksumPath} with size 100`)
     expect(debugMock).toHaveBeenCalledWith(`Downloaded ${downloadPath} with size 200`)
     expect(debugMock).toHaveBeenCalledWith(`Extracted ${expectedToolPath} with size 300`)
+  })
+
+  it("does not restore a resolved trunk version from cache", async (): Promise<void> => {
+    const restoreMock = vi.fn<(cachePath: string, cacheKey: string) => Promise<boolean>>().mockResolvedValue(true)
+    const cache = {
+      saveCache: true,
+      restore: restoreMock,
+    } as unknown as Cache
+    const artifact = new Artifact("acton", "trunk", "x86_64", "linux")
+
+    await expect(resolveToolchain(artifact, cache, createGitHub())).resolves.toEqual({
+      toolPath: expectedToolPath,
+      useCache: false,
+    })
+
+    expect(restoreMock).not.toHaveBeenCalled()
+    expect(debugMock).toHaveBeenCalledWith("Cache is disabled for trunk version")
+    expect(getReleaseByTagMock).toHaveBeenCalledWith({
+      owner: "ton-blockchain",
+      repo: "acton",
+      tag: "trunk",
+    })
   })
 })

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Disabled cache restore and save for the moving `trunk` version, including when resolved from `Acton.toml`.
+
 ## [1.1.0] - 27.08.2026
 
 setup-acton 1.1.0 modernizes the build toolchain and strengthens release validation. It migrates the bundled action to

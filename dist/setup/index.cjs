@@ -71599,6 +71599,10 @@ async function resolveToolchain(artifact, cache, github) {
   if (!cache.saveCache) {
     return await downloadVersion(artifact, github);
   }
+  if (artifact.version === "trunk") {
+    debug("Cache is disabled for trunk version");
+    return await downloadVersion(artifact, github);
+  }
   const toolPath = import_node_path2.default.join(getInstalledPath(), artifact.name);
   const actonCache = await cache.restore(toolPath, artifact.cacheKey);
   if (actonCache) {

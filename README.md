@@ -142,8 +142,7 @@ step only when the job succeeds.
 
 When the same cache key is restored, the post-step skips saving the cache again.
 
-> **Note**: When the explicit `version` input is `trunk`, the post-step skips saving the cache because `trunk` is a
-> moving target.
+> **Note**: Caching is disabled for the `trunk` version.
 
 Disable caching with:
 
