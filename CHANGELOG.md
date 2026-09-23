@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.2.0] - 23.09.2026
+
+### Changed
+
+- Added known `SHA-256` checksums for Acton 1.2.0 release artifacts.
+- Hardened checksum refreshes by requiring `GH_TOKEN` and rejecting mutable GitHub releases.
+- Updated `smol-toml` to 1.8.0.
+
 ### Fixed
 
 - Disabled cache restore and save for the moving `trunk` version, including when resolved from `Acton.toml`.
