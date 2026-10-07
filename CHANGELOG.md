@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated vulnerable `brace-expansion`, `smol-toml`, `source-map-js`, and `undici` dependencies.
+
 ## [1.2.0] - 23.09.2026
 
 ### Changed
