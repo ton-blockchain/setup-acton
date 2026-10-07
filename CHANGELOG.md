@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Updated `@actions/cache` to 6.3.0 and `@octokit/core` to 7.0.8.
+- Updated Vitest and `@vitest/coverage-v8` to 5.0.3.
 
 ### Fixed
 
