@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `@actions/cache` to 6.3.0 and `@octokit/core` to 7.0.8.
+
 ### Fixed
 
 - Updated vulnerable `brace-expansion`, `smol-toml`, `source-map-js`, and `undici` dependencies.
