@@ -62,25 +62,25 @@ describe("getChecksumFromFile", (): void => {
   it("does not search for checksums beyond the first line", (): void => {
     const checksumPath = writeTempFile(checksumAssetName, `not-a-checksum\n${artifactChecksum}  ${artifactName}\n`)
 
-    expect((): void => getChecksumFromFile(checksumPath, artifactName)).toThrow(
-      "Checksum file must use '<sha256>  <archive name>' format",
-    )
+    expect((): void => {
+      getChecksumFromFile(checksumPath, artifactName)
+    }).toThrow("Checksum file must use '<sha256>  <archive name>' format")
   })
 
   it("fails when the asset name does not match", (): void => {
     const checksumPath = writeTempFile(checksumAssetName, `${artifactChecksum}  other-artifact.tar.gz\n`)
 
-    expect((): void => getChecksumFromFile(checksumPath, artifactName)).toThrow(
-      `Checksum file name mismatch: expected ${artifactName}, got other-artifact.tar.gz`,
-    )
+    expect((): void => {
+      getChecksumFromFile(checksumPath, artifactName)
+    }).toThrow(`Checksum file name mismatch: expected ${artifactName}, got other-artifact.tar.gz`)
   })
 
   it("fails when the checksum file is empty", (): void => {
     const checksumPath = writeTempFile(checksumAssetName, "\n")
 
-    expect((): void => getChecksumFromFile(checksumPath, artifactName)).toThrow(
-      "Checksum file does not contain a checksum",
-    )
+    expect((): void => {
+      getChecksumFromFile(checksumPath, artifactName)
+    }).toThrow("Checksum file does not contain a checksum")
   })
 })
 

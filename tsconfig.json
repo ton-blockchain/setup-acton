@@ -1,30 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": false,
-    "declarationMap": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "lib": ["ES2022"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "newLine": "lf",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUncheckedIndexedAccess": true,
     "outDir": "./dist",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "pretty": true,
-    "resolveJsonModule": true,
-    "rootDir": "./src",
-    "strict": true,
-    "strictNullChecks": true,
-    "target": "es2022"
+    "rootDir": "./src"
   },
   "exclude": ["__tests__", "coverage", "dist", "node_modules"],
   "include": ["src"]
